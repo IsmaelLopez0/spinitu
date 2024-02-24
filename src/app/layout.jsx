@@ -1,5 +1,5 @@
 import { Inter } from "next/font/google";
-import NavBar from "@/components/Navbar";
+import NavBar from "@/components/organisms/Navbar";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -12,9 +12,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`bg-cararra-100 ${inter.className}`}>
         <NavBar />
-        {children}
+        <div className="max-h-[calc(100vh-100px)]">{children}</div>
       </body>
     </html>
   );

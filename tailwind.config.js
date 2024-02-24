@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+const colors = require("tailwindcss/colors");
+
 module.exports = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -6,11 +8,59 @@ module.exports = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+    colors: {
+      ...colors,
+      cararra: {
+        50: "#f7f7f5",
+        100: "#efefea",
+        200: "#dad9ce",
+        300: "#c2c1af",
+        400: "#a8a58f",
+        500: "#979278",
+        600: "#8a836c",
+        700: "#736c5b",
+        800: "#5f594d",
+        900: "#4e4940",
+        950: "#292621",
+      },
+      swirl: {
+        50: "#f7f6f5",
+        100: "#edeae7",
+        200: "#d6cfc8",
+        300: "#c3b8ae",
+        400: "#aa998d",
+        500: "#988377",
+        600: "#8c756a",
+        700: "#756059",
+        800: "#60504c",
+        900: "#4f423f",
+        950: "#292221",
+      },
+      mindaro: {
+        50: "#fbffe6",
+        100: "#f5fec9",
+        200: "#e9fd99",
+        300: "#d9f86a",
+        400: "#c1ed2e",
+        500: "#a2d30f",
+        600: "#7ea907",
+        700: "#5f800b",
+        800: "#4c650f",
+        900: "#405512",
+        950: "#213003",
+      },
+      orchid: {
+        50: "#fef5fc",
+        100: "#fdeafb",
+        200: "#fbd3f7",
+        300: "#f7b0ed",
+        400: "#f181de",
+        500: "#e765d1",
+        600: "#c831ac",
+        700: "#a5268a",
+        800: "#872170",
+        900: "#6f205b",
+        950: "#490939",
       },
     },
   },

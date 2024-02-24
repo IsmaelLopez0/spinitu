@@ -1,11 +1,14 @@
 "use client";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import Input from "@/components/atoms/Input";
+import Button from "@/components/atoms/Button";
 
 export default function LoginPage() {
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
@@ -14,7 +17,6 @@ export default function LoginPage() {
   const [error, setError] = useState();
 
   async function onSubmit(data) {
-    console.log(data);
     const res = await signIn("credentials", {
       email: data.email,
       password: data.password,
@@ -30,57 +32,63 @@ export default function LoginPage() {
 
   return (
     <div className="h-[calc(100vh-7rem)] flex justify-center items-center">
-      <form onSubmit={handleSubmit(onSubmit)} className="w-1/4">
-        <span>
-          {error && (
-            <p className="bg-red-500  text-lg text-white p3 rounded">{error}</p>
-          )}
-        </span>
-        <h1 className="text-slate-200 font-bold text-4xl mb-4">Login</h1>
-
-        <label htmlFor="username" className="text-slate-500 mb-2 block text-sm">
-          Email
-        </label>
-        <input
-          type="text"
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="w-1/3 border rounded p-5 border-swirl-200"
+      >
+        {error && (
+          <p className="bg-red-500 text-lg text-center text-white p-3 mb-2 rounded">
+            {error}
+          </p>
+        )}
+        <h1 className="text-swirl-800 text-center font-bold text-4xl mb-4">
+          Login
+        </h1>
+        <Controller
           name="email"
-          placeholder="email@domain.com"
-          className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
-          {...register("email", {
-            required: {
-              value: true,
-              message: "Email is required",
-            },
-          })}
+          control={control}
+          render={({ field }) => (
+            <Input
+              label="Email"
+              name="email"
+              errors={errors}
+              placeholder="email@domain.com"
+              type="email"
+              {...register("email", {
+                required: {
+                  value: true,
+                  message: "Email is required",
+                },
+              })}
+              {...field}
+            />
+          )}
         />
-        {errors.email && (
-          <span className="text-red-500 text-xs">{errors.email.message}</span>
-        )}
 
-        <label htmlFor="username" className="text-slate-500 mb-2 block text-sm">
-          Password
-        </label>
-        <input
-          type="password"
+        <Controller
           name="password"
-          placeholder="********"
-          className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
-          {...register("password", {
-            required: {
-              value: true,
-              message: "Password is required",
-            },
-          })}
+          control={control}
+          render={({ field }) => (
+            <Input
+              label="Password"
+              name="password"
+              errors={errors}
+              placeholder="********"
+              type="password"
+              {...register("password", {
+                required: {
+                  value: true,
+                  message: "Password is required",
+                },
+              })}
+              {...field}
+            />
+          )}
         />
-        {errors.password && (
-          <span className="text-red-500 text-xs">
-            {errors.password.message}
-          </span>
-        )}
 
-        <button className="w-full bg-blue-500 text-white p-3 rounded-lg">
+        <Button color="mindaro" type="solid" className="w-full">
           Register
-        </button>
+        </Button>
       </form>
     </div>
   );

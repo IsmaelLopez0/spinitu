@@ -1,13 +1,23 @@
 "use client";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import Input from "@/components/atoms/Input";
+import Button from "@/components/atoms/Button";
 
 export default function RegisterPage() {
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      name: "",
+      lastname: "",
+      email: "",
+      password: "",
+    },
+  });
   const router = useRouter();
 
   async function onSubmit(data) {
@@ -16,11 +26,7 @@ export default function RegisterPage() {
     }
     const res = await fetch("/api/auth/register", {
       method: "POST",
-      body: JSON.stringify({
-        username: data.username,
-        password: data.password,
-        email: data.email,
-      }),
+      body: JSON.stringify(data),
       headers: {
         "Content-Type": "application/json",
       },
@@ -28,99 +34,123 @@ export default function RegisterPage() {
     if (res.ok) {
       router.push("/auth/login");
     }
-    console.log(res);
   }
 
   return (
     <div className="h-[calc(100vh-7rem)] flex justify-center items-center">
-      <form onSubmit={handleSubmit(onSubmit)} className="w-1/4">
-        <h1 className="text-slate-200 font-bold text-4xl mb-4">Registrar</h1>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="w-1/3 border rounded p-5 border-swirl-200"
+      >
+        <h1 className="text-swirl-800 text-center font-bold text-4xl mb-4">
+          Registrar
+        </h1>
 
-        <label htmlFor="username" className="text-slate-500 mb-2 block text-sm">
-          Username
-        </label>
-        <input
-          type="text"
-          name="username"
-          placeholder="Username123"
-          className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
-          {...register("username", {
-            required: {
-              value: true,
-              message: "Username is required",
-            },
-          })}
+        <Controller
+          name="name"
+          control={control}
+          render={({ field }) => (
+            <Input
+              label="Name"
+              name="name"
+              errors={errors}
+              placeholder="Jane"
+              {...register("name", {
+                required: {
+                  value: true,
+                  message: "Name is required",
+                },
+              })}
+              {...field}
+            />
+          )}
         />
-        {errors.username && (
-          <span className="text-red-500 text-xs">
-            {errors.username.message}
-          </span>
-        )}
 
-        <label htmlFor="username" className="text-slate-500 mb-2 block text-sm">
-          Email
-        </label>
-        <input
-          type="email"
+        <Controller
+          name="lastname"
+          control={control}
+          render={({ field }) => (
+            <Input
+              label="Last Name"
+              name="lastname"
+              errors={errors}
+              placeholder="Doe"
+              {...register("lastname", {
+                required: {
+                  value: true,
+                  message: "Last Name is required",
+                },
+              })}
+              {...field}
+            />
+          )}
+        />
+
+        <Controller
           name="email"
-          placeholder="email@domain.com"
-          className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
-          {...register("email", {
-            required: {
-              value: true,
-              message: "Email is required",
-            },
-          })}
+          control={control}
+          render={({ field }) => (
+            <Input
+              label="Email"
+              name="email"
+              errors={errors}
+              placeholder="email@domain.com"
+              {...register("email", {
+                required: {
+                  value: true,
+                  message: "Email is required",
+                },
+              })}
+              {...field}
+            />
+          )}
         />
-        {errors.email && (
-          <span className="text-red-500 text-xs">{errors.email.message}</span>
-        )}
 
-        <label htmlFor="username" className="text-slate-500 mb-2 block text-sm">
-          Password
-        </label>
-        <input
-          type="password"
+        <Controller
           name="password"
-          placeholder="********"
-          className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
-          {...register("password", {
-            required: {
-              value: true,
-              message: "Password is required",
-            },
-          })}
+          control={control}
+          render={({ field }) => (
+            <Input
+              label="Password"
+              name="password"
+              errors={errors}
+              placeholder="********"
+              type="password"
+              {...register("password", {
+                required: {
+                  value: true,
+                  message: "Password is required",
+                },
+              })}
+              {...field}
+            />
+          )}
         />
-        {errors.password && (
-          <span className="text-red-500 text-xs">
-            {errors.password.message}
-          </span>
-        )}
 
-        <label htmlFor="username" className="text-slate-500 mb-2 block text-sm">
-          Confirm Password
-        </label>
-        <input
-          type="password"
+        <Controller
           name="confirmPassword"
-          placeholder="********"
-          className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
-          {...register("confirmPassword", {
-            required: {
-              value: true,
-              message: "Confirm Password is required",
-            },
-          })}
+          control={control}
+          render={({ field }) => (
+            <Input
+              label="Confirm Password"
+              name="confirmPassword"
+              errors={errors}
+              placeholder="********"
+              type="password"
+              {...register("confirmPassword", {
+                required: {
+                  value: true,
+                  message: "Confirm Password is required",
+                },
+              })}
+              {...field}
+            />
+          )}
         />
-        {errors.confirmPassword && (
-          <span className="text-red-500 text-xs">
-            {errors.confirmPassword.message}
-          </span>
-        )}
 
-        <button className="w-full bg-blue-500 text-white p-3 rounded-lg">
+        <Button color="mindaro" className="w-full">
           Register
-        </button>
+        </Button>
       </form>
     </div>
   );

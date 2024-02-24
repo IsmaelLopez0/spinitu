@@ -20,23 +20,17 @@ export const authOptions = {
           where: { email: credentials.email },
         });
         if (!userFound) throw new Error("No user found");
-        console.log(userFound);
         const matchPassword = await bcrypt.compare(
           credentials.password,
           userFound.password
         );
         if (!matchPassword) throw new Error("Wrong password");
-        return {
-          id: userFound.id,
-          name: userFound.username,
-          email: userFound.email,
-        };
+        return { ...userFound };
       },
     }),
   ],
   pages: {
     signIn: "/auth/login",
-    signOut: "/auth/signout",
   },
 };
 

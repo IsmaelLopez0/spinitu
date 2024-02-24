@@ -1,4 +1,9 @@
+"use client";
+import { useRouter } from "next/navigation";
 function HomePage() {
+  const router = useRouter();
+  router.push("/auth/login");
+
   return (
     <section className="h-[calc(100vh-7rem)] flex justify-center items-center">
       <div>
