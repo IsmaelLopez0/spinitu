@@ -41,61 +41,65 @@ export default function ProfilePage() {
 
   return (
     <section className="h-full py-3 px-5 flex justify-center items-center gap-x-5">
-      <div className="w-1/2 flex flex-col gap-y-4 ">
-        <Card
-          data={{
-            title: `${userData?.name ?? ""} ${userData?.lastname ?? ""}`,
-            description: userData.email ?? "",
-          }}
-        >
-          <FormProfile userData={userData} setUserData={setUserData} />
-        </Card>
+      <div className="grid grid-cols-2 grid-rows-2 gap-10">
+        <div className="row-span-2">
+          <Card
+            data={{
+              title: `${userData?.name ?? ""} ${userData?.lastname ?? ""}`,
+              description: userData.email ?? "",
+            }}
+          >
+            <FormProfile userData={userData} setUserData={setUserData} />
+          </Card>
+        </div>
 
         <Card data={{ title: "Change password" }}>
           <FormChangePassword email={userData.email} />
         </Card>
-        <Card data={{ title: "⚠️ Deactivate account" }}>
-          <p className="text-red-600">
-            {"Once your account has been deactivate, it's gone for good."}
-          </p>
-          <Button
-            color="orchid"
-            text="Deactivate account"
-            className="mt-2 w-full bg-red-700"
-            onClick={() => setShowDialog(true)}
-          />
-        </Card>
-        {showDialog ? (
-          <Dialog
-            title="Deactivate account"
-            description="Are you sure you want to deactivate your account? All of
+        <div className="col-start-2">
+          <Card data={{ title: "⚠️ Deactivate account" }}>
+            <p className="text-red-600">
+              {"Once your account has been deactivate, it's gone for good."}
+            </p>
+            <Button
+              color="orchid"
+              text="Deactivate account"
+              className="mt-2 w-full bg-red-700"
+              onClick={() => setShowDialog(true)}
+            />
+          </Card>
+        </div>
+      </div>
+      {showDialog ? (
+        <Dialog
+          title="Deactivate account"
+          description="Are you sure you want to deactivate your account? All of
                       your data will be permanently removed. This action cannot
                       be undone."
-            footer={
-              <>
-                <Button
-                  color="orchid"
-                  text="Deactivate account"
-                  className="text-sm ml-3 bg-red-700"
-                  onClick={() => {
-                    deleteAccount();
-                    setShowDialog(false);
-                  }}
-                >
-                  Deactivate
-                </Button>
-                <Button
-                  type="outline"
-                  className="text-sm"
-                  onClick={() => setShowDialog(false)}
-                >
-                  Cancel
-                </Button>
-              </>
-            }
-          />
-        ) : null}
-      </div>
+          footer={
+            <>
+              <Button
+                color="orchid"
+                text="Deactivate account"
+                className="text-sm ml-3 bg-red-700"
+                onClick={() => {
+                  deleteAccount();
+                  setShowDialog(false);
+                }}
+              >
+                Deactivate
+              </Button>
+              <Button
+                type="outline"
+                className="text-sm"
+                onClick={() => setShowDialog(false)}
+              >
+                Cancel
+              </Button>
+            </>
+          }
+        />
+      ) : null}
     </section>
   );
 }
