@@ -8,10 +8,11 @@ export async function POST(request) {
     const emailFound = await prisma.user.findUnique({
       where: {
         email: data.email,
+        isActive: true,
       },
     });
     if (emailFound) throw new Error("Email already exists");
-    const { confirmPassword, ...userData } = data;
+    const { confirmPassword, specializations, ...userData } = data;
     const hashedPassword = await bcrypt.hash(data.password, 10);
     const newUser = await prisma.user.create({
       data: {
@@ -19,6 +20,17 @@ export async function POST(request) {
         password: hashedPassword,
       },
     });
+    if (specializations) {
+      const specializationsParsed = specializations
+        .split(",")
+        .map((e) => e.trim());
+      await prisma.coach.create({
+        data: {
+          user_id: newUser.id,
+          specializations: JSON.stringify(specializationsParsed),
+        },
+      });
+    }
     const { password, ...user } = newUser;
     return NextResponse.json(user, { status: 200 });
   } catch (err) {

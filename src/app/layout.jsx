@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`bg-cararra-100 ${inter.className}`}>
         <NavBar />
-        <div className="max-h-[calc(100vh-100px)]">{children}</div>
+        <div className="min-h-[calc(100vh-100px)]">{children}</div>
       </body>
     </html>
   );

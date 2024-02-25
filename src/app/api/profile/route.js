@@ -1,4 +1,3 @@
-// pages/api/user.js (if using Next.js 13 or newer)
 import { NextResponse } from "next/server";
 import prisma from "@/libs/prisma";
 

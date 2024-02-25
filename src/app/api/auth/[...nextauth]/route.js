@@ -20,6 +20,7 @@ export const authOptions = {
           where: { email: credentials.email },
         });
         if (!userFound) throw new Error("No user found");
+        if (!userFound.isActive) throw new Error("Inactive user");
         const matchPassword = await bcrypt.compare(
           credentials.password,
           userFound.password

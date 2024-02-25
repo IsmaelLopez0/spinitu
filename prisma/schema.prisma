@@ -21,6 +21,7 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   cognito_id    String?
+  isActive      Boolean  @default(true)
   coaches       Coach[]
   memberships   Membership[]
   reservations  Reservation[]

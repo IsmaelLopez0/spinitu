@@ -37,7 +37,7 @@ export async function DELETE(req) {
   const body = await req.json();
   try {
     const { email } = body;
-    await prisma.user.delete({ where: { email } });
+    await prisma.user.update({ where: { email }, data: { isActive: false } });
     return NextResponse.json("Ok", { status: 200 });
   } catch (error) {
     console.error("Error fetching user:", error);

@@ -1,10 +1,9 @@
 "use client";
 import { useForm, Controller } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import Input from "@/components/atoms/Input";
 import Button from "@/components/atoms/Button";
 
-export default function RegisterPage() {
+export default function RegisterPage(props) {
   const {
     control,
     register,
@@ -16,14 +15,11 @@ export default function RegisterPage() {
       lastname: "",
       email: "",
       password: "",
+      specializations: "",
     },
   });
-  const router = useRouter();
 
   async function onSubmit(data) {
-    if (data.password !== data.confirmPassword) {
-      return alert("Passwords do not match");
-    }
     const res = await fetch("/api/auth/register", {
       method: "POST",
       body: JSON.stringify(data),
@@ -31,21 +27,17 @@ export default function RegisterPage() {
         "Content-Type": "application/json",
       },
     });
-    if (res.ok) {
-      router.push("/auth/login");
+    if (res.ok && props.saveData) {
+      props.saveData();
     }
   }
 
   return (
-    <div className="h-[calc(100vh-7rem)] flex justify-center items-center">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="w-1/3 border rounded p-5 border-swirl-200"
-      >
-        <h1 className="text-swirl-800 text-center font-bold text-4xl mb-4">
-          Registrar
-        </h1>
-
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="rounded p-5 flex flex-col"
+    >
+      <div className="flex items-center gap-5 mb-3">
         <Controller
           name="name"
           control={control}
@@ -85,7 +77,9 @@ export default function RegisterPage() {
             />
           )}
         />
+      </div>
 
+      <div className="flex items-center gap-5 mb-3">
         <Controller
           name="email"
           control={control}
@@ -93,8 +87,8 @@ export default function RegisterPage() {
             <Input
               label="Email"
               name="email"
-              errors={errors}
               type="email"
+              errors={errors}
               placeholder="email@domain.com"
               {...register("email", {
                 required: {
@@ -127,32 +121,43 @@ export default function RegisterPage() {
             />
           )}
         />
+      </div>
 
+      <div className="w-full mb-3">
         <Controller
-          name="confirmPassword"
+          name="specializations"
           control={control}
           render={({ field }) => (
             <Input
-              label="Confirm Password"
-              name="confirmPassword"
+              label="Specializations"
+              name="specializations"
               errors={errors}
-              placeholder="********"
-              type="password"
-              {...register("confirmPassword", {
+              placeholder="specialization1, specialization2, specialization3"
+              {...register("specializations", {
                 required: {
                   value: true,
-                  message: "Confirm Password is required",
+                  message: "Specializations is required",
                 },
               })}
               {...field}
             />
           )}
         />
+      </div>
 
+      <div className="flex gap-5">
+        <Button
+          color="orchid"
+          className="w-full"
+          type="outline"
+          onClick={() => props.closeDialog({ show: false })}
+        >
+          Cancel
+        </Button>
         <Button color="mindaro" className="w-full">
           Register
         </Button>
-      </form>
-    </div>
+      </div>
+    </form>
   );
 }
