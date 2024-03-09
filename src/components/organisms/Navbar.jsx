@@ -35,9 +35,9 @@ async function NavBar() {
             <li>
               <SignOutButton />
             </li>
+            <Notifications />
           </>
         )}
-        <Notifications />
       </ul>
     </nav>
   );
