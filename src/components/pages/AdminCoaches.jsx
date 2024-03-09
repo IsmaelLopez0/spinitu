@@ -16,7 +16,8 @@ export default function AdminCoaches() {
         "Content-Type": "application/json",
       },
     });
-    setCoaches(await res.json());
+    const data = await res.json();
+    setCoaches(data);
   }
 
   function handleDialog() {
@@ -86,18 +87,18 @@ export default function AdminCoaches() {
   }, []);
 
   return (
-    <div className="relative overflow-x-auto h-full">
+    <div className="relative h-full overflow-x-auto">
       <header className="flex justify-between m-3">
         <h1>List coaches</h1>
         <Button
           color="mindaro"
-          className="z-10 sticky bottom-0"
+          className="sticky bottom-0 z-10"
           onClick={() => handleDialog()}
         >
           New Coach
         </Button>
       </header>
-      <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+      <table className="w-full text-sm text-left text-gray-500 rtl:text-right">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50">
           <tr>
             <th scope="col" className="px-6 py-3">
@@ -146,7 +147,7 @@ export default function AdminCoaches() {
                 <td className="px-6 py-4">{coach.phone}</td>
                 <td className="px-6 py-4">
                   <XCircleIcon
-                    className="h-7 text-red-500"
+                    className="text-red-500 h-7"
                     onClick={() => askForDelete(coach.email)}
                   />
                 </td>

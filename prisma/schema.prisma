@@ -22,9 +22,11 @@ model User {
   updatedAt     DateTime @updatedAt
   cognito_id    String?
   isActive      Boolean  @default(true)
-  coaches       Coach[]
+  coaches       Coach?
   memberships   Membership[]
   reservations  Reservation[]
+  classesDisponibility ClassCoachDisponibility[]
+  notifications Notification[]
 }
 
 model Coach {
@@ -59,11 +61,12 @@ model Class {
   name          String
   description   String
   level         String
-  date_start    DateTime
+  date_start    DateTime @unique
   duration      DateTime
   instructor_id Int
   is_active     Boolean
   reservations  Reservation[]
+  couchesDisponibility ClassCoachDisponibility[]
   instructor    Coach           @relation(fields: [instructor_id], references: [user_id])
 }
 
@@ -73,4 +76,22 @@ model Reservation {
   class_id  Int
   user      User    @relation(fields: [user_id], references: [id])
   class     Class   @relation(fields: [class_id], references: [id])
+}
+
+model ClassCoachDisponibility {
+  user_id   Int
+  class_id  Int
+  user      User    @relation(fields: [user_id], references: [id])
+  class     Class   @relation(fields: [class_id], references: [id])
+  @@id([user_id, class_id])
+}
+
+model Notification {
+  id       Int  @id @default(autoincrement())
+  fecha    DateTime @default(now())
+  user_id  Int
+  title    String
+  body     String
+  leido    Boolean @default(false)
+  user      User    @relation(fields: [user_id], references: [id])
 }

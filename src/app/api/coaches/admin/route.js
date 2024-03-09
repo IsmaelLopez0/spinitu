@@ -22,9 +22,9 @@ export async function GET(req) {
       },
     });
     users = users
-      .filter(({ coaches }) => coaches.length > 0)
+      .filter(({ coaches }) => coaches)
       .map(({ coaches, ...user }) => ({
-        specializations: coaches[0].specializations,
+        specializations: coaches.specializations,
         ...user,
       }));
     return NextResponse.json(users, { status: 200 });

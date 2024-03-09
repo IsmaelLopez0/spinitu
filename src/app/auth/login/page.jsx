@@ -34,14 +34,14 @@ export default function LoginPage() {
     <div className="h-[calc(100vh-7rem)] flex justify-center items-center">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-1/3 border rounded p-5 border-swirl-200"
+        className="w-1/3 p-5 border rounded border-swirl-200"
       >
         {error && (
-          <p className="bg-red-500 text-lg text-center text-white p-3 mb-2 rounded">
+          <p className="p-3 mb-2 text-lg text-center text-white bg-red-500 rounded">
             {error}
           </p>
         )}
-        <h1 className="text-swirl-800 text-center font-bold text-4xl mb-4">
+        <h1 className="mb-4 text-4xl font-bold text-center text-swirl-800">
           Login
         </h1>
         <Controller

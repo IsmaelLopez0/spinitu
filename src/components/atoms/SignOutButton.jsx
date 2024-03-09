@@ -6,7 +6,7 @@ export default function SignOutButton() {
   return (
     <Button
       color="orchid"
-      className="text-sm py-1 px-3"
+      className="px-3 py-1 text-sm"
       onClick={() => signOut()}
     >
       Sign out

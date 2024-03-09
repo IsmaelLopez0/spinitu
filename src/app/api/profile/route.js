@@ -11,11 +11,13 @@ export async function GET(req) {
     const user = await prisma.user.findUnique({
       where: { email },
       select: {
+        id: true,
         name: true,
         lastname: true,
         email: true,
         phone: true,
         biography: true,
+        coaches: true,
       },
     });
 

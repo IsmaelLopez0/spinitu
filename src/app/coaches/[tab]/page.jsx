@@ -1,15 +1,19 @@
 "use client";
-import Shedule from "@/components/organisms/Shedule";
-import AdminCoaches from "@/components/pages/AdminCoaches";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { getSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
+import Schedule from "@/components/organisms/Schedule";
+import AdminCoaches from "@/components/pages/AdminCoaches";
+import { useUserConfig } from "@/stores/useUserConfig";
 
 const ACTIVE_CLASS = "text-swirl-900 bg-gray-100";
 
 export default function CoachesPage(props) {
   const params = useParams();
   const [children, setChildren] = useState(null);
+  const user = useUserConfig((state) => state.user);
+  const setUser = useUserConfig((state) => state.setUser);
 
   function setActiveClass(tab) {
     return params.tab === tab ? ACTIVE_CLASS : "";
@@ -18,38 +22,53 @@ export default function CoachesPage(props) {
   useEffect(() => {
     switch (params.tab) {
       case "shedule":
-        setChildren(<Shedule />);
+        setChildren(<Schedule user={user} />);
         break;
       default:
         setChildren(<AdminCoaches />);
         break;
     }
-  }, [params.tab]);
+  }, [params.tab, user]);
+
+  useEffect(() => {
+    if (!user?.name) {
+      getSession().then(({ user }) =>
+        fetch(`/api/profile?email=${user.email}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }).then((res) => {
+          res.json().then((data) => setUser(data));
+        })
+      );
+    }
+  }, [setUser, user]);
 
   return (
-    <div className="h-full py-5 px-10">
-      <ul className="flex flex-wrap text-sm font-medium text-center text-swirl-700 border-b border-swirl-200">
+    <div className="h-full px-10 py-5">
+      <div className="flex flex-wrap text-sm font-medium text-center border-b text-swirl-700 border-swirl-200">
         <Link href="/coaches/shedule">
-          <li
+          <span
             className={`me-2 inline-block p-4 rounded-t-lg active ${setActiveClass(
               "shedule"
             )}`}
           >
             Shedule
-          </li>
+          </span>
         </Link>
         <Link href="/coaches/admin">
-          <li
+          <span
             className={`me-2 inline-block p-4 rounded-t-lg active ${setActiveClass(
               "admin"
             )}`}
           >
             Coaches
-          </li>
+          </span>
         </Link>
-      </ul>
+      </div>
 
-      <main className="mt-2 min-h-full">{children}</main>
+      <main className="min-h-full mt-2">{children}</main>
     </div>
   );
 }
