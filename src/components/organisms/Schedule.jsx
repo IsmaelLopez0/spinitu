@@ -1,3 +1,4 @@
+import { unstable_noStore as noStore } from "next/cache";
 import React, { useEffect, useState } from "react";
 import {
   ChevronLeftIcon,
@@ -32,6 +33,7 @@ async function createClass(dateStart, instructorId) {
 }
 
 async function getWeekClasses(firstDayWeek) {
+  noStore();
   if (!firstDayWeek) return {};
   const tempDate = new Date(firstDayWeek);
   const lastDayWeek = new Date(tempDate.setDate(tempDate.getDate() + 7));

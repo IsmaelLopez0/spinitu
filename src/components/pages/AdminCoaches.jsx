@@ -1,4 +1,5 @@
 "use client";
+import { unstable_noStore as noStore } from "next/cache";
 import React, { useEffect, useState } from "react";
 import AddCoachForm from "./AddCoachForm";
 import Button from "../atoms/Button";
@@ -10,6 +11,7 @@ export default function AdminCoaches() {
   const [dialog, setDialog] = useState({ show: false });
 
   async function getCoaches() {
+    noStore();
     const res = await fetch(`/api/coaches/admin`, {
       method: "GET",
       headers: {

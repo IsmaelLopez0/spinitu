@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/libs/prisma";
+export const fetchCache = "default-no-store";
 
 export async function POST(req) {
   const body = await req.json();
