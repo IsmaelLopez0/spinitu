@@ -18,7 +18,7 @@ export async function readNotification(userId) {
     headers: {
       "Content-Type": "application/json",
     },
-    cache: "max-age=0",
+    cache: "no-store",
   });
   const data = await res.json();
   return data;
