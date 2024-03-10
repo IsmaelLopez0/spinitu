@@ -15,6 +15,7 @@ export default function AdminCoaches() {
       headers: {
         "Content-Type": "application/json",
       },
+      cache: "no-store",
     });
     const data = await res.json();
     setCoaches(data);
@@ -42,10 +43,6 @@ export default function AdminCoaches() {
       },
     });
     if (res.status === 200) {
-      res.setHeader(
-        "Cache-Control",
-        "no-cache, no-store, max-age=0, must-revalidate"
-      );
       getCoaches();
       setDialog({
         title: "Coach Deleted",

@@ -41,6 +41,7 @@ async function getWeekClasses(firstDayWeek) {
     headers: {
       "Content-Type": "application/json",
     },
+    cache: "no-store",
   });
   const resParsed = await res.json();
   return resParsed;

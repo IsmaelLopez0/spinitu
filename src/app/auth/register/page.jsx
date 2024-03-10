@@ -40,9 +40,9 @@ export default function RegisterPage() {
     <div className="h-[calc(100vh-7rem)] flex justify-center items-center">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-1/3 border rounded p-5 border-swirl-200"
+        className="w-1/3 p-5 border rounded border-swirl-200"
       >
-        <h1 className="text-swirl-800 text-center font-bold text-4xl mb-4">
+        <h1 className="mb-4 text-4xl font-bold text-center text-swirl-800">
           Registrar
         </h1>
 
