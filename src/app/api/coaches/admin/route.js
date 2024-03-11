@@ -28,7 +28,14 @@ export async function GET(req) {
         specializations: coaches.specializations,
         ...user,
       }));
-    return NextResponse.json(users, { status: 200 });
+    return NextResponse.json(users, {
+      status: 200,
+      headers: {
+        "Cache-Control": "public, s-maxage=1",
+        "CDN-Cache-Control": "public, s-maxage=60",
+        "Vercel-CDN-Cache-Control": "public, s-maxage=3600",
+      },
+    });
   } catch (error) {
     console.error("Error fetching user:", error);
     return NextResponse.json("Internal server error", { status: 500 });
