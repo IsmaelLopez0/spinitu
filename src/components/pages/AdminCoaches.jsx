@@ -1,5 +1,4 @@
 "use client";
-import { unstable_noStore as noStore } from "next/cache";
 import React, { useEffect, useState } from "react";
 import AddCoachForm from "./AddCoachForm";
 import Button from "../atoms/Button";
@@ -7,15 +6,16 @@ import Dialog from "../atoms/Dialog";
 import { XCircleIcon } from "@heroicons/react/16/solid";
 
 async function getCoaches() {
-  noStore();
-  const res = await fetch(`/api/coaches/admin`, {
-    cache: "no-store",
+  const request = new Request(`/api/coaches/admin`, {
     method: "GET",
-    headers: {
+    headers: new Headers({
       "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-    },
+      "Cache-Control": "no-cache", // Indica al navegador que no almacene en caché la respuesta
+      Pragma: "no-cache", // Indica a los servidores intermedios que no almacenen en caché la respuesta
+    }),
   });
+
+  const res = await fetch(request);
   const data = await res.json();
   return data;
 }
