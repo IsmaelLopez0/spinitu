@@ -39,12 +39,12 @@ async function getWeekClasses(firstDayWeek) {
   const lastDayWeek = new Date(tempDate.setDate(tempDate.getDate() + 7));
   const URL = `/api/class?firstDayWeek=${firstDayWeek}&lastDayWeek=${lastDayWeek}`;
   const res = await fetch(URL, {
+    cache: "no-store",
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       "Cache-Control": "no-store",
     },
-    cache: "no-cache",
   });
   const resParsed = await res.json();
   return resParsed;

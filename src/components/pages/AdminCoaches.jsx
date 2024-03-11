@@ -6,23 +6,22 @@ import Button from "../atoms/Button";
 import Dialog from "../atoms/Dialog";
 import { XCircleIcon } from "@heroicons/react/16/solid";
 
+async function getCoaches() {
+  noStore();
+  const res = await fetch(`/api/coaches/admin`, {
+    cache: "no-store",
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+    },
+  });
+  const data = await res.json();
+  return data;
+}
 export default function AdminCoaches() {
   const [coaches, setCoaches] = useState([]);
   const [dialog, setDialog] = useState({ show: false });
-
-  async function getCoaches() {
-    noStore();
-    const res = await fetch(`/api/coaches/admin`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store",
-      },
-      cache: "no-cache",
-    });
-    const data = await res.json();
-    setCoaches(data);
-  }
 
   function handleDialog() {
     setDialog({
@@ -34,7 +33,7 @@ export default function AdminCoaches() {
 
   function saveData() {
     setDialog({ show: false });
-    getCoaches();
+    getCoaches().then((res) => setCoaches(res));
   }
 
   async function deleteCoach(email) {
@@ -46,7 +45,7 @@ export default function AdminCoaches() {
       },
     });
     if (res.status === 200) {
-      getCoaches();
+      getCoaches().then((res) => setCoaches(res));
       setDialog({
         title: "Coach Deleted",
         show: true,
@@ -87,7 +86,7 @@ export default function AdminCoaches() {
   }
 
   useEffect(() => {
-    getCoaches();
+    getCoaches().then((res) => setCoaches(res));
   }, []);
 
   return (

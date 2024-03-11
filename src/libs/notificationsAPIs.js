@@ -16,12 +16,12 @@ export async function createNotification(userId, title, body) {
 export async function readNotification(userId) {
   noStore();
   const res = await fetch(`${URL}?userId=${userId}`, {
+    cache: "no-store",
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       "Cache-Control": "no-store",
     },
-    cache: "no-cache",
   });
   const data = await res.json();
   return data;
