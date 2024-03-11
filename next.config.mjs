@@ -1,6 +1,21 @@
-import MillionLint from '@million/lint';
+import MillionLint from "@million/lint";
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  reactStrictMode: true,
+  async headers() {
+    return [
+      {
+        source: "/coaches/admin",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "s-maxage=0, stale-while-revalidate=0",
+          },
+        ],
+      },
+    ];
+  },
+};
 export default MillionLint.next({
-  rsc: true
+  rsc: true,
 })(nextConfig);
