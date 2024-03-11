@@ -18,7 +18,7 @@ export default function AdminCoaches() {
         "Content-Type": "application/json",
         "Cache-Control": "no-store",
       },
-      cache: "no-store",
+      cache: "no-cache",
     });
     const data = await res.json();
     setCoaches(data);
