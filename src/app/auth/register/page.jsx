@@ -26,16 +26,17 @@ export default function RegisterPage() {
     if (data.password !== data.confirmPassword) {
       return alert("Passwords do not match");
     }
-    const params = {
-      url: "/user",
-      body: data,
+    const res = await fetch("/api/auth/register", {
       method: "POST",
-    };
-    const res = await genericFetch(params);
-    if (res.statusCode === 200) {
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (res.ok) {
       router.push("/auth/login");
     } else {
-      setToast(res.body.error, "error", params.url + res.statusCode);
+      setToast("Algo salió mal", "error", "/api/auth/register");
     }
   }
 

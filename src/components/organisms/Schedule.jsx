@@ -29,7 +29,7 @@ async function createClass(dateStart, instructorId) {
   };
   const res = await genericFetch(params);
   if (res.statusCode === 200) {
-    return res.id;
+    return res.body.id;
   }
   setToast(res.body.error, "error", params.url + res.statusCode);
   return;
@@ -115,7 +115,9 @@ export default function Schedule(props) {
   }, [isFirstLoad, props.user, week]);
 
   useEffect(() => {
-    getClassExist();
+    if (firstDayWeek) {
+      getClassExist();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstDayWeek]);
 
@@ -133,6 +135,7 @@ export default function Schedule(props) {
 
   async function setDisponibility(dateStart, classId) {
     let id = classId;
+    console.log(classId);
     if (!id) {
       id = await createClass(dateStart, props.user?.coaches.user_id);
       createNotification(
@@ -140,6 +143,7 @@ export default function Schedule(props) {
         "Default asignation",
         `You have been assigned by default the class of ${dateStart.toLocaleString()}`
       );
+      console.log(id);
     }
     await createDisponibility(id, props.user?.coaches.user_id);
     setClassDetail({ show: false });

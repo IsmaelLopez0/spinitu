@@ -19,21 +19,17 @@ export default function Notifications() {
     if (!user?.name) {
       getSession().then(({ user }) => {
         const params = {
-          url: "/user",
-          body: data,
+          url: "/user/user",
+          query: { email: user.email },
           method: "GET",
         };
-        genericFetch(params)
-          .then((res) => {
-            if (res.statusCode === 200) {
-              res.json().then((data) => setUser(data));
-            } else {
-              setToast(res.body.error, "error", params.url + res.statusCode);
-            }
-          })
-          .catch((err) =>
-            setToast(err.body.error, "error", params.url + err.statusCode)
-          );
+        genericFetch(params).then((res) => {
+          if (res.statusCode === 200) {
+            setUser(res.body);
+          } else {
+            setToast(res.body.error, "error", params.url);
+          }
+        });
       });
     }
   }, [setUser, user]);

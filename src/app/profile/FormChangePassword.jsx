@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Input from "@/components/atoms/Input";
 import Button from "@/components/atoms/Button";
-import { genericFetch } from "@/libs/externalAPIs";
 import { setToast } from "@/libs/notificationsAPIs";
 
 export default function FormProfile(props) {
@@ -25,19 +24,25 @@ export default function FormProfile(props) {
       setIsLoadingButton(false);
       return;
     }
-    const params = {
-      url: "/user",
-      body: {
+    const response = await fetch(`/api/profile/warning`, {
+      method: "PUT",
+      body: JSON.stringify({
         newPassword,
         currentPassword,
         email: props.email,
+      }),
+      headers: {
+        "Content-Type": "application/json",
       },
-      method: "PUT",
-    };
-    const res = await genericFetch(params);
+    });
+    const res = await response.json();
     if (res.statusCode !== 200) {
-      setToast(res.body.error, "error", params.url + res.statusCode);
-      setError(es.body.error);
+      setToast(
+        res.body.error,
+        "error",
+        "/api/profile/warning" + res.statusCode
+      );
+      setError(res.body.error);
     }
 
     setIsLoadingButton(false);
@@ -46,7 +51,7 @@ export default function FormProfile(props) {
   return (
     <form onSubmit={handleSubmit(onSubmitChangePassword)}>
       {error && (
-        <p className="bg-red-500 text-lg text-center text-white p-3 mb-2 rounded">
+        <p className="p-3 mb-2 text-lg text-center text-white bg-red-500 rounded">
           {error}
         </p>
       )}

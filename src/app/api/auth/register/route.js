@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-import bcrypt from "bcrypt";
-import prisma from "@/libs/prisma";
+import { NextResponse } from 'next/server';
+import bcrypt from 'bcrypt';
+import prisma from '@/libs/prisma';
 
 export async function POST(request) {
   try {
@@ -11,7 +11,7 @@ export async function POST(request) {
         isActive: true,
       },
     });
-    if (emailFound) throw new Error("Email already exists");
+    if (emailFound) throw new Error('Email already exists');
     const { confirmPassword, specializations, ...userData } = data;
     const hashedPassword = await bcrypt.hash(data.password, 10);
     const newUser = await prisma.user.create({
@@ -22,7 +22,7 @@ export async function POST(request) {
     });
     if (specializations) {
       const specializationsParsed = specializations
-        .split(",")
+        .split(',')
         .map((e) => e.trim());
       await prisma.coach.create({
         data: {

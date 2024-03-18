@@ -21,13 +21,13 @@ export default function ProfilePage() {
       method: "GET",
     };
     const data = await genericFetch(params);
-    setUserData(data);
+    setUserData(data.body);
   }
 
   async function deleteAccount() {
     const params = {
       url: "/user",
-      query: { email: userData.email },
+      body: { email: userData.email },
       method: "DELETE",
     };
     const data = await genericFetch(params);

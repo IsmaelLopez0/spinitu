@@ -18,7 +18,7 @@ export const authOptions = {
       },
       async authorize(credentials, req) {
         const userFound = await prisma.user.findUnique({
-          where: { email: credentials.email },
+          where: { AND: [{ email: credentials.email }, { isActive: true }] },
         });
         if (!userFound) throw new Error("No user found");
         if (!userFound.isActive) throw new Error("Inactive user");

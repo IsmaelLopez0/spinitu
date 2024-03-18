@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import prisma from "@/libs/prisma";
 import bcrypt from "bcrypt";
+import prisma from "@/libs/prisma";
+import { genericFetch } from "@/libs/externalAPIs";
 
 export async function PUT(req) {
   const body = await req.json();
@@ -20,13 +21,16 @@ export async function PUT(req) {
     if (!matchPassword) throw new Error("Wrong password");
 
     const hashedPassword = await bcrypt.hash(body.newPassword, 10);
-    await prisma.user.update({
-      where: { email },
-      data: {
+    const params = {
+      url: "/user",
+      body: {
+        email,
         password: hashedPassword,
       },
-    });
-    return NextResponse.json("Ok", { status: 200 });
+      method: "PUT",
+    };
+    const res = await genericFetch(params);
+    return NextResponse.json(res, { status: 200 });
   } catch (error) {
     console.error("Error fetching user:", error);
     return NextResponse.json(error.message, { status: 500 });

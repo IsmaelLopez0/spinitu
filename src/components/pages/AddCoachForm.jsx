@@ -1,9 +1,8 @@
-"use client";
-import { useForm, Controller } from "react-hook-form";
-import Input from "@/components/atoms/Input";
-import Button from "@/components/atoms/Button";
-import { genericFetch } from "@/libs/externalAPIs";
-import { setToast } from "@/libs/notificationsAPIs";
+'use client';
+import { useForm, Controller } from 'react-hook-form';
+import Input from '@/components/atoms/Input';
+import Button from '@/components/atoms/Button';
+import { setToast } from '@/libs/notificationsAPIs';
 
 export default function RegisterPage(props) {
   const {
@@ -13,32 +12,33 @@ export default function RegisterPage(props) {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: "",
-      lastname: "",
-      email: "",
-      password: "",
-      specializations: "",
+      name: '',
+      lastname: '',
+      email: '',
+      password: '',
+      specializations: '',
     },
   });
 
   async function onSubmit(data) {
-    const params = {
-      url: "/user",
-      body: data,
-      method: "POST",
-    };
-    const res = await genericFetch(params);
-    if (res.statusCode === 200) {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (res.ok) {
       if (props.saveData) props.saveData();
     } else {
-      setToast(res.body.error, "error", params.url + res.statusCode);
+      setToast('Algo salió mal', 'error', '/api/auth/register');
     }
   }
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="rounded p-5 flex flex-col"
+      className="flex flex-col p-5 rounded"
     >
       <div className="flex items-center gap-5 mb-3">
         <Controller
@@ -50,10 +50,10 @@ export default function RegisterPage(props) {
               name="name"
               errors={errors}
               placeholder="Jane"
-              {...register("name", {
+              {...register('name', {
                 required: {
                   value: true,
-                  message: "Name is required",
+                  message: 'Name is required',
                 },
               })}
               {...field}
@@ -70,10 +70,10 @@ export default function RegisterPage(props) {
               name="lastname"
               errors={errors}
               placeholder="Doe"
-              {...register("lastname", {
+              {...register('lastname', {
                 required: {
                   value: true,
-                  message: "Last Name is required",
+                  message: 'Last Name is required',
                 },
               })}
               {...field}
@@ -93,10 +93,10 @@ export default function RegisterPage(props) {
               type="email"
               errors={errors}
               placeholder="email@domain.com"
-              {...register("email", {
+              {...register('email', {
                 required: {
                   value: true,
-                  message: "Email is required",
+                  message: 'Email is required',
                 },
               })}
               {...field}
@@ -114,10 +114,10 @@ export default function RegisterPage(props) {
               errors={errors}
               placeholder="********"
               type="password"
-              {...register("password", {
+              {...register('password', {
                 required: {
                   value: true,
-                  message: "Password is required",
+                  message: 'Password is required',
                 },
               })}
               {...field}
@@ -136,10 +136,10 @@ export default function RegisterPage(props) {
               name="specializations"
               errors={errors}
               placeholder="specialization1, specialization2, specialization3"
-              {...register("specializations", {
+              {...register('specializations', {
                 required: {
                   value: true,
-                  message: "Specializations is required",
+                  message: 'Specializations is required',
                 },
               })}
               {...field}

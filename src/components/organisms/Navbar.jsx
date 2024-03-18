@@ -4,6 +4,29 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import SignOutButton from "../atoms/SignOutButton";
 import Notifications from "../atoms/Notifications";
 
+const outSessionMenu = [
+  { href: "/auth/login", title: "Login" },
+  { href: "/auth/register", title: "Register" },
+];
+
+const inSessionMenu = [
+  { href: "/profile", title: "Profile" },
+  { href: "/coaches/shedule", title: "Coaches" },
+  { href: "/dashboard", title: "Dashboard" },
+  { component: <SignOutButton /> },
+  { component: <Notifications /> },
+];
+
+const MenuItems = ({ items }) =>
+  items.map(
+    (item, i) =>
+      item.component ?? (
+        <li key={i}>
+          <Link href={item.href}>{item.title}</Link>
+        </li>
+      )
+  );
+
 async function NavBar() {
   const session = await getServerSession(authOptions);
   return (
@@ -12,15 +35,9 @@ async function NavBar() {
         <h1 className="text-xl font-bold">SPINITU</h1>
       </div>
       <ul className="flex items-center gap-x-5">
-        {!session?.user ? (
-          <>
-            <li>
-              <Link href="/auth/login">Login</Link>
-            </li>
-            <li>
-              <Link href="/auth/register">Register</Link>
-            </li>
-          </>
+        <MenuItems items={!session?.user ? outSessionMenu : inSessionMenu} />
+        {/*!session?.user ? (
+          <MenuItems items={outSessionMenu} />
         ) : (
           <>
             <li>
@@ -37,7 +54,7 @@ async function NavBar() {
             </li>
             <Notifications />
           </>
-        )}
+        )*/}
       </ul>
     </nav>
   );

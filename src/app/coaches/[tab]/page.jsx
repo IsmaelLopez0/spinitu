@@ -30,8 +30,7 @@ export default function CoachesPage(props) {
         setChildren(<AdminCoaches />);
         break;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.tab]);
+  }, [params.tab, user]);
 
   useEffect(() => {
     if (!user?.name) {
