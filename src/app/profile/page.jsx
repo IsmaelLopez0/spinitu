@@ -6,6 +6,8 @@ import FormProfile from "./FormProfile";
 import FormChangePassword from "./FormChangePassword";
 import Button from "@/components/atoms/Button";
 import Dialog from "@/components/atoms/Dialog";
+import { genericFetch } from "@/libs/externalAPIs";
+import { setToast } from "@/libs/notificationsAPIs";
 
 export default function ProfilePage() {
   const [userData, setUserData] = useState({});
@@ -13,25 +15,26 @@ export default function ProfilePage() {
 
   async function init() {
     const { user } = await getSession();
-    const res = await fetch(`/api/profile?email=${user.email}`, {
+    const params = {
+      url: "/user/user",
+      query: { email: user.email },
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    setUserData(await res.json());
+    };
+    const data = await genericFetch(params);
+    setUserData(data);
   }
 
   async function deleteAccount() {
-    const res = await fetch(`/api/profile/warning`, {
+    const params = {
+      url: "/user",
+      query: { email: userData.email },
       method: "DELETE",
-      body: JSON.stringify({ email: userData.email }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (res.status === 200) {
+    };
+    const data = await genericFetch(params);
+    if (data.statusCode === 200) {
       await signOut();
+    } else {
+      setToast(data.body.error, "error", params.url + data.statusCode);
     }
   }
 
@@ -40,7 +43,7 @@ export default function ProfilePage() {
   }, []);
 
   return (
-    <section className="h-full py-3 px-5 flex justify-center items-center gap-x-5">
+    <section className="flex items-center justify-center h-full px-5 py-3 gap-x-5">
       <div className="grid grid-cols-2 grid-rows-2 gap-10">
         <div className="row-span-2">
           <Card
@@ -64,7 +67,7 @@ export default function ProfilePage() {
             <Button
               color="orchid"
               text="Deactivate account"
-              className="mt-2 w-full bg-red-700"
+              className="w-full mt-2 bg-red-700"
               onClick={() => setShowDialog(true)}
             />
           </Card>
@@ -81,7 +84,7 @@ export default function ProfilePage() {
               <Button
                 color="orchid"
                 text="Deactivate account"
-                className="text-sm ml-3 bg-red-700"
+                className="ml-3 text-sm bg-red-700"
                 onClick={() => {
                   deleteAccount();
                   setShowDialog(false);

@@ -1,4 +1,5 @@
 import { unstable_noStore as noStore } from "next/cache";
+import { toast } from "sonner";
 const URL = "/api/notification";
 
 export async function createNotification(userId, title, body) {
@@ -38,3 +39,12 @@ export async function updateNotification(userId, notificationId) {
   const data = await res.json();
   return data;
 }
+
+export const setToast = (message, type, id) => {
+  const options = { duration: 2500, id };
+  if (!type) {
+    toast(message, options);
+  } else {
+    toast[type](message, options);
+  }
+};

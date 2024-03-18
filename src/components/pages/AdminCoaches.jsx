@@ -4,20 +4,20 @@ import AddCoachForm from "./AddCoachForm";
 import Button from "../atoms/Button";
 import Dialog from "../atoms/Dialog";
 import { XCircleIcon } from "@heroicons/react/16/solid";
+import { genericFetch } from "@/libs/externalAPIs";
+import { setToast } from "@/libs/notificationsAPIs";
 
 async function getCoaches() {
-  const request = new Request(`/api/coaches/admin`, {
+  const params = {
+    url: "/user/coaches",
     method: "GET",
-    headers: new Headers({
-      "Content-Type": "application/json",
-      "Cache-Control": "no-cache", // Indica al navegador que no almacene en caché la respuesta
-      Pragma: "no-cache", // Indica a los servidores intermedios que no almacenen en caché la respuesta
-    }),
-  });
-
-  const res = await fetch(request);
-  const data = await res.json();
-  return data;
+  };
+  const data = await genericFetch(params);
+  if (data.statusCode !== 200) {
+    setToast(data.body.error, "error", params.url + data.statusCode);
+    return [];
+  }
+  return data.body;
 }
 export default function AdminCoaches() {
   const [coaches, setCoaches] = useState([]);

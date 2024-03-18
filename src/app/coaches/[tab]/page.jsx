@@ -6,6 +6,8 @@ import React, { useEffect, useState } from "react";
 import Schedule from "@/components/organisms/Schedule";
 import AdminCoaches from "@/components/pages/AdminCoaches";
 import { useUserConfig } from "@/stores/useUserConfig";
+import { genericFetch } from "@/libs/externalAPIs";
+import { setToast } from "@/libs/notificationsAPIs";
 
 const ACTIVE_CLASS = "text-swirl-900 bg-gray-100";
 
@@ -28,22 +30,28 @@ export default function CoachesPage(props) {
         setChildren(<AdminCoaches />);
         break;
     }
-  }, [params.tab, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.tab]);
 
   useEffect(() => {
     if (!user?.name) {
-      getSession().then(({ user }) =>
-        fetch(`/api/profile?email=${user.email}`, {
+      getSession().then(({ user }) => {
+        const params = {
+          url: "/user/user",
+          query: { email: user.email },
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }).then((res) => {
-          res.json().then((data) => setUser(data));
-        })
-      );
+        };
+        genericFetch(params).then((data) => {
+          if (data.statusCode === 200) {
+            setUser(data.body);
+          } else {
+            setToast(data.body.error, "error", params.url + data.statusCode);
+          }
+        });
+      });
     }
-  }, [setUser, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="h-full px-10 py-5">
