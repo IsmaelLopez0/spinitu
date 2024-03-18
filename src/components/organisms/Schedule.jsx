@@ -1,4 +1,3 @@
-import { unstable_noStore as noStore } from "next/cache";
 import React, { useEffect, useState } from "react";
 import {
   ChevronLeftIcon,
@@ -15,75 +14,77 @@ import {
 } from "@/libs/_utilsFunctions";
 import Button from "../atoms/Button";
 import { createNotification } from "@/libs/notificationsAPIs";
+import { genericFetch } from "@/libs/externalAPIs";
+import { setToast } from "@/libs/notificationsAPIs";
 
 const dias = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const currentWeek = getCurrentWeek();
 
 async function createClass(dateStart, instructorId) {
-  const res = await fetch(`/api/class`, {
+  const params = {
+    url: "/class",
+    body: { dateStart, instructorId },
     method: "POST",
-    body: JSON.stringify({ dateStart, instructorId }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const resParsed = await res.json();
-  return resParsed.id;
+  };
+  const res = await genericFetch(params);
+  if (res.statusCode === 200) {
+    return res.id;
+  }
+  setToast(res.body.error, "error", params.url + res.statusCode);
+  return;
 }
 
 async function getWeekClasses(firstDayWeek) {
-  noStore();
   if (!firstDayWeek) return {};
   const tempDate = new Date(firstDayWeek);
   const lastDayWeek = new Date(tempDate.setDate(tempDate.getDate() + 7));
-  const URL = `/api/class?firstDayWeek=${firstDayWeek}&lastDayWeek=${lastDayWeek}`;
-  const res = await fetch(URL, {
-    cache: "no-store",
+  const params = {
+    url: "/class",
+    query: { firstDayWeek, lastDayWeek },
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-    },
-  });
-  const resParsed = await res.json();
-  return resParsed;
+  };
+  const res = await genericFetch(params);
+  if (res.statusCode === 200) {
+    return res.body;
+  }
+  setToast(res.body.error, "error", params.url + res.statusCode);
+  return {};
 }
 
 async function createDisponibility(classId, userId) {
-  const URL = `/api/class/disponibility`;
-  const res = await fetch(URL, {
+  const params = {
+    url: "/class/disponibility",
+    body: { classId, userId },
     method: "POST",
-    body: JSON.stringify({ classId, userId }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const resParsed = await res.json();
-  return resParsed;
+  };
+  const res = await genericFetch(params);
+  if (res.statusCode !== 200) {
+    setToast(res.body.error, "error", params.url + res.statusCode);
+  }
 }
 
 async function updateClass(classId, instructorId, dateStart, oldInstructor) {
-  const URL = `/api/class`;
-  const res = await fetch(URL, {
+  const params = {
+    url: "/class",
+    body: { classId, instructorId },
     method: "PUT",
-    body: JSON.stringify({ classId, instructorId }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  createNotification(
-    instructorId,
-    "You were assigned a class",
-    `You have been assigned the class of ${dateStart.toLocaleString()}`
-  );
-  createNotification(
-    oldInstructor,
-    "You will no longer teach the class",
-    `An administrator assigned someone else to class for the day ${dateStart.toLocaleString()}`
-  );
-  const resParsed = await res.json();
-  return resParsed;
+  };
+  const res = await genericFetch(params);
+  if (res.statusCode === 200) {
+    createNotification(
+      instructorId,
+      "You were assigned a class",
+      `You have been assigned the class of ${dateStart.toLocaleString()}`
+    );
+    createNotification(
+      oldInstructor,
+      "You will no longer teach the class",
+      `An administrator assigned someone else to class for the day ${dateStart.toLocaleString()}`
+    );
+  } else {
+    setToast(res.body.error, "error", params.url + res.statusCode);
+  }
 }
 
 function couchIncluded(couches = [], userId) {

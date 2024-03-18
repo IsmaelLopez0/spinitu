@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Input from "@/components/atoms/Input";
 import Button from "@/components/atoms/Button";
+import { genericFetch } from "@/libs/externalAPIs";
+import { setToast } from "@/libs/notificationsAPIs";
 
 export default function FormProfile(props) {
   const [error, setError] = useState();
@@ -23,19 +25,19 @@ export default function FormProfile(props) {
       setIsLoadingButton(false);
       return;
     }
-    const res = await fetch(`/api/profile/warning`, {
-      method: "PUT",
-      body: JSON.stringify({
+    const params = {
+      url: "/user",
+      body: {
         newPassword,
         currentPassword,
         email: props.email,
-      }),
-      headers: {
-        "Content-Type": "application/json",
       },
-    });
-    if (res.status !== 200) {
-      setError(await res.json());
+      method: "PUT",
+    };
+    const res = await genericFetch(params);
+    if (res.statusCode !== 200) {
+      setToast(res.body.error, "error", params.url + res.statusCode);
+      setError(es.body.error);
     }
 
     setIsLoadingButton(false);

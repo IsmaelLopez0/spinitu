@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Input from "@/components/atoms/Input";
 import Button from "@/components/atoms/Button";
+import { genericFetch } from "@/libs/externalAPIs";
+import { setToast } from "@/libs/notificationsAPIs";
 
 export default function FormProfile(props) {
   const [isLoadingButton, setIsLoadingButton] = useState(false);
@@ -14,15 +16,18 @@ export default function FormProfile(props) {
 
   async function onSubmitProfile(data) {
     setIsLoadingButton(true);
-    const res = await fetch(`/api/profile`, {
+    const params = {
+      url: "/user",
+      body: { ...data, email: props.userData.email },
       method: "PUT",
-      body: JSON.stringify({ ...data, email: props.userData.email }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    };
+    const res = await genericFetch(params);
+    if (res.statusCode === 200) {
+      props.setUserData(res.body);
+    } else {
+      setToast(res.body.error, "error", params.url + res.statusCode);
+    }
 
-    props.setUserData(await res.json());
     setIsLoadingButton(false);
   }
 

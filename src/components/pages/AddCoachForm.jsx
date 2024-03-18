@@ -2,6 +2,8 @@
 import { useForm, Controller } from "react-hook-form";
 import Input from "@/components/atoms/Input";
 import Button from "@/components/atoms/Button";
+import { genericFetch } from "@/libs/externalAPIs";
+import { setToast } from "@/libs/notificationsAPIs";
 
 export default function RegisterPage(props) {
   const {
@@ -20,15 +22,16 @@ export default function RegisterPage(props) {
   });
 
   async function onSubmit(data) {
-    const res = await fetch("/api/auth/register", {
+    const params = {
+      url: "/user",
+      body: data,
       method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (res.ok && props.saveData) {
-      props.saveData();
+    };
+    const res = await genericFetch(params);
+    if (res.statusCode === 200) {
+      if (props.saveData) props.saveData();
+    } else {
+      setToast(res.body.error, "error", params.url + res.statusCode);
     }
   }
 

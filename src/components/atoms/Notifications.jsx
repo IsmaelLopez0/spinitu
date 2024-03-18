@@ -6,6 +6,8 @@ import { XMarkIcon, BellIcon } from "@heroicons/react/16/solid";
 import { readNotification, updateNotification } from "@/libs/notificationsAPIs";
 import { useUserConfig } from "@/stores/useUserConfig";
 import Card from "../organisms/Card";
+import { genericFetch } from "@/libs/externalAPIs";
+import { setToast } from "@/libs/notificationsAPIs";
 
 export default function Notifications() {
   const [open, setOpen] = useState(false);
@@ -15,16 +17,24 @@ export default function Notifications() {
 
   useEffect(() => {
     if (!user?.name) {
-      getSession().then(({ user }) =>
-        fetch(`/api/profile?email=${user.email}`, {
+      getSession().then(({ user }) => {
+        const params = {
+          url: "/user",
+          body: data,
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }).then((res) => {
-          res.json().then((data) => setUser(data));
-        })
-      );
+        };
+        genericFetch(params)
+          .then((res) => {
+            if (res.statusCode === 200) {
+              res.json().then((data) => setUser(data));
+            } else {
+              setToast(res.body.error, "error", params.url + res.statusCode);
+            }
+          })
+          .catch((err) =>
+            setToast(err.body.error, "error", params.url + err.statusCode)
+          );
+      });
     }
   }, [setUser, user]);
 

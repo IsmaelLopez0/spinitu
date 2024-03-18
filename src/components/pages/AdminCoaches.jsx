@@ -37,14 +37,13 @@ export default function AdminCoaches() {
   }
 
   async function deleteCoach(email) {
-    const res = await fetch(`/api/profile/warning`, {
+    const params = {
+      url: "/user",
+      body: { email },
       method: "DELETE",
-      body: JSON.stringify({ email }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (res.status === 200) {
+    };
+    const res = await genericFetch(params);
+    if (res.statusCode === 200) {
       getCoaches().then((res) => setCoaches(res));
       setDialog({
         title: "Coach Deleted",
@@ -57,6 +56,8 @@ export default function AdminCoaches() {
           />
         ),
       });
+    } else {
+      setToast(res.body.error, "error", params.url + res.statusCode);
     }
   }
 

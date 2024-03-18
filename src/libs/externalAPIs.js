@@ -1,7 +1,3 @@
-{
-  email: "kjklf";
-}
-
 const getQueryStringParams = (query = {}) =>
   Object.entries(query)
     .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
@@ -14,10 +10,12 @@ export async function genericFetch(params = {}) {
   if ([url, method].includes(undefined)) {
     console.log("Falló");
   }
+  let body = params.body ? JSON.stringify(params.body) : undefined;
   const query = getQueryStringParams(params.query);
   const fullURL = `${baseURL}${url}?${query}`;
   const res = await fetch(fullURL, {
     method,
+    body,
     headers: {
       "Content-Type": "application/json",
       ...params?.headers,

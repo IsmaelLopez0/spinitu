@@ -1,43 +1,49 @@
-import { unstable_noStore as noStore } from "next/cache";
 import { toast } from "sonner";
-const URL = "/api/notification";
+import { genericFetch } from "@/libs/externalAPIs";
+
+const URL = "/notification";
 
 export async function createNotification(userId, title, body) {
-  const res = await fetch(URL, {
+  if (userId) return;
+  const params = {
+    url: URL,
+    body: { userId, title, body },
     method: "POST",
-    body: JSON.stringify({ userId, title, body }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const data = await res.json();
-  return data;
+  };
+  const res = await genericFetch(params);
+  if (res.statusCode === 200) {
+    return data.body;
+  } else {
+    setToast(res.body.error, "error", params.url + res.statusCode);
+  }
 }
 
 export async function readNotification(userId) {
-  noStore();
-  const res = await fetch(`${URL}?userId=${userId}`, {
-    cache: "no-store",
+  const params = {
+    url: URL,
+    query: { userId },
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-    },
-  });
-  const data = await res.json();
-  return data;
+  };
+  const res = await genericFetch(params);
+  if (res.statusCode === 200) {
+    return res.body;
+  } else {
+    setToast(res.body.error, "error", params.url + res.statusCode);
+  }
 }
 
 export async function updateNotification(userId, notificationId) {
-  const res = await fetch(URL, {
+  const params = {
+    url: URL,
+    body: { userId, notificationId },
     method: "PUT",
-    body: JSON.stringify({ userId, notificationId }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const data = await res.json();
-  return data;
+  };
+  const res = await genericFetch(params);
+  if (res.statusCode === 200) {
+    return res.body;
+  } else {
+    setToast(res.body.error, "error", params.url + res.statusCode);
+  }
 }
 
 export const setToast = (message, type, id) => {
