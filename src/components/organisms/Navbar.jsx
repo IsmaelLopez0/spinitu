@@ -1,18 +1,18 @@
-import Link from "next/link";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import SignOutButton from "../atoms/SignOutButton";
-import Notifications from "../atoms/Notifications";
+import Link from 'next/link';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import SignOutButton from '../atoms/SignOutButton';
+import Notifications from '../atoms/Notifications';
 
 const outSessionMenu = [
-  { href: "/auth/login", title: "Login" },
-  { href: "/auth/register", title: "Register" },
+  { href: '/auth/login', title: 'Login' },
+  { href: '/auth/register', title: 'Register' },
 ];
 
 const inSessionMenu = [
-  { href: "/profile", title: "Profile" },
-  { href: "/coaches/shedule", title: "Coaches" },
-  { href: "/dashboard", title: "Dashboard" },
+  { href: '/profile', title: 'Profile' },
+  { href: '/coaches/schedule', title: 'Coaches' },
+  { href: '/dashboard', title: 'Dashboard' },
   { component: <SignOutButton /> },
   { component: <Notifications /> },
 ];
@@ -24,7 +24,7 @@ const MenuItems = ({ items }) =>
         <li key={i}>
           <Link href={item.href}>{item.title}</Link>
         </li>
-      )
+      ),
   );
 
 async function NavBar() {
@@ -44,7 +44,7 @@ async function NavBar() {
               <Link href="/profile">Profile</Link>
             </li>
             <li>
-              <Link href="/coaches/shedule">Coaches</Link>
+              <Link href="/coaches/schedule">Coaches</Link>
             </li>
             <li>
               <Link href="/dashboard">Dashboard</Link>

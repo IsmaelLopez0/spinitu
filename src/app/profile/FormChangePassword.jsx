@@ -1,9 +1,9 @@
-"use client";
-import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import Input from "@/components/atoms/Input";
-import Button from "@/components/atoms/Button";
-import { setToast } from "@/libs/notificationsAPIs";
+'use client';
+import { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import Input from '@/components/atoms/Input';
+import Button from '@/components/atoms/Button';
+import { setToast } from '@/libs/notificationsAPIs';
 
 export default function FormProfile(props) {
   const [error, setError] = useState();
@@ -25,24 +25,26 @@ export default function FormProfile(props) {
       return;
     }
     const response = await fetch(`/api/profile/warning`, {
-      method: "PUT",
+      method: 'PUT',
       body: JSON.stringify({
         newPassword,
         currentPassword,
         email: props.email,
       }),
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     });
     const res = await response.json();
     if (res.statusCode !== 200) {
       setToast(
         res.body.error,
-        "error",
-        "/api/profile/warning" + res.statusCode
+        'error',
+        '/api/profile/warning' + res.statusCode,
       );
       setError(res.body.error);
+    } else {
+      setToast('Password saved correctly', 'success', '/api/profile/warning');
     }
 
     setIsLoadingButton(false);
@@ -65,10 +67,10 @@ export default function FormProfile(props) {
             placeholder="*******"
             type="password"
             errors={errors}
-            {...register("currentPassword", {
+            {...register('currentPassword', {
               required: {
                 value: true,
-                message: "Current Password is required",
+                message: 'Current Password is required',
               },
             })}
             {...field}
@@ -85,10 +87,10 @@ export default function FormProfile(props) {
             type="password"
             placeholder="********"
             errors={errors}
-            {...register("newPassword", {
+            {...register('newPassword', {
               required: {
                 value: true,
-                message: "New Password is required",
+                message: 'New Password is required',
               },
             })}
             {...field}
@@ -106,10 +108,10 @@ export default function FormProfile(props) {
             errors={errors}
             placeholder="********"
             type="password"
-            {...register("confirmPassword", {
+            {...register('confirmPassword', {
               required: {
                 value: true,
-                message: "Confirm New Password is required",
+                message: 'Confirm New Password is required',
               },
             })}
             {...field}

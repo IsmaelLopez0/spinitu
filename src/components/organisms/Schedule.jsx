@@ -1,37 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   CheckIcon,
-} from "@heroicons/react/16/solid";
-import GenericLoading from "../atoms/GenericLoading";
-import ScheduleByDayComponent from "../atoms/ScheduleByDayComponent";
-import Dialog from "../atoms/Dialog";
+} from '@heroicons/react/16/solid';
+import GenericLoading from '../atoms/GenericLoading';
+import ScheduleByDayComponent from '../atoms/ScheduleByDayComponent';
+import Dialog from '../atoms/Dialog';
 import {
   getDay,
   obtenerNombreMes,
   getCurrentWeek,
-} from "@/libs/_utilsFunctions";
-import Button from "../atoms/Button";
-import { createNotification } from "@/libs/notificationsAPIs";
-import { genericFetch } from "@/libs/externalAPIs";
-import { setToast } from "@/libs/notificationsAPIs";
+} from '@/libs/_utilsFunctions';
+import Button from '../atoms/Button';
+import { createNotification } from '@/libs/notificationsAPIs';
+import { genericFetch } from '@/libs/externalAPIs';
+import { setToast } from '@/libs/notificationsAPIs';
 
-const dias = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const dias = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 const currentWeek = getCurrentWeek();
 
 async function createClass(dateStart, instructorId) {
   const params = {
-    url: "/class",
+    url: '/class',
     body: { dateStart, instructorId },
-    method: "POST",
+    method: 'POST',
   };
   const res = await genericFetch(params);
   if (res.statusCode === 200) {
     return res.body.id;
   }
-  setToast(res.body.error, "error", params.url + res.statusCode);
+  setToast(res.body.error, 'error', params.url + res.statusCode);
   return;
 }
 
@@ -40,56 +40,65 @@ async function getWeekClasses(firstDayWeek) {
   const tempDate = new Date(firstDayWeek);
   const lastDayWeek = new Date(tempDate.setDate(tempDate.getDate() + 7));
   const params = {
-    url: "/class",
+    url: '/class',
     query: { firstDayWeek, lastDayWeek },
-    method: "GET",
+    method: 'GET',
   };
   const res = await genericFetch(params);
   if (res.statusCode === 200) {
     return res.body;
   }
-  setToast(res.body.error, "error", params.url + res.statusCode);
+  setToast(res.body.error, 'error', params.url + res.statusCode);
   return {};
 }
 
 async function createDisponibility(classId, userId) {
   const params = {
-    url: "/class/disponibility",
+    url: '/class/disponibility',
     body: { classId, userId },
-    method: "POST",
+    method: 'POST',
   };
   const res = await genericFetch(params);
   if (res.statusCode !== 200) {
-    setToast(res.body.error, "error", params.url + res.statusCode);
+    setToast(res.body.error, 'error', params.url + res.statusCode);
   }
 }
 
 async function updateClass(classId, instructorId, dateStart, oldInstructor) {
   const params = {
-    url: "/class",
+    url: '/class',
     body: { classId, instructorId },
-    method: "PUT",
+    method: 'PUT',
   };
   const res = await genericFetch(params);
   if (res.statusCode === 200) {
     createNotification(
       instructorId,
-      "You were assigned a class",
-      `You have been assigned the class of ${dateStart.toLocaleString()}`
+      'You were assigned a class',
+      `You have been assigned the class of ${dateStart.toLocaleString()}`,
     );
     createNotification(
       oldInstructor,
-      "You will no longer teach the class",
-      `An administrator assigned someone else to class for the day ${dateStart.toLocaleString()}`
+      'You will no longer teach the class',
+      `An administrator assigned someone else to class for the day ${dateStart.toLocaleString()}`,
     );
   } else {
-    setToast(res.body.error, "error", params.url + res.statusCode);
+    setToast(res.body.error, 'error', params.url + res.statusCode);
   }
 }
 
 function couchIncluded(couches = [], userId) {
   return couches.some((s) => s.id === userId);
 }
+
+const isToday = (someDate) => {
+  const today = new Date();
+  return (
+    someDate.getDate() == today.getDate() &&
+    someDate.getMonth() == today.getMonth() &&
+    someDate.getFullYear() == today.getFullYear()
+  );
+};
 
 export default function Schedule(props) {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
@@ -109,7 +118,7 @@ export default function Schedule(props) {
       setIsFirstLoad(false);
     }
     const firstDayWeek = new Date(
-      firstDayYear.getTime() + (week - 1) * 7 * 24 * 60 * 60 * 1000
+      firstDayYear.getTime() + (week - 1) * 7 * 24 * 60 * 60 * 1000,
     );
     setFirstDayWeek(firstDayWeek);
   }, [isFirstLoad, props.user, week]);
@@ -140,8 +149,8 @@ export default function Schedule(props) {
       id = await createClass(dateStart, props.user?.coaches.user_id);
       createNotification(
         props.user?.coaches.user_id,
-        "Default asignation",
-        `You have been assigned by default the class of ${dateStart.toLocaleString()}`
+        'Default asignation',
+        `You have been assigned by default the class of ${dateStart.toLocaleString()}`,
       );
       console.log(id);
     }
@@ -155,6 +164,7 @@ export default function Schedule(props) {
       <div className="grid grid-flow-col grid-cols-7 h-full grid-rows-10 gap-2.5 text-center">
         {dias.map((day, i) => {
           const { currentDay, monthDay } = getDay(firstDayWeek, i);
+          const istoday = isToday(currentDay);
           return (
             <React.Fragment key={currentDay}>
               <div className="sticky top-[65px] bg-cararra-100 flex items-center justify-center nm-10">
@@ -164,7 +174,9 @@ export default function Schedule(props) {
                     onClick={() => handleWeek(false)}
                   />
                 ) : null}
-                <div className="flex flex-col">
+                <div
+                  className={`flex flex-col ${istoday ? 'bg-mindaro-300 rounded-2xl p-2' : ''}`}
+                >
                   <p>
                     {currentDay.getDate()}/{obtenerNombreMes(monthDay)}
                   </p>
@@ -207,7 +219,7 @@ export default function Schedule(props) {
               {isCoach &&
               !couchIncluded(
                 classDetail.payload?.classExist?.couchesDisponibility,
-                props.user?.coaches.user_id
+                props.user?.coaches.user_id,
               ) ? (
                 <Button
                   text="I'm available"
@@ -216,7 +228,7 @@ export default function Schedule(props) {
                   onClick={() =>
                     setDisponibility(
                       classDetail.payload?.dateStart,
-                      classDetail.payload?.classExist?.id
+                      classDetail.payload?.classExist?.id,
                     )
                   }
                 />
@@ -233,7 +245,7 @@ export default function Schedule(props) {
                     <li
                       key={couch.id}
                       className={`border-b border-swirl-200 p-3 flex justify-between items-center ${
-                        i % 2 === 0 ? "bg-cararra-100" : ""
+                        i % 2 === 0 ? 'bg-cararra-100' : ''
                       }`}
                     >
                       <span>
@@ -250,7 +262,7 @@ export default function Schedule(props) {
                                 classDetail.payload?.classExist?.id,
                                 couch.id,
                                 classDetail.payload?.dateStart,
-                                couch.id
+                                couch.id,
                               ).then((res) => {
                                 getClassExist();
                                 setClassDetail({ show: false });
@@ -265,7 +277,7 @@ export default function Schedule(props) {
                         )}
                       </span>
                     </li>
-                  )
+                  ),
                 )}
               </ul>
             </>
