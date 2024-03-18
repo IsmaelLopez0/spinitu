@@ -1,10 +1,10 @@
-"use client";
-import { useForm, Controller } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import Input from "@/components/atoms/Input";
-import Button from "@/components/atoms/Button";
-import { genericFetch } from "@/libs/externalAPIs";
-import { setToast } from "@/libs/notificationsAPIs";
+'use client';
+import { useForm, Controller } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import Input from '@/components/atoms/Input';
+import Button from '@/components/atoms/Button';
+import { genericFetch } from '@/libs/externalAPIs';
+import { setToast } from '@/libs/notificationsAPIs';
 
 export default function RegisterPage() {
   const {
@@ -14,29 +14,30 @@ export default function RegisterPage() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: "",
-      lastname: "",
-      email: "",
-      password: "",
+      name: '',
+      lastname: '',
+      email: '',
+      password: '',
     },
   });
   const router = useRouter();
 
   async function onSubmit(data) {
     if (data.password !== data.confirmPassword) {
-      return alert("Passwords do not match");
+      return alert('Passwords do not match');
     }
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
       body: JSON.stringify(data),
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     });
     if (res.ok) {
-      router.push("/auth/login");
+      router.push('/auth/login');
     } else {
-      setToast("Algo salió mal", "error", "/api/auth/register");
+      const data = await res.json();
+      setToast(data.message, 'error', '/api/auth/register');
     }
   }
 
@@ -59,10 +60,10 @@ export default function RegisterPage() {
               name="name"
               errors={errors}
               placeholder="Jane"
-              {...register("name", {
+              {...register('name', {
                 required: {
                   value: true,
-                  message: "Name is required",
+                  message: 'Name is required',
                 },
               })}
               {...field}
@@ -79,10 +80,10 @@ export default function RegisterPage() {
               name="lastname"
               errors={errors}
               placeholder="Doe"
-              {...register("lastname", {
+              {...register('lastname', {
                 required: {
                   value: true,
-                  message: "Last Name is required",
+                  message: 'Last Name is required',
                 },
               })}
               {...field}
@@ -100,10 +101,10 @@ export default function RegisterPage() {
               errors={errors}
               type="email"
               placeholder="email@domain.com"
-              {...register("email", {
+              {...register('email', {
                 required: {
                   value: true,
-                  message: "Email is required",
+                  message: 'Email is required',
                 },
               })}
               {...field}
@@ -121,10 +122,10 @@ export default function RegisterPage() {
               errors={errors}
               placeholder="********"
               type="password"
-              {...register("password", {
+              {...register('password', {
                 required: {
                   value: true,
-                  message: "Password is required",
+                  message: 'Password is required',
                 },
               })}
               {...field}
@@ -142,10 +143,10 @@ export default function RegisterPage() {
               errors={errors}
               placeholder="********"
               type="password"
-              {...register("confirmPassword", {
+              {...register('confirmPassword', {
                 required: {
                   value: true,
-                  message: "Confirm Password is required",
+                  message: 'Confirm Password is required',
                 },
               })}
               {...field}

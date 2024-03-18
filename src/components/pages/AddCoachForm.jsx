@@ -31,7 +31,7 @@ export default function RegisterPage(props) {
     if (res.ok) {
       if (props.saveData) props.saveData();
     } else {
-      setToast('Algo salió mal', 'error', '/api/auth/register');
+      setToast('Something went wrong', 'error', '/api/auth/register');
     }
   }
 
