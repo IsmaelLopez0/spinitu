@@ -17,7 +17,7 @@ import { createNotification } from '@/libs/notificationsAPIs';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
 
-const dias = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const dias = ['Time', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 const currentWeek = getCurrentWeek();
 
@@ -161,34 +161,41 @@ export default function Schedule(props) {
 
   return (
     <>
-      <div className="grid grid-flow-col grid-cols-7 h-full grid-rows-10 gap-2.5 text-center">
+      <div className="grid grid-flow-col grid-cols-8 h-full grid-rows-10 gap-2.5 text-center">
         {dias.map((day, i) => {
-          const { currentDay, monthDay } = getDay(firstDayWeek, i);
+          const { currentDay, monthDay } = getDay(firstDayWeek, i - 1);
           const istoday = isToday(currentDay);
           return (
             <React.Fragment key={currentDay}>
-              <div className="sticky top-[65px] bg-cararra-100 flex items-center justify-center nm-10">
-                {i === 0 ? (
-                  <ChevronLeftIcon
-                    className="mr-2 cursor-pointer text-mindaro-700 h-7"
-                    onClick={() => handleWeek(false)}
-                  />
-                ) : null}
-                <div
-                  className={`flex flex-col ${istoday ? 'bg-mindaro-300 rounded-2xl p-2' : ''}`}
-                >
-                  <p>
-                    {currentDay.getDate()}/{obtenerNombreMes(monthDay)}
-                  </p>
-                  <span>{day}</span>
+              {i > 0 ? (
+                <div className="sticky top-[65px] bg-cararra-100 flex items-center justify-center nm-10">
+                  {i === 1 ? (
+                    <ChevronLeftIcon
+                      className="mr-2 cursor-pointer text-mindaro-700 h-7"
+                      onClick={() => handleWeek(false)}
+                    />
+                  ) : null}
+                  <div
+                    className={`flex flex-col ${istoday ? 'bg-mindaro-300 rounded-2xl p-2' : ''}`}
+                  >
+                    <p>
+                      {currentDay.getDate()}/{obtenerNombreMes(monthDay)}
+                    </p>
+                    <span>{day}</span>
+                  </div>
+                  {i === 7 ? (
+                    <ChevronRightIcon
+                      className="ml-2 cursor-pointer text-mindaro-700 h-7"
+                      onClick={() => handleWeek(true)}
+                    />
+                  ) : null}
                 </div>
-                {i === 6 ? (
-                  <ChevronRightIcon
-                    className="ml-2 cursor-pointer text-mindaro-700 h-7"
-                    onClick={() => handleWeek(true)}
-                  />
-                ) : null}
-              </div>
+              ) : (
+                <div
+                  className="sticky top-[65px] bg-cararra-100 flex items-center justify-center nm-10"
+                  key={day + '-' + i}
+                />
+              )}
               <ScheduleByDayComponent
                 day={i}
                 currentDay={currentDay}

@@ -1,13 +1,13 @@
-"use client";
-import { useEffect, useState } from "react";
-import { getSession, signOut } from "next-auth/react";
-import Card from "@/components/organisms/Card";
-import FormProfile from "./FormProfile";
-import FormChangePassword from "./FormChangePassword";
-import Button from "@/components/atoms/Button";
-import Dialog from "@/components/atoms/Dialog";
-import { genericFetch } from "@/libs/externalAPIs";
-import { setToast } from "@/libs/notificationsAPIs";
+'use client';
+import { useEffect, useState } from 'react';
+import { getSession, signOut } from 'next-auth/react';
+import Card from '@/components/organisms/Card';
+import FormProfile from './FormProfile';
+import FormChangePassword from './FormChangePassword';
+import Button from '@/components/atoms/Button';
+import Dialog from '@/components/atoms/Dialog';
+import { genericFetch } from '@/libs/externalAPIs';
+import { setToast } from '@/libs/notificationsAPIs';
 
 export default function ProfilePage() {
   const [userData, setUserData] = useState({});
@@ -16,9 +16,9 @@ export default function ProfilePage() {
   async function init() {
     const { user } = await getSession();
     const params = {
-      url: "/user/user",
+      url: '/user/user',
       query: { email: user.email },
-      method: "GET",
+      method: 'GET',
     };
     const data = await genericFetch(params);
     setUserData(data.body);
@@ -26,15 +26,15 @@ export default function ProfilePage() {
 
   async function deleteAccount() {
     const params = {
-      url: "/user",
+      url: '/user',
       body: { email: userData.email },
-      method: "DELETE",
+      method: 'DELETE',
     };
     const data = await genericFetch(params);
     if (data.statusCode === 200) {
       await signOut();
     } else {
-      setToast(data.body.error, "error", params.url + data.statusCode);
+      setToast(data.body.error, 'error', params.url + data.statusCode);
     }
   }
 
@@ -43,24 +43,24 @@ export default function ProfilePage() {
   }, []);
 
   return (
-    <section className="flex items-center justify-center h-full px-5 py-3 gap-x-5">
+    <section className="flex items-center justify-center h-full gap-x-5">
       <div className="grid grid-cols-2 grid-rows-2 gap-10">
         <div className="row-span-2">
           <Card
             data={{
-              title: `${userData?.name ?? ""} ${userData?.lastname ?? ""}`,
-              description: userData.email ?? "",
+              title: `${userData?.name ?? ''} ${userData?.lastname ?? ''}`,
+              description: userData.email ?? '',
             }}
           >
             <FormProfile userData={userData} setUserData={setUserData} />
           </Card>
         </div>
 
-        <Card data={{ title: "Change password" }}>
+        <Card data={{ title: 'Change password' }}>
           <FormChangePassword email={userData.email} />
         </Card>
         <div className="col-start-2">
-          <Card data={{ title: "⚠️ Deactivate account" }}>
+          <Card data={{ title: '⚠️ Deactivate account' }}>
             <p className="text-red-600">
               {"Once your account has been deactivate, it's gone for good."}
             </p>

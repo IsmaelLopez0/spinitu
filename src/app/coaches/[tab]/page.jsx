@@ -11,7 +11,7 @@ import { setToast } from '@/libs/notificationsAPIs';
 
 const ACTIVE_CLASS = 'text-swirl-900 bg-gray-100';
 
-export default function CoachesPage(props) {
+export default function CoachesPage() {
   const params = useParams();
   const [children, setChildren] = useState(null);
   const user = useUserConfig((state) => state.user);
@@ -53,7 +53,7 @@ export default function CoachesPage(props) {
   }, []);
 
   return (
-    <div className="h-full px-10 py-5">
+    <div className="h-full">
       <div className="flex flex-wrap text-sm font-medium text-center border-b text-swirl-700 border-swirl-200">
         <Link href="/coaches/schedule">
           <span

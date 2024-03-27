@@ -1,7 +1,7 @@
 export default function Input({ label, name, errors, className, ...props }) {
   return (
     <div className="w-full">
-      <label htmlFor={name} className="text-slate-500 mb-2 block text-sm">
+      <label htmlFor={name} className="block mb-2 text-sm text-slate-500">
         {label}
       </label>
       <input
@@ -11,7 +11,7 @@ export default function Input({ label, name, errors, className, ...props }) {
         {...props}
       />
       {errors && errors[name] ? (
-        <span className="text-red-500 text-xs">{errors[name].message}</span>
+        <span className="text-xs text-red-500">{errors[name].message}</span>
       ) : null}
     </div>
   );

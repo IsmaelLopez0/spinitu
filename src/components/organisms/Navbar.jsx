@@ -10,6 +10,7 @@ const outSessionMenu = [
 ];
 
 const inSessionMenu = [
+  { href: '/booking', title: 'Booking' },
   { href: '/profile', title: 'Profile' },
   { href: '/coaches/schedule', title: 'Coaches' },
   { href: '/dashboard', title: 'Dashboard' },
@@ -36,25 +37,6 @@ async function NavBar() {
       </div>
       <ul className="flex items-center gap-x-5">
         <MenuItems items={!session?.user ? outSessionMenu : inSessionMenu} />
-        {/*!session?.user ? (
-          <MenuItems items={outSessionMenu} />
-        ) : (
-          <>
-            <li>
-              <Link href="/profile">Profile</Link>
-            </li>
-            <li>
-              <Link href="/coaches/schedule">Coaches</Link>
-            </li>
-            <li>
-              <Link href="/dashboard">Dashboard</Link>
-            </li>
-            <li>
-              <SignOutButton />
-            </li>
-            <Notifications />
-          </>
-        )*/}
       </ul>
     </nav>
   );

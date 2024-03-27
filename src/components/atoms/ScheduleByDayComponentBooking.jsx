@@ -1,4 +1,4 @@
-import { compareDates, getIsValidDifference } from '@/libs/_utilsFunctions';
+import { compareDates } from '@/libs/_utilsFunctions';
 
 const validSchedule = {
   1: { start: '6:00', end: '7:00' },
@@ -23,10 +23,9 @@ const shedulByDay = [
   [null, 2, 3, 4, 5, null, null, null, null],
 ];
 
-export default function ScheduleByDayComponent({
+export default function ScheduleByDayComponentBooking({
   day,
   currentDay,
-  isCoach,
   classesExist,
   onClick = () => {},
 }) {
@@ -52,9 +51,7 @@ export default function ScheduleByDayComponent({
     const today = new Date();
     const hour = validSchedule[currSchedule].start.replace(/:.*/, '');
     const dayWithHour = currentDay.setHours(hour, 0);
-    const isDisable = isCoach
-      ? getIsValidDifference(currentDay.setHours(hour, 50), 14)
-      : compareDates(today, currentDay.setHours(hour - 1, 50)) !== 1;
+    // const isDisable = compareDates(today, currentDay.setHours(hour - 1, 50)) !== 1;
     const classExist = classesExist[dayWithHour];
     const totalCoaches = classExist?.couchesDisponibility?.length ?? 0;
     const defaultCoach =
@@ -64,21 +61,16 @@ export default function ScheduleByDayComponent({
     return (
       <div
         key={day + '-' + i}
-        className={`text-cararra-100 w-full h-24 flex flex-col justify-center items-center rounded-md ${
-          isDisable
-            ? 'bg-orchid-200 cursor-not-allowed'
-            : 'bg-orchid-400 cursor-pointer'
-        }`}
+        className={`text-cararra-100 w-full h-24 flex flex-col justify-center items-center rounded-md bg-orchid-400 cursor-pointer`}
         onClick={() => {
-          !isDisable && onClick(new Date(dayWithHour), classExist);
+          // !isDisable &&
+          onClick(new Date(dayWithHour), classExist);
         }}
       >
-        <p className="text-sm">Availables: {totalCoaches}</p>
-        {totalCoaches > 0 ? (
-          <p className="text-xs">
-            Assigned: {defaultCoach.name} {defaultCoach.lastname}
-          </p>
-        ) : null}
+        <p className="text-sm">Assistants: {totalCoaches}</p>
+        <p className="text-xs">
+          Coach: {defaultCoach.name} {defaultCoach.lastname}
+        </p>
       </div>
     );
   });
