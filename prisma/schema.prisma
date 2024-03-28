@@ -16,13 +16,14 @@ model User {
   name          String
   lastname      String
   email         String @unique
-  password      String
+  password      String?
   phone         String?
   biography     String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   cognito_id    String?
   isActive      Boolean  @default(true)
+  rol           UserRoles @default(ADMINISTRATOR)
   coaches       Coach?
   memberships   Membership[]
   reservations  Reservation[]
@@ -95,4 +96,11 @@ model Notification {
   body     String
   leido    Boolean @default(false)
   user      User    @relation(fields: [user_id], references: [id])
+}
+
+enum UserRoles {
+  RECEPTIONIST
+  ADMINISTRATOR
+  COACH
+  USER
 }

@@ -17,6 +17,7 @@ export default function RegisterPage() {
       lastname: '',
       email: '',
       password: '',
+      rol: 'ADMINISTRATOR',
     },
   });
   const router = useRouter();

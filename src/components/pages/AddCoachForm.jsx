@@ -17,6 +17,7 @@ export default function RegisterPage(props) {
       email: '',
       password: '',
       specializations: '',
+      rol: 'COACH',
     },
   });
 

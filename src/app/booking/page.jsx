@@ -20,10 +20,10 @@ function tabsReducer(state = [], action) {
 }
 
 const inputsToAddUser = [
-  { name: 'Name', placeholder: 'Name' },
-  { name: 'Last Name', placeholder: 'Last Name' },
-  { name: 'Email', placeholder: 'Email' },
-  { name: 'Phone', placeholder: 'Phone' },
+  { name: 'name', label: 'Name', placeholder: 'Name' },
+  { name: 'lastname', label: 'Last Name', placeholder: 'Last Name' },
+  { name: 'email', label: 'Email', placeholder: 'Email' },
+  { name: 'phone', label: 'Phone', placeholder: 'Phone' },
 ];
 
 export default function Booking() {
@@ -43,7 +43,7 @@ export default function Booking() {
   ];
 
   function onSubmit(data) {
-    console.log(data);
+    console.log({ ...data, rol: 'USER' });
   }
 
   return (
@@ -59,7 +59,7 @@ export default function Booking() {
                   name={input.name}
                   render={({ field }) => (
                     <Input
-                      label={input.name}
+                      label={input.label}
                       name={input.name}
                       placeholder={input.placeholder}
                       {...field}
