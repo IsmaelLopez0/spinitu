@@ -7,8 +7,15 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-export default function Tabs({ tabs, actionButtons = [] }) {
+export default function Tabs({ tabs, actionButtons = [], currentTab }) {
   const [selectedTab, setSelectedTab] = useState(0);
+
+  function setTab(index) {
+    setSelectedTab(index);
+    if (currentTab) {
+      currentTab(index);
+    }
+  }
 
   return (
     <div className="flex flex-col">
@@ -27,7 +34,7 @@ export default function Tabs({ tabs, actionButtons = [] }) {
                       : 'hover:bg-cararra-100/[0.4]',
                   )
                 }
-                onClick={() => setSelectedTab(index)}
+                onClick={() => setTab(index)}
               >
                 {tab.title}
               </Tab>
@@ -50,41 +57,6 @@ export default function Tabs({ tabs, actionButtons = [] }) {
           ))}
         </Tab.Panels>
       </Tab.Group>
-    </div>
-  );
-
-  return (
-    <div className="flex flex-col">
-      <div className="flex flex-row">
-        <Tab.Group>
-          <Tab.List className="flex p-4 space-x-4 bg-gray-200 rounded-md">
-            {tabs.map((tab, index) => (
-              <Tab
-                key={tab.title}
-                className={`${
-                  index === selectedTab
-                    ? 'bg-white border-gray-200'
-                    : 'border-transparent'
-                } p-2 rounded-md text-sm font-medium`}
-                onClick={() => setSelectedTab(index)}
-              >
-                {tab.title}
-              </Tab>
-            ))}
-          </Tab.List>
-          <Tab.Panels className="mt-4">
-            {tabs.map((tab, index) => (
-              <Tab.Panel
-                key={tab.title}
-                className={`${index === selectedTab ? 'block' : 'hidden'}
-                  p-4`}
-              >
-                {tab.content}
-              </Tab.Panel>
-            ))}
-          </Tab.Panels>
-        </Tab.Group>
-      </div>
     </div>
   );
 }

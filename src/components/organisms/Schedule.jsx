@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useState } from 'react';
 import {
   ChevronLeftIcon,
@@ -16,6 +17,8 @@ import Button from '../atoms/Button';
 import { createNotification } from '@/libs/notificationsAPIs';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
+import { useUserConfig } from '@/stores/useUserConfig';
+import { getSession } from 'next-auth/react';
 
 const dias = ['Time', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -100,19 +103,41 @@ const isToday = (someDate) => {
   );
 };
 
-export default function Schedule(props) {
+export default function Schedule() {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [isCoach, setIsCoach] = useState(false);
   const [week, setWeek] = useState(1);
   const [firstDayWeek, setFirstDayWeek] = useState();
   const [classesExist, setClassesExist] = useState({});
   const [classDetail, setClassDetail] = useState({ show: false });
+  const user = useUserConfig((state) => state.user);
+  const setUser = useUserConfig((state) => state.setUser);
+
+  useEffect(() => {
+    if (!user?.name) {
+      getSession().then(({ user }) => {
+        const params = {
+          url: '/user/user',
+          query: { email: user.email },
+          method: 'GET',
+        };
+        genericFetch(params).then((data) => {
+          if (data.statusCode === 200) {
+            setUser(data.body);
+          } else {
+            setToast(data.body.error, 'error', params.url + data.statusCode);
+          }
+        });
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const añoActual = new Date().getFullYear();
     const firstDayYear = new Date(añoActual, 0, 1);
-    if (isFirstLoad && props.user?.name) {
-      const coach = Boolean(props.user?.coaches?.user_id);
+    if (isFirstLoad && user?.name) {
+      const coach = Boolean(user?.coaches?.user_id);
       setIsCoach(coach);
       setWeek(coach ? currentWeek + 2 : currentWeek);
       setIsFirstLoad(false);
@@ -121,7 +146,7 @@ export default function Schedule(props) {
       firstDayYear.getTime() + (week - 1) * 7 * 24 * 60 * 60 * 1000,
     );
     setFirstDayWeek(firstDayWeek);
-  }, [isFirstLoad, props.user, week]);
+  }, [isFirstLoad, user, week]);
 
   useEffect(() => {
     if (firstDayWeek) {
@@ -146,15 +171,15 @@ export default function Schedule(props) {
     let id = classId;
     console.log(classId);
     if (!id) {
-      id = await createClass(dateStart, props.user?.coaches.user_id);
+      id = await createClass(dateStart, user?.coaches.user_id);
       createNotification(
-        props.user?.coaches.user_id,
+        user?.coaches.user_id,
         'Default asignation',
         `You have been assigned by default the class of ${dateStart.toLocaleString()}`,
       );
       console.log(id);
     }
-    await createDisponibility(id, props.user?.coaches.user_id);
+    await createDisponibility(id, user?.coaches.user_id);
     setClassDetail({ show: false });
     getClassExist();
   }
@@ -226,7 +251,7 @@ export default function Schedule(props) {
               {isCoach &&
               !couchIncluded(
                 classDetail.payload?.classExist?.couchesDisponibility,
-                props.user?.coaches.user_id,
+                user?.coaches.user_id,
               ) ? (
                 <Button
                   text="I'm available"

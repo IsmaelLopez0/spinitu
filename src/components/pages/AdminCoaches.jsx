@@ -1,52 +1,43 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import AddCoachForm from "./AddCoachForm";
-import Button from "../atoms/Button";
-import Dialog from "../atoms/Dialog";
-import { XCircleIcon } from "@heroicons/react/16/solid";
-import { genericFetch } from "@/libs/externalAPIs";
-import { setToast } from "@/libs/notificationsAPIs";
+'use client';
+import React, { useEffect, useState } from 'react';
+import Button from '../atoms/Button';
+import Dialog from '../atoms/Dialog';
+import { XCircleIcon } from '@heroicons/react/16/solid';
+import { genericFetch } from '@/libs/externalAPIs';
+import { setToast } from '@/libs/notificationsAPIs';
 
 async function getCoaches() {
   const params = {
-    url: "/user/coaches",
-    method: "GET",
+    url: '/user/coaches',
+    method: 'GET',
   };
   const data = await genericFetch(params);
   if (data.statusCode !== 200) {
-    setToast(data.body.error, "error", params.url + data.statusCode);
+    setToast(data.body.error, 'error', params.url + data.statusCode);
     return [];
   }
   return data.body;
 }
-export default function AdminCoaches() {
+
+export default function AdminCoaches({ setCallbackAddCoach }) {
   const [coaches, setCoaches] = useState([]);
   const [dialog, setDialog] = useState({ show: false });
 
-  function handleDialog() {
-    setDialog({
-      title: "Add Coach",
-      show: true,
-      children: <AddCoachForm saveData={saveData} closeDialog={setDialog} />,
-    });
-  }
-
-  function saveData() {
-    setDialog({ show: false });
+  function getCoachesFunc() {
     getCoaches().then((res) => setCoaches(res));
   }
 
   async function deleteCoach(email) {
     const params = {
-      url: "/user",
+      url: '/user',
       body: { email },
-      method: "DELETE",
+      method: 'DELETE',
     };
     const res = await genericFetch(params);
     if (res.statusCode === 200) {
-      getCoaches().then((res) => setCoaches(res));
+      getCoachesFunc();
       setDialog({
-        title: "Coach Deleted",
+        title: 'Coach Deleted',
         show: true,
         children: (
           <Button
@@ -57,13 +48,13 @@ export default function AdminCoaches() {
         ),
       });
     } else {
-      setToast(res.body.error, "error", params.url + res.statusCode);
+      setToast(res.body.error, 'error', params.url + res.statusCode);
     }
   }
 
   function askForDelete(email) {
     setDialog({
-      title: "Are you sure you want to delete it?",
+      title: 'Are you sure you want to delete it?',
       show: true,
       children: (
         <div className="flex gap-3">
@@ -87,21 +78,12 @@ export default function AdminCoaches() {
   }
 
   useEffect(() => {
-    getCoaches().then((res) => setCoaches(res));
+    getCoachesFunc();
+    setCallbackAddCoach(() => getCoachesFunc);
   }, []);
 
   return (
     <div className="relative h-full overflow-x-auto">
-      <header className="flex justify-between m-3">
-        <h1>List coaches</h1>
-        <Button
-          color="mindaro"
-          className="sticky bottom-0 z-10"
-          onClick={() => handleDialog()}
-        >
-          New Coach
-        </Button>
-      </header>
       <table className="w-full text-sm text-left text-gray-500 rtl:text-right">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50">
           <tr>
@@ -131,7 +113,7 @@ export default function AdminCoaches() {
             return (
               <tr
                 key={coach.id}
-                className={`bg-white ${!isLast ? "border-b" : ""}`}
+                className={`bg-white ${!isLast ? 'border-b' : ''}`}
               >
                 <th
                   scope="row"

@@ -3,7 +3,6 @@ import { useForm, Controller } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import Input from '@/components/atoms/Input';
 import Button from '@/components/atoms/Button';
-import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
 
 export default function RegisterPage() {
