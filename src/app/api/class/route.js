@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
-import prisma from "@/libs/prisma";
-export const fetchCache = "default-no-store";
+import { NextResponse } from 'next/server';
+import prisma from '@/libs/prisma';
+
+export const fetchCache = 'default-no-store';
 
 export async function POST(req) {
   const body = await req.json();
@@ -12,7 +13,7 @@ export async function POST(req) {
       data: {
         name,
         description,
-        level: "MEDIUM",
+        level: 'MEDIUM',
         date_start: new Date(dateStart),
         duration: new Date(0, 0, 0, 1),
         is_active: true,
@@ -21,16 +22,16 @@ export async function POST(req) {
     });
     return NextResponse.json(res, { status: 200 });
   } catch (error) {
-    console.error("Error fetching user:", error);
-    return NextResponse.json("Internal server error", { status: 500 });
+    console.error('Error fetching user:', error);
+    return NextResponse.json('Internal server error', { status: 500 });
   }
 }
 
 export async function GET(req) {
-  const firstDayWeek = req.nextUrl.searchParams.get("firstDayWeek");
-  const lastDayWeek = req.nextUrl.searchParams.get("lastDayWeek");
+  const firstDayWeek = req.nextUrl.searchParams.get('firstDayWeek');
+  const lastDayWeek = req.nextUrl.searchParams.get('lastDayWeek');
   if (!firstDayWeek || !lastDayWeek) {
-    return NextResponse.json("Bad Request", { status: 404 });
+    return NextResponse.json('Bad Request', { status: 404 });
   }
   const gt = new Date(firstDayWeek);
   const lte = new Date(lastDayWeek);
@@ -69,8 +70,8 @@ export async function GET(req) {
     });
     return NextResponse.json(classes, { status: 200 });
   } catch (error) {
-    console.error("Error fetching user:", error);
-    return NextResponse.json("Internal server error", { status: 500 });
+    console.error('Error fetching user:', error);
+    return NextResponse.json('Internal server error', { status: 500 });
   }
 }
 
@@ -84,7 +85,7 @@ export async function PUT(req) {
     });
     return NextResponse.json(res, { status: 200 });
   } catch (error) {
-    console.error("Error fetching user:", error);
-    return NextResponse.json("Internal server error", { status: 500 });
+    console.error('Error fetching user:', error);
+    return NextResponse.json('Internal server error', { status: 500 });
   }
 }

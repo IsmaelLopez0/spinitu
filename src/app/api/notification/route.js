@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
-import prisma from "@/libs/prisma";
-export const fetchCache = "default-no-store";
+import { NextResponse } from 'next/server';
+import prisma from '@/libs/prisma';
+
+export const fetchCache = 'default-no-store';
 
 export async function POST(req) {
   const data = await req.json();
@@ -15,13 +16,13 @@ export async function POST(req) {
     });
     return NextResponse.json(res, { status: 200 });
   } catch (error) {
-    console.error("Error fetching user:", error);
-    return NextResponse.json("Internal server error", { status: 500 });
+    console.error('Error fetching user:', error);
+    return NextResponse.json('Internal server error', { status: 500 });
   }
 }
 
 export async function GET(req) {
-  const userId = req.nextUrl.searchParams.get("userId");
+  const userId = req.nextUrl.searchParams.get('userId');
   try {
     const notifications = await prisma.notification.findMany({
       where: { user_id: Number(userId) },
@@ -32,12 +33,12 @@ export async function GET(req) {
         body: true,
         leido: true,
       },
-      orderBy: [{ leido: "asc" }],
+      orderBy: [{ leido: 'asc' }],
     });
     return NextResponse.json(notifications, { status: 200 });
   } catch (error) {
-    console.error("Error fetching user:", error);
-    return NextResponse.json("Internal server error", { status: 500 });
+    console.error('Error fetching user:', error);
+    return NextResponse.json('Internal server error', { status: 500 });
   }
 }
 
@@ -55,7 +56,7 @@ export async function PUT(req) {
     });
     return NextResponse.json(res, { status: 200 });
   } catch (error) {
-    console.error("Error fetching user:", error);
-    return NextResponse.json("Internal server error", { status: 500 });
+    console.error('Error fetching user:', error);
+    return NextResponse.json('Internal server error', { status: 500 });
   }
 }

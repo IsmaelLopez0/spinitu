@@ -15,6 +15,7 @@
     "@million/lint": "^0.0.68",
     "@prisma/client": "^5.10.2",
     "bcrypt": "^5.1.1",
+    "eslint-config-airbnb": "^19.0.4",
     "material-symbols": "^0.17.1",
     "next": "14.1.0",
     "next-auth": "^4.24.6",

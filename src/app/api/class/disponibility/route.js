@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
-import prisma from "@/libs/prisma";
-export const fetchCache = "default-no-store";
+import { NextResponse } from 'next/server';
+import prisma from '@/libs/prisma';
+
+export const fetchCache = 'default-no-store';
 
 export async function POST(req) {
   const body = await req.json();
@@ -11,7 +12,7 @@ export async function POST(req) {
     });
     return NextResponse.json(res, { status: 200 });
   } catch (error) {
-    console.error("Error fetching user:", error);
-    return NextResponse.json("Internal server error", { status: 500 });
+    console.error('Error fetching user:', error);
+    return NextResponse.json('Internal server error', { status: 500 });
   }
 }
