@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getSession, signOut } from 'next-auth/react';
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  CheckIcon,
-} from '@heroicons/react/16/solid';
+import { getSession } from 'next-auth/react';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/16/solid';
 import GenericLoading from '../atoms/GenericLoading';
 import ScheduleByDayComponentBooking from '../atoms/ScheduleByDayComponentBooking';
 import Dialog from '../atoms/Dialog';
@@ -15,7 +11,6 @@ import {
 } from '@/libs/_utilsFunctions';
 import Button from '../atoms/Button';
 import Autocomplete from '../atoms/Autocomplete';
-import { createNotification } from '@/libs/notificationsAPIs';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
 import { useUserConfig } from '@/stores/useUserConfig';
@@ -41,33 +36,6 @@ async function getWeekClasses(firstDayWeek) {
   return {};
 }
 
-async function updateClass(classId, instructorId, dateStart, oldInstructor) {
-  const params = {
-    url: '/class',
-    body: { classId, instructorId },
-    method: 'PUT',
-  };
-  const res = await genericFetch(params);
-  if (res.statusCode === 200) {
-    createNotification(
-      instructorId,
-      'You were assigned a class',
-      `You have been assigned the class of ${dateStart.toLocaleString()}`,
-    );
-    createNotification(
-      oldInstructor,
-      'You will no longer teach the class',
-      `An administrator assigned someone else to class for the day ${dateStart.toLocaleString()}`,
-    );
-  } else {
-    setToast(res.body.error, 'error', params.url + res.statusCode);
-  }
-}
-
-function couchIncluded(couches = [], userId) {
-  return couches.some((s) => s.id === userId);
-}
-
 const isToday = (someDate) => {
   const today = new Date();
   return (
@@ -78,6 +46,7 @@ const isToday = (someDate) => {
 };
 
 export default function ScheduleBooking() {
+  const [data, setData] = useState([]);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [week, setWeek] = useState(1);
   const [firstDayWeek, setFirstDayWeek] = useState();
@@ -88,10 +57,32 @@ export default function ScheduleBooking() {
   const user = useUserConfig((state) => state.user);
   const setUser = useUserConfig((state) => state.setUser);
 
+  function getClients(isReload = false) {
+    const params = { url: '/user/allClients', method: 'GET' };
+    genericFetch(params).then((res) => {
+      if (res.statusCode === 200) {
+        const newData = res.body
+          .filter((f) => f.days_to_access > 0)
+          .map(({ memberships, ...item }) => ({
+            id: item.id,
+            name: `${item.name ?? ''} ${item.lastname ?? ''}`,
+            description: `${item.days_to_access} remaining classes`,
+          }));
+        setData(newData);
+        if (isReload) {
+          setToast('Reserved class', 'success', '/api/reservation');
+        }
+      } else {
+        setToast('Something went wrong', 'error', '/user/allClients');
+      }
+    });
+  }
+
   useEffect(() => {
     const añoActual = new Date().getFullYear();
     const firstDayYear = new Date(añoActual, 0, 1);
     if (isFirstLoad && user?.name) {
+      getClients();
       const coach = Boolean(user?.coaches?.user_id);
       setWeek(coach ? currentWeek + 2 : currentWeek);
       setIsFirstLoad(false);
@@ -148,6 +139,28 @@ export default function ScheduleBooking() {
       ({ id }) => id === instructor_id,
     );
     return `${name ?? ''} ${lastname ?? ''}`;
+  }
+
+  async function reservClass(payload) {
+    const { position, classExist } = payload;
+    const res = await fetch('/api/reservation', {
+      method: 'POST',
+      body: JSON.stringify({
+        position,
+        userId: userSelected.id,
+        classId: classExist.id,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (res.ok) {
+      setConfirmReserve({ show: false });
+      getClients(true);
+    } else {
+      const data = await res.json();
+      setToast(data.message, 'error', '/api/reservation');
+    }
   }
 
   return (
@@ -237,19 +250,27 @@ export default function ScheduleBooking() {
               <hr />
               <div className="grid grid-cols-4 grid-rows-4 gap-4 mt-3">
                 {Array.from(Array(12)).map((e, i) => {
-                  const isAvailable = i % 3 === 0;
+                  const currentReservations =
+                    classDetail.payload.classExist.reservations;
                   const position = 12 - i;
+                  const isReserved = currentReservations.find(
+                    (f) => f.position === position,
+                  );
                   return (
                     <div
                       key={i}
-                      className={`relative text-center rounded-xl select-none hover:bg-cararra-50 ${isAvailable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+                      className={`relative text-center rounded-xl select-none hover:bg-cararra-50 ${!isReserved ? 'cursor-pointer' : 'cursor-not-allowed'}`}
                       onClick={() => {
-                        if (isAvailable) {
+                        if (!isReserved) {
                           setConfirmReserve({
                             show: true,
                             payload: {
                               ...classDetail.payload,
                               position: position,
+                              usersInClass:
+                                classDetail.payload.classExist.reservations.map(
+                                  ({ user }) => user.id,
+                                ),
                             },
                           });
                           setClassDetail({ show: false });
@@ -257,7 +278,7 @@ export default function ScheduleBooking() {
                       }}
                     >
                       <span
-                        className={`text-center material-symbols-outlined ${isAvailable ? 'text-mindaro-400' : 'text-orchid-400'}`}
+                        className={`text-center material-symbols-outlined ${!isReserved ? 'text-mindaro-400' : 'text-orchid-400'}`}
                         style={{ fontSize: '60px' }}
                       >
                         directions_bike
@@ -268,15 +289,7 @@ export default function ScheduleBooking() {
                     </div>
                   );
                 })}
-                <div
-                  className="relative col-span-4 text-center cursor-default select-none rounded-xl"
-                  onClick={() =>
-                    setConfirmReserve({
-                      show: true,
-                      payload: { ...classDetail.payload, position: position },
-                    })
-                  }
-                >
+                <div className="relative col-span-4 text-center cursor-default select-none rounded-xl">
                   <span
                     className="text-center text-cararra-700 material-symbols-outlined"
                     style={{ fontSize: '48px' }}
@@ -287,6 +300,13 @@ export default function ScheduleBooking() {
                     Coach
                   </span>
                 </div>
+              </div>
+              <div>
+                <Button
+                  text="Cancelar"
+                  type="outline"
+                  onClick={() => setClassDetail({ show: false })}
+                />
               </div>
             </>
           ) : (
@@ -323,27 +343,26 @@ export default function ScheduleBooking() {
               </span>
             </div>
           </div>
-          <div className="flex flex-col justify-between overflow-auto h-36">
+          <div className="flex flex-col justify-between overflow-auto">
             <Autocomplete
-              list={[
-                { id: 1, name: 'Wade Cooper' },
-                { id: 2, name: 'Arlene Mccoy' },
-                { id: 3, name: 'Devon Webb' },
-                { id: 4, name: 'Tom Cook' },
-                { id: 5, name: 'Tanya Fox' },
-                { id: 6, name: 'Hellen Schmidt' },
-              ]}
+              list={data.filter(
+                (f) => !confirmReserve.payload?.usersInClass.includes(f.id),
+              )}
               selected={userSelected}
               setSelected={setUserSelected}
             />
-            <div className="flex justify-between">
+            <div className="flex justify-between mt-2">
               <Button
                 color="orchid"
                 onClick={() => setConfirmReserve({ show: false })}
               >
                 Cancel
               </Button>
-              <Button color="mindaro" disabled={!userSelected}>
+              <Button
+                color="mindaro"
+                disabled={!userSelected}
+                onClick={() => reservClass(confirmReserve.payload)}
+              >
                 Add to class
               </Button>
             </div>

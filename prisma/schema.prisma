@@ -43,6 +43,8 @@ model MembershipType {
   name            String
   description     String
   days_to_access  Int
+  price           Float       @default(300.00)
+  validity        Int         @default(1)
   membership      Membership[]
 }
 
@@ -76,6 +78,7 @@ model Reservation {
   id        Int  @id @default(autoincrement())
   user_id   Int
   class_id  Int
+  position  Int?
   user      User    @relation(fields: [user_id], references: [id])
   class     Class   @relation(fields: [class_id], references: [id])
 }

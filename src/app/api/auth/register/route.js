@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
 import prisma from '@/libs/prisma';
+import { genericFetch } from '@/libs/externalAPIs';
 
 export async function POST(request) {
   try {
@@ -11,14 +12,26 @@ export async function POST(request) {
       },
     });
     if (emailFound) throw new Error('Email already exists');
-    const { confirmPassword, specializations, ...userData } = data;
-    const hashedPassword = await bcrypt.hash(data.password, 10);
-    const newUser = await prisma.user.create({
-      data: {
-        ...userData,
-        password: hashedPassword,
-      },
-    });
+    let hashedPassword;
+    const isUser = data.rol === 'USER';
+    if (!isUser) {
+      hashedPassword = await bcrypt.hash(data.password, 10);
+    }
+    const { confirmPassword, specializations, membershipTypeId, ...userData } =
+      data;
+    const newData = { ...userData };
+    if (hashedPassword) {
+      newData.password = hashedPassword;
+    }
+    const newUser = await prisma.user.create({ data: newData });
+    if (isUser && membershipTypeId) {
+      const params = {
+        url: '/membership',
+        method: 'POST',
+        body: { userId: newUser.id, membershipTypeId },
+      };
+      await genericFetch(params);
+    }
     if (specializations) {
       const specializationsParsed = specializations
         .split(',')

@@ -1,37 +1,20 @@
+import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import Table from '@/components/atoms/Table';
 import Input from '@/components/atoms/Input';
 import Button from '@/components/atoms/Button';
+import { genericFetch } from '@/libs/externalAPIs';
+import { sumDaysToDate } from '@/libs/_utilsFunctions';
 
 const headers = [
   { title: 'Name', key: 'name' },
   { title: 'Email', key: 'email' },
-  { title: 'Time', key: 'time' },
-  { title: 'Remaining classes', key: 'remaining' },
-];
-
-const data = [
-  {
-    name: 'Apple MacBook Pro 17"',
-    color: 'Silver',
-    category: 'Laptop',
-    price: '$2999',
-  },
-  {
-    name: 'Microsoft Surface Pro',
-    color: 'White',
-    category: 'Laptop PC',
-    price: '$1999',
-  },
-  {
-    name: 'Magic Mouse 2',
-    color: 'Black',
-    category: 'Accessories',
-    price: '$99',
-  },
+  { title: 'Hour', key: 'hour' },
+  { title: 'Remaining classes', key: 'days_to_access' },
 ];
 
 export default function UserList(props) {
+  const [data, setData] = useState([]);
   const { control, handleSubmit } = useForm({
     defaultValues: {
       search: '',
@@ -39,8 +22,47 @@ export default function UserList(props) {
   });
 
   function onSubmit(data) {
-    console.log(data);
+    getClients(data.search);
   }
+
+  function formatDate(date) {
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `${year}-${month}-${day}`;
+  }
+
+  function getTime(date) {
+    const tempHour = date.getHours();
+    const hour = tempHour < 10 ? `0${tempHour}` : tempHour;
+    const minutes = date.getMinutes();
+    return `${hour}:0${minutes}`;
+  }
+
+  function getClients(emailOrName) {
+    const dateStart = formatDate(new Date());
+    const dateEnd = formatDate(sumDaysToDate(new Date(), 1));
+    const query = { dateStart, dateEnd };
+    if (emailOrName) query.emailOrName = emailOrName;
+    const params = { url: '/user/clients', method: 'GET', query };
+    genericFetch(params).then((res) => {
+      if (res.statusCode === 200) {
+        const newData = res.body.map(({ memberships, ...item }) => ({
+          ...item,
+          name: `${item.name ?? ''} ${item.lastname ?? ''}`,
+          hour: getTime(new Date(item.date_start)),
+          ...memberships[0],
+        }));
+        setData(newData);
+      } else {
+        setToast('Something went wrong', 'error', '/user/clients');
+      }
+    });
+  }
+
+  useEffect(() => {
+    getClients();
+  }, []);
 
   return (
     <div>
@@ -62,7 +84,6 @@ export default function UserList(props) {
         caption="The people who appear in the following list are those who have class today"
         headers={headers}
         data={data}
-        actions={<button>Action</button>}
       />
     </div>
   );

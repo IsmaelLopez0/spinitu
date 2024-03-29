@@ -43,9 +43,9 @@ export default function Autocomplete({
           leaveTo="opacity-0"
           afterLeave={() => setQuery('')}
         >
-          <Combobox.Options className="absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-24 ring-1 ring-black/5 focus:outline-none sm:text-sm">
+          <Combobox.Options className="w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-24 ring-1 ring-black/5 focus:outline-none sm:text-sm">
             {filteredList.length === 0 ? (
-              <div className="relative px-4 py-2 text-gray-700 cursor-default select-none">
+              <div className="px-4 py-2 text-gray-700 cursor-default select-none">
                 Nothing found.
               </div>
             ) : (
@@ -53,7 +53,7 @@ export default function Autocomplete({
                 <Combobox.Option
                   key={person.id}
                   className={({ active }) =>
-                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                    `flex cursor-default select-none py-2 pl-5 pr-4 ${
                       active ? 'bg-teal-600 text-white' : 'text-gray-900'
                     }`
                   }
@@ -61,22 +61,27 @@ export default function Autocomplete({
                 >
                   {({ selected, active }) => (
                     <>
+                      {selected ? (
+                        <span
+                          className={`flex items-center mr-2 ${
+                            active ? 'text-white' : 'text-teal-600'
+                          }`}
+                        >
+                          <CheckIcon className="w-5 h-5" aria-hidden="true" />
+                        </span>
+                      ) : (
+                        <div className="w-5 mr-2" />
+                      )}
                       <span
                         className={`block truncate ${
                           selected ? 'font-medium' : 'font-normal'
                         }`}
                       >
                         {person.name}
+                        {person.description ? (
+                          <p className="text-xs">{person.description}</p>
+                        ) : null}
                       </span>
-                      {selected ? (
-                        <span
-                          className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                            active ? 'text-white' : 'text-teal-600'
-                          }`}
-                        >
-                          <CheckIcon className="w-5 h-5" aria-hidden="true" />
-                        </span>
-                      ) : null}
                     </>
                   )}
                 </Combobox.Option>

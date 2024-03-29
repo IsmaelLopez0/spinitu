@@ -30,19 +30,19 @@ export default function Table({ title, headers, data, ...props }) {
         </thead>
         <tbody>
           {data.map((item, row) => (
-            <tr key={item.id ?? row} className="bg-white border-b ">
+            <tr key={`${item.id}-${row}`} className="bg-white border-b ">
               {headers.map(({ key }, col) => {
                 const valueData = item[key];
                 return col === 0 ? (
                   <th
-                    key={key}
+                    key={`${key}-${col}`}
                     scope="row"
                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap "
                   >
                     {valueData}
                   </th>
                 ) : (
-                  <td key={key} className="px-6 py-4">
+                  <td key={`${key}-${col}`} className="px-6 py-4">
                     {valueData}
                   </td>
                 );

@@ -53,7 +53,7 @@ export default function ScheduleByDayComponentBooking({
     const dayWithHour = currentDay.setHours(hour, 0);
     // const isDisable = compareDates(today, currentDay.setHours(hour - 1, 50)) !== 1;
     const classExist = classesExist[dayWithHour];
-    const totalCoaches = classExist?.couchesDisponibility?.length ?? 0;
+    const totalAssistants = classExist?.reservations?.length ?? 0;
     const defaultCoach =
       classExist?.couchesDisponibility?.find(
         (f) => f.id === classExist.instructor_id,
@@ -67,7 +67,7 @@ export default function ScheduleByDayComponentBooking({
           onClick(new Date(dayWithHour), classExist);
         }}
       >
-        <p className="text-sm">Assistants: {totalCoaches}</p>
+        <p className="text-sm">Assistants: {totalAssistants}</p>
         <p className="text-xs">
           Coach: {defaultCoach.name} {defaultCoach.lastname}
         </p>

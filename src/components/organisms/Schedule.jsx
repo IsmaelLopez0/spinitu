@@ -169,7 +169,6 @@ export default function Schedule() {
 
   async function setDisponibility(dateStart, classId) {
     let id = classId;
-    console.log(classId);
     if (!id) {
       id = await createClass(dateStart, user?.coaches.user_id);
       createNotification(
@@ -177,7 +176,6 @@ export default function Schedule() {
         'Default asignation',
         `You have been assigned by default the class of ${dateStart.toLocaleString()}`,
       );
-      console.log(id);
     }
     await createDisponibility(id, user?.coaches.user_id);
     setClassDetail({ show: false });

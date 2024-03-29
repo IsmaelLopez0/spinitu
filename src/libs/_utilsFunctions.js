@@ -24,7 +24,7 @@ export function getIsValidDifference(date2, diff) {
 }
 
 export function sumDaysToDate(fecha, dias) {
-  const calculado = new Date();
+  const calculado = new Date(fecha);
   const dateResul = fecha.getDate() + dias;
   calculado.setDate(dateResul);
   return calculado;
