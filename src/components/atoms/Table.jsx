@@ -16,7 +16,7 @@ export default function Table({ title, headers, data, ...props }) {
               <th
                 key={header.key}
                 scope="col"
-                className={`px-6 py-3 ${header.class ?? ''}`}
+                className={`px-6 py-3 text-center ${header.class ?? ''}`}
               >
                 {header.title}
               </th>
@@ -37,12 +37,12 @@ export default function Table({ title, headers, data, ...props }) {
                   <th
                     key={`${key}-${col}`}
                     scope="row"
-                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap "
+                    className="px-6 py-4 font-medium text-center text-gray-900 whitespace-nowrap"
                   >
                     {valueData}
                   </th>
                 ) : (
-                  <td key={`${key}-${col}`} className="px-6 py-4">
+                  <td key={`${key}-${col}`} className="px-6 py-4 text-center">
                     {valueData}
                   </td>
                 );

@@ -16,6 +16,7 @@ export default function RegisterPage(props) {
       lastname: '',
       email: '',
       password: '',
+      phone: '',
       specializations: '',
       rol: 'COACH',
     },
@@ -127,7 +128,29 @@ export default function RegisterPage(props) {
         />
       </div>
 
-      <div className="w-full mb-3">
+      <div className="flex items-center gap-5 mb-3">
+        <Controller
+          name="phone"
+          control={control}
+          render={({ field }) => (
+            <Input
+              label="Phone"
+              name="phone"
+              errors={errors}
+              placeholder="123-456-7890"
+              type="tel"
+              defaultValue={props.userData?.phone}
+              pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+              {...register('phone', {
+                required: {
+                  value: true,
+                  message: 'Phone is required',
+                },
+              })}
+              {...field}
+            />
+          )}
+        />
         <Controller
           name="specializations"
           control={control}

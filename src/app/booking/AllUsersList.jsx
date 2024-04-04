@@ -42,8 +42,8 @@ export default function AllUsersList(props) {
 
   function RemainingClases(props) {
     return (
-      <div className="flex">
-        {props.days_to_access}
+      <div className="flex items-center justify-center w-full">
+        <span className="w-5">{props.days_to_access}</span>
         <PlusCircleIcon
           onClick={() => setAddClassDialog({ show: true, payload: props })}
           className="h-5 ml-2 cursor-pointer text-mindaro-500"

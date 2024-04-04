@@ -10,7 +10,7 @@ export default function Dialog({ children, ...props }) {
 
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div className="flex items-end justify-center min-h-full p-4 text-center sm:items-center sm:p-0">
-          <div className="relative overflow-hidden text-left transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:w-full sm:max-w-xl">
+          <div className="relative overflow-hidden text-left transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:w-full sm:max-w-2xl">
             <div className="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
               <div className="w-full sm:flex sm:items-start">
                 {props.icon ? (

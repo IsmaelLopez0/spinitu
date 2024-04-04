@@ -6,6 +6,7 @@ export default function Autocomplete({
   list = [],
   selected,
   setSelected,
+  label,
   ...props
 }) {
   const [query, setQuery] = useState('');
@@ -22,17 +23,25 @@ export default function Autocomplete({
 
   return (
     <Combobox value={selected} onChange={setSelected}>
+      <Combobox.Label
+        aria-labelledby={props.id ?? 'autocomplete'}
+        className="block mb-2 text-sm text-slate-500"
+      >
+        {label}
+      </Combobox.Label>
       <div className="relative mt-1">
         <div className="relative w-full overflow-hidden text-left bg-white border-t-2 border-gray-100 rounded-lg shadow-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
           <Combobox.Input
             className="w-full py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 border-none focus:ring-0 focus:outline-0"
             displayValue={(person) => person.name}
             onChange={(event) => setQuery(event.target.value)}
+            id={props.id ?? 'autocomplete'}
           />
           <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
             <ChevronUpDownIcon
               className="w-5 h-5 text-gray-400"
               aria-hidden="true"
+              aria-labelledby={props.id ?? 'autocomplete'}
             />
           </Combobox.Button>
         </div>

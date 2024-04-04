@@ -51,20 +51,26 @@ export default function ScheduleByDayComponentBooking({
     const today = new Date();
     const hour = validSchedule[currSchedule].start.replace(/:.*/, '');
     const dayWithHour = currentDay.setHours(hour, 0);
-    // const isDisable = compareDates(today, currentDay.setHours(hour - 1, 50)) !== 1;
+    const isDisable =
+      compareDates(today, currentDay.setHours(hour - 1, 50)) !== 1;
     const classExist = classesExist[dayWithHour];
     const totalAssistants = classExist?.reservations?.length ?? 0;
     const defaultCoach =
       classExist?.couchesDisponibility?.find(
         (f) => f.id === classExist.instructor_id,
       ) ?? '';
+    let color = 'bg-orchid-500';
+    if (totalAssistants === 12) {
+      color = 'bg-orchid-700';
+    }
     return (
       <div
         key={day + '-' + i}
-        className={`text-cararra-100 w-full h-24 flex flex-col justify-center items-center rounded-md bg-orchid-400 cursor-pointer`}
+        className={`text-cararra-100 w-full h-24 flex flex-col justify-center items-center rounded-md ${
+          isDisable ? 'bg-orchid-500/50' : `${color} cursor-pointer`
+        }`}
         onClick={() => {
-          // !isDisable &&
-          onClick(new Date(dayWithHour), classExist);
+          onClick(new Date(dayWithHour), classExist, isDisable);
         }}
       >
         <p className="text-sm">Assistants: {totalAssistants}</p>

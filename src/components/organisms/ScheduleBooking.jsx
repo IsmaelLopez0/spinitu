@@ -83,8 +83,7 @@ export default function ScheduleBooking() {
     const firstDayYear = new Date(añoActual, 0, 1);
     if (isFirstLoad && user?.name) {
       getClients();
-      const coach = Boolean(user?.coaches?.user_id);
-      setWeek(coach ? currentWeek + 2 : currentWeek);
+      setWeek(currentWeek);
       setIsFirstLoad(false);
     }
     const firstDayWeek = new Date(
@@ -165,14 +164,14 @@ export default function ScheduleBooking() {
 
   return (
     <>
-      <div className="grid grid-flow-col grid-cols-8 h-full grid-rows-10 gap-2.5 text-center">
+      <div className="grid grid-flow-col grid-cols-8 h-full grid-rows-10 gap-2.5 gap-y-0 text-center">
         {dias.map((day, i) => {
           const { currentDay, monthDay } = getDay(firstDayWeek, i - 1);
           const istoday = isToday(currentDay);
           return (
             <React.Fragment key={currentDay}>
               {i > 0 ? (
-                <div className="sticky top-[65px] bg-cararra-100 flex items-center justify-center nm-10">
+                <div className="sticky top-[60px] bg-cararra-100 flex items-center justify-center nm-10">
                   {i === 1 ? (
                     <ChevronLeftIcon
                       className="mr-2 cursor-pointer text-mindaro-700 h-7"
@@ -196,18 +195,26 @@ export default function ScheduleBooking() {
                 </div>
               ) : (
                 <div
-                  className="sticky top-[65px] bg-cararra-100 flex items-center justify-center nm-10"
+                  className="text-xs text-white sticky top-[60px] bg-cararra-100 flex flex-col gap-4 gap-y-2 py-2 px-5"
                   key={day + '-' + i}
-                />
+                >
+                  <span className="p-1 rounded bg-orchid-500/50">
+                    Previous class
+                  </span>
+                  <span className="p-1 rounded bg-orchid-500">Available</span>
+                  <span className="h-full p-1 rounded bg-orchid-700">
+                    Full house
+                  </span>
+                </div>
               )}
               <ScheduleByDayComponentBooking
                 day={i}
                 currentDay={currentDay}
                 classesExist={classesExist}
-                onClick={(dateStart, classExist) => {
+                onClick={(dateStart, classExist, isDisable) => {
                   setClassDetail({
                     show: true,
-                    payload: { classExist, dateStart },
+                    payload: { classExist, dateStart, isDisable },
                   });
                 }}
               />
@@ -261,7 +268,7 @@ export default function ScheduleBooking() {
                       key={i}
                       className={`relative text-center rounded-xl select-none hover:bg-cararra-50 ${!isReserved ? 'cursor-pointer' : 'cursor-not-allowed'}`}
                       onClick={() => {
-                        if (!isReserved) {
+                        if (!isReserved && !classDetail.payload.isDisable) {
                           setConfirmReserve({
                             show: true,
                             payload: {
@@ -277,15 +284,22 @@ export default function ScheduleBooking() {
                         }
                       }}
                     >
-                      <span
-                        className={`text-center material-symbols-outlined ${!isReserved ? 'text-mindaro-400' : 'text-orchid-400'}`}
-                        style={{ fontSize: '60px' }}
-                      >
-                        directions_bike
-                      </span>
-                      <span className="absolute bottom-0 text-center bg-white border rounded-full left-2/3 w-7">
-                        {position}
-                      </span>
+                      <div class="has-tooltip">
+                        <span
+                          className={`text-center material-symbols-outlined ${!isReserved ? 'text-mindaro-400' : 'text-orchid-400'}`}
+                          style={{ fontSize: '60px' }}
+                        >
+                          directions_bike
+                        </span>
+                        <span className="absolute bottom-0 text-center bg-white border rounded-full left-2/3 w-7">
+                          {position}
+                        </span>
+                        {isReserved && (
+                          <span class="tooltip rounded shadow-lg p-1 bg-cararra-100 -left-2 -bottom-2">
+                            {isReserved?.user?.name}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
@@ -303,7 +317,7 @@ export default function ScheduleBooking() {
               </div>
               <div>
                 <Button
-                  text="Cancelar"
+                  text="Cancel"
                   type="outline"
                   onClick={() => setClassDetail({ show: false })}
                 />

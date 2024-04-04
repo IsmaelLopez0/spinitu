@@ -115,6 +115,7 @@ export default function Booking() {
             </div>
 
             <Autocomplete
+              label={<div className="mt-2">Membership Package</div>}
               list={memberships}
               selected={membershipSelected}
               setSelected={setMembershipSelected}
