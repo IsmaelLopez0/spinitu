@@ -1,10 +1,11 @@
-"use client";
-import { useForm, Controller } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
-import { useState } from "react";
-import Input from "@/components/atoms/Input";
-import Button from "@/components/atoms/Button";
+'use client';
+import { useForm, Controller } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
+import { useState } from 'react';
+import Input from '@/components/atoms/Input';
+import Button from '@/components/atoms/Button';
+import { useUserConfig } from '@/stores/useUserConfig';
 
 export default function LoginPage() {
   const {
@@ -15,9 +16,10 @@ export default function LoginPage() {
   } = useForm();
   const router = useRouter();
   const [error, setError] = useState();
+  const user = useUserConfig((state) => state.user);
 
   async function onSubmit(data) {
-    const res = await signIn("credentials", {
+    const res = await signIn('credentials', {
       email: data.email,
       password: data.password,
       redirect: false,
@@ -25,9 +27,13 @@ export default function LoginPage() {
     if (res.error) {
       setError(res.error);
     } else {
-      router.push("/dashboard");
+      router.push('/dashboard');
       router.refresh();
     }
+  }
+
+  if (user) {
+    router.push('/dashboard');
   }
 
   return (
@@ -54,10 +60,10 @@ export default function LoginPage() {
               errors={errors}
               placeholder="email@domain.com"
               type="email"
-              {...register("email", {
+              {...register('email', {
                 required: {
                   value: true,
-                  message: "Email is required",
+                  message: 'Email is required',
                 },
               })}
               {...field}
@@ -75,10 +81,10 @@ export default function LoginPage() {
               errors={errors}
               placeholder="********"
               type="password"
-              {...register("password", {
+              {...register('password', {
                 required: {
                   value: true,
-                  message: "Password is required",
+                  message: 'Password is required',
                 },
               })}
               {...field}

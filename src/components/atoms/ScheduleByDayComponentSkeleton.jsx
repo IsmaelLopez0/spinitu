@@ -23,13 +23,7 @@ const shedulByDay = [
   [null, 2, 3, 4, 5, null, null, null, null],
 ];
 
-export default function ScheduleByDayComponent({
-  day,
-  currentDay,
-  isCoach,
-  classesExist,
-  onClick = () => {},
-}) {
+export default function ScheduleByDayComponentSkeleton({ day }) {
   return shedulByDay[day].map((currSchedule, i) => {
     if (currSchedule === null) {
       return (
@@ -49,36 +43,39 @@ export default function ScheduleByDayComponent({
         </div>
       );
     }
-    const today = new Date();
-    const hour = validSchedule[currSchedule].start.replace(/:.*/, '');
-    const dayWithHour = currentDay.setHours(hour, 0);
-    const isDisable =
-      compareDates(today, currentDay.setHours(hour - 1, 50)) !== 1;
-    const classExist = classesExist[dayWithHour];
-    const totalCoaches = classExist?.couchesDisponibility?.length ?? 0;
-    const defaultCoach =
-      classExist?.couchesDisponibility?.find(
-        (f) => f.id === classExist.instructor_id,
-      ) ?? '';
     return (
-      <div
-        key={day + '-' + i}
-        className={`text-cararra-100 w-full h-24 flex flex-col justify-center items-center rounded-md ${
-          isDisable
-            ? 'bg-orchid-200 cursor-not-allowed'
-            : 'bg-orchid-400 cursor-pointer'
-        }`}
-        onClick={() => {
-          !isDisable && onClick(new Date(dayWithHour), classExist);
-        }}
-      >
-        <p className="text-sm">Availables: {totalCoaches}</p>
-        {totalCoaches > 0 ? (
-          <p className="text-xs">
-            Assigned: {defaultCoach.name} {defaultCoach.lastname}
-          </p>
-        ) : null}
+      <div class="border border-orchid-100 shadow rounded-md p-4 max-w-sm w-full mx-auto h-24">
+        <div class="animate-pulse flex space-x-4">
+          <div class="flex-1 space-y-6 py-1">
+            <div class="space-y-3">
+              <div class="grid grid-cols-1 gap-4">
+                <div class="h-2 bg-orchid-300 rounded col-span-1"></div>
+                <div class="h-2 bg-orchid-300 rounded col-span-1"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
+    // return (
+    //   <div
+    //     key={day + '-' + i}
+    //     className={`animate-pulse text-cararra-100 w-full h-24 flex flex-col justify-center items-center rounded-md ${
+    //       isDisable
+    //         ? 'bg-orchid-200 cursor-not-allowed'
+    //         : 'bg-orchid-400 cursor-pointer'
+    //     }`}
+    //     onClick={() => {
+    //       !isDisable && onClick(new Date(dayWithHour), classExist);
+    //     }}
+    //   >
+    //     <p className="text-sm">Availables: {totalCoaches}</p>
+    //     {totalCoaches > 0 ? (
+    //       <p className="text-xs">
+    //         Assigned: {defaultCoach.name} {defaultCoach.lastname}
+    //       </p>
+    //     ) : null}
+    //   </div>
+    // );
   });
 }

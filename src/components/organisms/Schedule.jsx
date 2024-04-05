@@ -7,6 +7,7 @@ import {
 } from '@heroicons/react/16/solid';
 import GenericLoading from '../atoms/GenericLoading';
 import ScheduleByDayComponent from '../atoms/ScheduleByDayComponent';
+import ScheduleByDayComponentSkeleton from '../atoms/ScheduleByDayComponentSkeleton';
 import Dialog from '../atoms/Dialog';
 import {
   getDay,
@@ -110,6 +111,7 @@ export default function Schedule() {
   const [firstDayWeek, setFirstDayWeek] = useState();
   const [classesExist, setClassesExist] = useState({});
   const [classDetail, setClassDetail] = useState({ show: false });
+  const [isLoading, setIsLoading] = useState(false);
   const user = useUserConfig((state) => state.user);
   const setUser = useUserConfig((state) => state.setUser);
 
@@ -139,7 +141,7 @@ export default function Schedule() {
     if (isFirstLoad && user?.name) {
       const coach = Boolean(user?.coaches?.user_id);
       setIsCoach(coach);
-      setWeek(coach ? currentWeek + 2 : currentWeek);
+      setWeek(currentWeek);
       setIsFirstLoad(false);
     }
     const firstDayWeek = new Date(
@@ -160,7 +162,11 @@ export default function Schedule() {
   }
 
   function getClassExist() {
-    getWeekClasses(firstDayWeek).then((res) => setClassesExist(res));
+    // setIsLoading(true);
+    getWeekClasses(firstDayWeek).then((res) => {
+      setClassesExist(res);
+      setIsLoading(false);
+    });
   }
 
   function handleWeek(isNextWeek = true) {
@@ -219,18 +225,22 @@ export default function Schedule() {
                   key={day + '-' + i}
                 />
               )}
-              <ScheduleByDayComponent
-                day={i}
-                currentDay={currentDay}
-                isCoach={isCoach}
-                classesExist={classesExist}
-                onClick={(dateStart, classExist) => {
-                  setClassDetail({
-                    show: true,
-                    payload: { classExist, dateStart },
-                  });
-                }}
-              />
+              {isLoading ? (
+                <ScheduleByDayComponentSkeleton day={i} />
+              ) : (
+                <ScheduleByDayComponent
+                  day={i}
+                  currentDay={currentDay}
+                  isCoach={isCoach}
+                  classesExist={classesExist}
+                  onClick={(dateStart, classExist) => {
+                    setClassDetail({
+                      show: true,
+                      payload: { classExist, dateStart },
+                    });
+                  }}
+                />
+              )}
             </React.Fragment>
           );
         })}

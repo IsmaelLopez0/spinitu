@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Input from '@/components/atoms/Input';
 import Button from '@/components/atoms/Button';
 import { setToast } from '@/libs/notificationsAPIs';
+import { useUserConfig } from '@/stores/useUserConfig';
 
 export default function RegisterPage() {
   const {
@@ -21,6 +22,7 @@ export default function RegisterPage() {
     },
   });
   const router = useRouter();
+  const user = useUserConfig((state) => state.user);
 
   async function onSubmit(data) {
     if (data.password !== data.confirmPassword) {
@@ -39,6 +41,10 @@ export default function RegisterPage() {
       const data = await res.json();
       setToast(data.message, 'error', '/api/auth/register');
     }
+  }
+
+  if (user) {
+    router.push('/dashboard');
   }
 
   return (

@@ -199,7 +199,7 @@ export default function ScheduleBooking() {
                   key={day + '-' + i}
                 >
                   <span className="p-1 rounded bg-orchid-500/50">
-                    Previous class
+                    Not available
                   </span>
                   <span className="p-1 rounded bg-orchid-500">Available</span>
                   <span className="h-full p-1 rounded bg-orchid-700">
