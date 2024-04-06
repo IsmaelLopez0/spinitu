@@ -87,22 +87,22 @@ export default function AdminCoaches({ setCallbackAddCoach }) {
       <table className="w-full text-sm text-left text-gray-500 rtl:text-right">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50">
           <tr>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 text-center">
               Name
             </th>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 text-center">
               Last Name
             </th>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 text-center">
               Specializations
             </th>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 text-center">
               Email
             </th>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 text-center">
               Phone
             </th>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 text-center">
               Actions
             </th>
           </tr>
@@ -117,11 +117,11 @@ export default function AdminCoaches({ setCallbackAddCoach }) {
               >
                 <th
                   scope="row"
-                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                  className="px-6 py-4 font-medium text-center text-gray-900 whitespace-nowrap"
                 >
                   {coach.name}
                 </th>
-                <td className="px-6 py-4">{coach.lastname}</td>
+                <td className="px-6 py-4 text-center">{coach.lastname}</td>
                 <td className="px-6 py-4">
                   <ul className="list-disc">
                     {JSON.parse(coach.specializations).map((e, i) => (
@@ -129,8 +129,8 @@ export default function AdminCoaches({ setCallbackAddCoach }) {
                     ))}
                   </ul>
                 </td>
-                <td className="px-6 py-4">{coach.email}</td>
-                <td className="px-6 py-4">{coach.phone}</td>
+                <td className="px-6 py-4 text-center">{coach.email}</td>
+                <td className="px-6 py-4 text-center">{coach.phone}</td>
                 <td className="px-6 py-4">
                   <XCircleIcon
                     className="text-red-500 h-7"

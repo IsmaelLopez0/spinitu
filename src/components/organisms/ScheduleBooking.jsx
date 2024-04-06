@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { getSession } from 'next-auth/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/16/solid';
 import GenericLoading from '../atoms/GenericLoading';
 import ScheduleByDayComponentBooking from '../atoms/ScheduleByDayComponentBooking';
+import ScheduleByDayComponentSkeleton from '../atoms/ScheduleByDayComponentSkeleton';
 import Dialog from '../atoms/Dialog';
 import {
   getDay,
@@ -54,8 +54,8 @@ export default function ScheduleBooking() {
   const [classDetail, setClassDetail] = useState({ show: false });
   const [confirmReserve, setConfirmReserve] = useState({ show: false });
   const [userSelected, setUserSelected] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const user = useUserConfig((state) => state.user);
-  const setUser = useUserConfig((state) => state.setUser);
 
   function getClients(isReload = false) {
     const params = { url: '/user/allClients', method: 'GET' };
@@ -79,38 +79,21 @@ export default function ScheduleBooking() {
   }
 
   useEffect(() => {
-    const añoActual = new Date().getFullYear();
-    const firstDayYear = new Date(añoActual, 0, 1);
     if (isFirstLoad && user?.name) {
       getClients();
       setWeek(currentWeek);
       setIsFirstLoad(false);
     }
+  }, [isFirstLoad, user]);
+
+  useEffect(() => {
+    const añoActual = new Date().getFullYear();
+    const firstDayYear = new Date(añoActual, 0, 1);
     const firstDayWeek = new Date(
       firstDayYear.getTime() + (week - 1) * 7 * 24 * 60 * 60 * 1000,
     );
     setFirstDayWeek(firstDayWeek);
-  }, [isFirstLoad, week]);
-
-  useEffect(() => {
-    if (!user?.name) {
-      getSession().then(({ user }) => {
-        const params = {
-          url: '/user/user',
-          query: { email: user.email },
-          method: 'GET',
-        };
-        genericFetch(params).then((data) => {
-          if (data.statusCode === 200) {
-            setUser(data.body);
-          } else {
-            setToast(data.body.error, 'error', params.url + data.statusCode);
-          }
-        });
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [week]);
 
   useEffect(() => {
     if (firstDayWeek) {
@@ -124,7 +107,11 @@ export default function ScheduleBooking() {
   }
 
   function getClassExist() {
-    getWeekClasses(firstDayWeek).then((res) => setClassesExist(res));
+    setIsLoading(true);
+    getWeekClasses(firstDayWeek).then((res) => {
+      setClassesExist(res);
+      setIsLoading(false);
+    });
   }
 
   function handleWeek(isNextWeek = true) {
@@ -207,17 +194,21 @@ export default function ScheduleBooking() {
                   </span>
                 </div>
               )}
-              <ScheduleByDayComponentBooking
-                day={i}
-                currentDay={currentDay}
-                classesExist={classesExist}
-                onClick={(dateStart, classExist, isDisable) => {
-                  setClassDetail({
-                    show: true,
-                    payload: { classExist, dateStart, isDisable },
-                  });
-                }}
-              />
+              {isLoading ? (
+                <ScheduleByDayComponentSkeleton day={i} />
+              ) : (
+                <ScheduleByDayComponentBooking
+                  day={i}
+                  currentDay={currentDay}
+                  classesExist={classesExist}
+                  onClick={(dateStart, classExist, isDisable) => {
+                    setClassDetail({
+                      show: true,
+                      payload: { classExist, dateStart, isDisable },
+                    });
+                  }}
+                />
+              )}
             </React.Fragment>
           );
         })}

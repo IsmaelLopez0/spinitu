@@ -19,7 +19,6 @@ import { createNotification } from '@/libs/notificationsAPIs';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
 import { useUserConfig } from '@/stores/useUserConfig';
-import { getSession } from 'next-auth/react';
 
 const dias = ['Time', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -113,45 +112,27 @@ export default function Schedule() {
   const [classDetail, setClassDetail] = useState({ show: false });
   const [isLoading, setIsLoading] = useState(false);
   const user = useUserConfig((state) => state.user);
-  const setUser = useUserConfig((state) => state.setUser);
 
   useEffect(() => {
-    if (!user?.name) {
-      getSession().then(({ user }) => {
-        const params = {
-          url: '/user/user',
-          query: { email: user.email },
-          method: 'GET',
-        };
-        genericFetch(params).then((data) => {
-          if (data.statusCode === 200) {
-            setUser(data.body);
-          } else {
-            setToast(data.body.error, 'error', params.url + data.statusCode);
-          }
-        });
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    const añoActual = new Date().getFullYear();
-    const firstDayYear = new Date(añoActual, 0, 1);
     if (isFirstLoad && user?.name) {
       const coach = Boolean(user?.coaches?.user_id);
       setIsCoach(coach);
       setWeek(currentWeek);
       setIsFirstLoad(false);
     }
+  }, [isFirstLoad, user]);
+
+  useEffect(() => {
+    const añoActual = new Date().getFullYear();
+    const firstDayYear = new Date(añoActual, 0, 1);
     const firstDayWeek = new Date(
       firstDayYear.getTime() + (week - 1) * 7 * 24 * 60 * 60 * 1000,
     );
     setFirstDayWeek(firstDayWeek);
-  }, [isFirstLoad, user, week]);
+  }, [week]);
 
   useEffect(() => {
-    if (firstDayWeek) {
+    if (firstDayWeek && isLoading === false) {
       getClassExist();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -162,7 +143,7 @@ export default function Schedule() {
   }
 
   function getClassExist() {
-    // setIsLoading(true);
+    setIsLoading(true);
     getWeekClasses(firstDayWeek).then((res) => {
       setClassesExist(res);
       setIsLoading(false);
@@ -197,7 +178,7 @@ export default function Schedule() {
           return (
             <React.Fragment key={currentDay}>
               {i > 0 ? (
-                <div className="sticky top-[65px] bg-cararra-100 flex items-center justify-center nm-10">
+                <div className="sticky top-[60px] bg-cararra-100 flex items-center justify-center nm-10">
                   {i === 1 ? (
                     <ChevronLeftIcon
                       className="mr-2 cursor-pointer text-mindaro-700 h-7"

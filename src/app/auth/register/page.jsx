@@ -44,7 +44,7 @@ export default function RegisterPage() {
   }
 
   if (user) {
-    router.push('/dashboard');
+    router.push('/booking');
   }
 
   return (

@@ -8,6 +8,10 @@ module.exports = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    fontFamily: {
+      theseasons: ['theseasons', 'sans-serif'],
+      ttchocolates: ['ttchocolates', 'sans-serif'],
+    },
     colors: {
       ...colors,
       cararra: {

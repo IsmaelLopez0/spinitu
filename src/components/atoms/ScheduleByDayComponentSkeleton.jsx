@@ -44,13 +44,16 @@ export default function ScheduleByDayComponentSkeleton({ day }) {
       );
     }
     return (
-      <div class="border border-orchid-100 shadow rounded-md p-4 max-w-sm w-full mx-auto h-24">
-        <div class="animate-pulse flex space-x-4">
-          <div class="flex-1 space-y-6 py-1">
-            <div class="space-y-3">
-              <div class="grid grid-cols-1 gap-4">
-                <div class="h-2 bg-orchid-300 rounded col-span-1"></div>
-                <div class="h-2 bg-orchid-300 rounded col-span-1"></div>
+      <div
+        key={day + '-' + i}
+        className="w-full h-24 max-w-sm p-4 mx-auto border rounded-md shadow border-orchid-100"
+      >
+        <div className="flex space-x-4 animate-pulse">
+          <div className="flex-1 py-1 space-y-6">
+            <div className="space-y-3">
+              <div className="grid grid-cols-1 gap-4">
+                <div className="h-2 col-span-1 rounded bg-orchid-300"></div>
+                <div className="h-2 col-span-1 rounded bg-orchid-300"></div>
               </div>
             </div>
           </div>
