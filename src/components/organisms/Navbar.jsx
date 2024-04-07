@@ -11,7 +11,7 @@ const outSessionMenu = [
 
 const inSessionMenu = [
   { href: '/booking', title: 'Booking' },
-  { href: '/coaches', title: 'Coaches' },
+  { href: '/availability', title: 'Availability' },
   // { href: '/dashboard', title: 'Dashboard' },
   { component: <Notifications /> },
   { component: <Profile /> },

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Button from '../atoms/Button';
 import Dialog from '../atoms/Dialog';
-import { XCircleIcon } from '@heroicons/react/16/solid';
+import { XCircleIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
 
@@ -19,7 +19,7 @@ async function getCoaches() {
   return data.body;
 }
 
-export default function AdminCoaches({ setCallbackAddCoach }) {
+export default function AdminCoaches({ setCallbackAddCoach, handleDialog }) {
   const [coaches, setCoaches] = useState([]);
   const [dialog, setDialog] = useState({ show: false });
 
@@ -131,9 +131,13 @@ export default function AdminCoaches({ setCallbackAddCoach }) {
                 </td>
                 <td className="px-6 py-4 text-center">{coach.email}</td>
                 <td className="px-6 py-4 text-center">{coach.phone}</td>
-                <td className="px-6 py-4">
+                <td className="flex justify-center gap-1 px-6 py-4">
+                  <PencilSquareIcon
+                    className="cursor-pointer text-mindaro-950 h-7"
+                    onClick={() => handleDialog(coach)}
+                  />
                   <XCircleIcon
-                    className="text-red-500 h-7"
+                    className="text-red-500 cursor-pointer h-7"
                     onClick={() => askForDelete(coach.email)}
                   />
                 </td>

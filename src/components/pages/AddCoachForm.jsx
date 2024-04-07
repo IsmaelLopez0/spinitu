@@ -1,10 +1,12 @@
 'use client';
+import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import Input from '@/components/atoms/Input';
 import Button from '@/components/atoms/Button';
 import { setToast } from '@/libs/notificationsAPIs';
 
-export default function RegisterPage(props) {
+export default function RegisterPage({ data, rol, isUpdate, ...props }) {
+  const [isLoading, setIsLoading] = useState(false);
   const {
     control,
     register,
@@ -12,19 +14,21 @@ export default function RegisterPage(props) {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: '',
-      lastname: '',
-      email: '',
+      name: data?.name ?? '',
+      lastname: data?.lastname ?? '',
+      email: data?.email ?? '',
       password: '',
-      phone: '',
-      specializations: '',
-      rol: 'COACH',
+      phone: data?.phone ?? '',
+      specializations:
+        JSON.parse(data?.specializations ?? '[]')?.join(', ') ?? '',
+      rol,
     },
   });
 
   async function onSubmit(data) {
+    setIsLoading(true);
     const res = await fetch('/api/auth/register', {
-      method: 'POST',
+      method: isUpdate ? 'PUT' : 'POST',
       body: JSON.stringify(data),
       headers: {
         'Content-Type': 'application/json',
@@ -84,49 +88,51 @@ export default function RegisterPage(props) {
         />
       </div>
 
-      <div className="flex items-center gap-5 mb-3">
-        <Controller
-          name="email"
-          control={control}
-          render={({ field }) => (
-            <Input
-              label="Email"
-              name="email"
-              type="email"
-              errors={errors}
-              placeholder="email@domain.com"
-              {...register('email', {
-                required: {
-                  value: true,
-                  message: 'Email is required',
-                },
-              })}
-              {...field}
-            />
-          )}
-        />
+      {!data ? (
+        <div className="flex items-center gap-5 mb-3">
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <Input
+                label="Email"
+                name="email"
+                type="email"
+                errors={errors}
+                placeholder="email@domain.com"
+                {...register('email', {
+                  required: {
+                    value: true,
+                    message: 'Email is required',
+                  },
+                })}
+                {...field}
+              />
+            )}
+          />
 
-        <Controller
-          name="password"
-          control={control}
-          render={({ field }) => (
-            <Input
-              label="Password"
-              name="password"
-              errors={errors}
-              placeholder="********"
-              type="password"
-              {...register('password', {
-                required: {
-                  value: true,
-                  message: 'Password is required',
-                },
-              })}
-              {...field}
-            />
-          )}
-        />
-      </div>
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <Input
+                label="Password"
+                name="password"
+                errors={errors}
+                placeholder="********"
+                type="password"
+                {...register('password', {
+                  required: {
+                    value: true,
+                    message: 'Password is required',
+                  },
+                })}
+                {...field}
+              />
+            )}
+          />
+        </div>
+      ) : null}
 
       <div className="flex items-center gap-5 mb-3">
         <Controller
@@ -151,25 +157,27 @@ export default function RegisterPage(props) {
             />
           )}
         />
-        <Controller
-          name="specializations"
-          control={control}
-          render={({ field }) => (
-            <Input
-              label="Specializations"
-              name="specializations"
-              errors={errors}
-              placeholder="specialization1, specialization2, specialization3"
-              {...register('specializations', {
-                required: {
-                  value: true,
-                  message: 'Specializations is required',
-                },
-              })}
-              {...field}
-            />
-          )}
-        />
+        {rol === 'COACH' ? (
+          <Controller
+            name="specializations"
+            control={control}
+            render={({ field }) => (
+              <Input
+                label="Specializations"
+                name="specializations"
+                errors={errors}
+                placeholder="specialization1, specialization2, specialization3"
+                {...register('specializations', {
+                  required: {
+                    value: true,
+                    message: 'Specializations is required',
+                  },
+                })}
+                {...field}
+              />
+            )}
+          />
+        ) : null}
       </div>
 
       <div className="flex gap-5">
@@ -181,8 +189,8 @@ export default function RegisterPage(props) {
         >
           Cancel
         </Button>
-        <Button color="mindaro" className="w-full">
-          Register
+        <Button color="mindaro" className="w-full" isLoading={isLoading}>
+          {data ? 'Update' : 'Register'}
         </Button>
       </div>
     </form>

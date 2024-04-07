@@ -93,7 +93,7 @@ export default function LoginPage() {
         />
 
         <Button color="mindaro" type="solid" className="w-full">
-          Register
+          Login
         </Button>
       </form>
     </div>

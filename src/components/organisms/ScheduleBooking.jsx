@@ -55,6 +55,7 @@ export default function ScheduleBooking() {
   const [confirmReserve, setConfirmReserve] = useState({ show: false });
   const [userSelected, setUserSelected] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingReservation, setIsLoadingReservation] = useState(false);
   const user = useUserConfig((state) => state.user);
 
   function getClients(isReload = false) {
@@ -111,6 +112,7 @@ export default function ScheduleBooking() {
     getWeekClasses(firstDayWeek).then((res) => {
       setClassesExist(res);
       setIsLoading(false);
+      setIsLoadingReservation(false);
     });
   }
 
@@ -128,6 +130,7 @@ export default function ScheduleBooking() {
   }
 
   async function reservClass(payload) {
+    setIsLoadingReservation(true);
     const { position, classExist } = payload;
     const res = await fetch('/api/reservation', {
       method: 'POST',
@@ -143,6 +146,7 @@ export default function ScheduleBooking() {
     if (res.ok) {
       setConfirmReserve({ show: false });
       getClients(true);
+      getClassExist();
     } else {
       const data = await res.json();
       setToast(data.message, 'error', '/api/reservation');
@@ -350,6 +354,7 @@ export default function ScheduleBooking() {
           </div>
           <div className="flex flex-col justify-between overflow-auto">
             <Autocomplete
+              label={<div className="mt-2">Select user:</div>}
               list={data.filter(
                 (f) => !confirmReserve.payload?.usersInClass.includes(f.id),
               )}
@@ -367,6 +372,7 @@ export default function ScheduleBooking() {
                 color="mindaro"
                 disabled={!userSelected}
                 onClick={() => reservClass(confirmReserve.payload)}
+                isLoading={isLoadingReservation}
               >
                 Add to class
               </Button>

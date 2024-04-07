@@ -53,10 +53,6 @@ export const metadata = {
   title: 'SPĪNĪTU',
   description:
     'SPĪNĪTU es un ride a nuestro yo más auténtico. El más brillante. El más valiente. Rodamos con todo nuestro espíritu, cuerpo y alma.',
-  icons: {
-    icon: '/icon.png',
-    shortcut: '/shortcut-icon.png',
-  },
 };
 
 export default function RootLayout({ children }) {

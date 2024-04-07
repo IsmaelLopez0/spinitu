@@ -50,3 +50,38 @@ export async function POST(request) {
     return NextResponse.json({ message: err.message }, { status: 400 });
   }
 }
+
+export async function PUT(request) {
+  try {
+    const data = await request.json();
+    const emailFound = await prisma.user.findUnique({
+      where: {
+        email: data.email,
+      },
+    });
+    if (!emailFound) throw new Error('The email does not exist');
+    const { confirmPassword, specializations, membershipTypeId, ...userData } =
+      data;
+    const newData = { ...userData };
+    const newUser = await prisma.user.update({
+      where: { email: data.email },
+      data: newData,
+    });
+    if (specializations) {
+      const specializationsParsed = specializations
+        .split(',')
+        .map((e) => e.trim());
+      await prisma.coach.create({
+        data: {
+          user_id: newUser.id,
+          specializations: JSON.stringify(specializationsParsed),
+        },
+      });
+    }
+    const { password, ...user } = newUser;
+    return NextResponse.json(user, { status: 200 });
+  } catch (err) {
+    console.log(err);
+    return NextResponse.json({ message: err.message }, { status: 400 });
+  }
+}

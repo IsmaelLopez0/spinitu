@@ -7,13 +7,18 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-export default function Tabs({ tabs, actionButtons = [], currentTab }) {
-  const [selectedTab, setSelectedTab] = useState(0);
+export default function Tabs({
+  tabs,
+  actionButtons = [],
+  currentTab = 0,
+  setCurrentTab,
+}) {
+  const [selectedTab, setSelectedTab] = useState(currentTab);
 
   function setTab(index) {
     setSelectedTab(index);
-    if (currentTab) {
-      currentTab(index);
+    if (setCurrentTab) {
+      setCurrentTab(index);
     }
   }
 

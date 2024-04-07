@@ -1,4 +1,4 @@
-export default function Table({ title, headers, data, ...props }) {
+export default function Table({ title, headers, data, Actions, ...props }) {
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
       <table className="w-full text-sm text-left text-gray-500 rtl:text-right ">
@@ -21,7 +21,7 @@ export default function Table({ title, headers, data, ...props }) {
                 {header.title}
               </th>
             ))}
-            {props.actions ? (
+            {Actions ? (
               <th scope="col" className="px-6 py-3">
                 <span className="sr-only">Edit</span>
               </th>
@@ -47,9 +47,7 @@ export default function Table({ title, headers, data, ...props }) {
                   </td>
                 );
               })}
-              {props.actions ? (
-                <td className="px-6 py-4 text-right">{props.actions}</td>
-              ) : null}
+              {Actions ? <Actions item={item} /> : null}
             </tr>
           ))}
         </tbody>

@@ -137,6 +137,7 @@ export default function AllUsersList(props) {
             : {addClassDialog.payload.days_to_access ?? 0}
           </p>
           <Autocomplete
+            label={<div className="mt-2">Select membership:</div>}
             list={memberships}
             selected={membershipSelected}
             setSelected={setMembershipSelected}
