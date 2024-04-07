@@ -38,6 +38,9 @@ export default function Profile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const capitalizeRol = (rol = '') =>
+    `${rol.charAt(0)}${rol.substring(1, rol.length).toLowerCase()}`;
+
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
@@ -71,10 +74,10 @@ export default function Profile() {
                   </p>
                   <span
                     className={
-                      'bg-swirl-300 px-2 rounded-md text-white w-fit text-sm'
+                      'bg-swirl-300 px-2 rounded-md my-1 text-white w-fit text-sm capitalize'
                     }
                   >
-                    ROL
+                    {capitalizeRol(user.rol)}
                   </span>
                 </div>
               )}
