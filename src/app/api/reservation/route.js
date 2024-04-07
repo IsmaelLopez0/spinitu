@@ -28,6 +28,10 @@ export async function POST(req) {
         },
       }),
     ]);
+    await prisma.membership.update({
+      where: { id: canReserv.id, days_to_access: 0 },
+      data: { end_date: new Date(), is_active: false },
+    });
     return NextResponse.json(res, { status: 200 });
   } catch (error) {
     console.error('Error fetching user:', error);
