@@ -115,7 +115,7 @@ export default function AvailabilityPage() {
 
   useEffect(() => {
     if (isFirstLoad && user?.name) {
-      const coach = Boolean(user?.coaches?.user_id);
+      const coach = Boolean(user?.rol === 'COACH');
       setIsCoach(coach);
       setWeek(currentWeek);
       setIsFirstLoad(false);

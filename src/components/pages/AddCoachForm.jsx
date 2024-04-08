@@ -11,6 +11,7 @@ export default function RegisterPage({ data, rol, isUpdate, ...props }) {
     control,
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -25,6 +26,11 @@ export default function RegisterPage({ data, rol, isUpdate, ...props }) {
     },
   });
 
+  const resetForm = () => {
+    reset();
+    setIsLoading(false);
+  };
+
   async function onSubmit(data) {
     setIsLoading(true);
     const res = await fetch('/api/auth/register', {
@@ -35,6 +41,7 @@ export default function RegisterPage({ data, rol, isUpdate, ...props }) {
       },
     });
     if (res.ok) {
+      resetForm();
       if (props.saveData) props.saveData();
     } else {
       setToast(data.message, 'error', '/api/auth/register');
@@ -146,7 +153,6 @@ export default function RegisterPage({ data, rol, isUpdate, ...props }) {
               placeholder="123-456-7890"
               type="tel"
               defaultValue={props.userData?.phone}
-              pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
               {...register('phone', {
                 required: {
                   value: true,
@@ -185,7 +191,10 @@ export default function RegisterPage({ data, rol, isUpdate, ...props }) {
           color="orchid"
           className="w-full"
           type="outline"
-          onClick={() => props.closeDialog({ show: false })}
+          onClick={() => {
+            resetForm();
+            props.closeDialog({ show: false });
+          }}
         >
           Cancel
         </Button>

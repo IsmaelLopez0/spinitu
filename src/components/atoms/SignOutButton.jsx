@@ -3,11 +3,12 @@ import { signOut } from 'next-auth/react';
 import Button from './Button';
 
 export default function SignOutButton({ isMenu, active }) {
+  const signOutFunc = () => signOut();
   if (isMenu) {
     return (
       <button
         className="flex items-center w-full text-sm rounded-md"
-        onClick={() => signOut()}
+        onClick={signOutFunc}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -29,11 +30,7 @@ export default function SignOutButton({ isMenu, active }) {
   }
 
   return (
-    <Button
-      color="orchid"
-      className="px-3 py-1 text-sm"
-      onClick={() => signOut()}
-    >
+    <Button color="orchid" className="px-3 py-1 text-sm" onClick={signOutFunc}>
       Sign out
     </Button>
   );

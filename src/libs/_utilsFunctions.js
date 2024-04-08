@@ -13,6 +13,7 @@ export function getDay(firstDayWeek, i) {
 
 export function compareDates(d1, d2) {
   const date1 = d1.getTime();
+  console.log(new Date(date1), new Date(d2));
   if (date1 < d2) return 1; // d1 is less than d2
   if (date1 > d2) return 2; // d1 is greater than d2
   return 0; // Both dates are equal

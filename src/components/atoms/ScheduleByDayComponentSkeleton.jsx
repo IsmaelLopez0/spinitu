@@ -1,15 +1,15 @@
 import { compareDates, getIsValidDifference } from '@/libs/_utilsFunctions';
 
 const validSchedule = {
-  1: { start: '6:00', end: '7:00' },
-  2: { start: '7:00', end: '8:00' },
-  3: { start: '8:00', end: '9:00' },
-  4: { start: '9:00', end: '10:00' },
-  5: { start: '10:00', end: '11:00' },
-  6: { start: '18:00', end: '19:00' },
-  7: { start: '19:00', end: '20:00' },
-  8: { start: '20:00', end: '21:00' },
-  9: { start: '21:00', end: '22:00' },
+  1: { start: '6:15', end: '7:00' },
+  2: { start: '7:15', end: '8:00' },
+  3: { start: '8:15', end: '9:00' },
+  4: { start: '9:15', end: '10:00' },
+  5: { start: '10:15', end: '11:00' },
+  6: { start: '18:15', end: '19:00' },
+  7: { start: '19:15', end: '20:00' },
+  8: { start: '20:15', end: '21:00' },
+  9: { start: '21:15', end: '22:00' },
 };
 
 const shedulByDay = [

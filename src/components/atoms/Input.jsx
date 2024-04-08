@@ -16,7 +16,7 @@ export default function Input({
   type = 'text',
   ...props
 }) {
-  const [eyeOpen, setEyeOpen] = useState(true);
+  const [eyeOpen, setEyeOpen] = useState(false);
 
   return (
     <div className="w-full">

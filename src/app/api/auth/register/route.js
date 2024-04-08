@@ -60,9 +60,10 @@ export async function PUT(request) {
       },
     });
     if (!emailFound) throw new Error('The email does not exist');
-    const { confirmPassword, specializations, membershipTypeId, ...userData } =
-      data;
+    const { specializations, membershipTypeId, ...userData } = data;
     const newData = { ...userData };
+    delete newData.password;
+    delete newData.confirmPassword;
     const newUser = await prisma.user.update({
       where: { email: data.email },
       data: newData,

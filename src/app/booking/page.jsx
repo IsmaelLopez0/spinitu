@@ -37,12 +37,19 @@ export default function Booking() {
   const [showDialog, setShowDialog] = useState(false);
   const [memberships, setMemberships] = useState([]);
   const [membershipSelected, setMembershipSelected] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const [tabs] = useReducer(tabsReducer, [
     { title: 'Today', content: <UserList /> },
     { title: 'Schedule', content: <ScheduleBooking /> },
     { title: 'All Users', content: <AllUsersList /> },
   ]);
-  const { control, handleSubmit } = useForm();
+  const { control, handleSubmit, reset } = useForm();
+
+  const resetForm = () => {
+    reset();
+    setMembershipSelected();
+    setIsLoading(false);
+  };
 
   const actionButtons = [
     {
@@ -53,6 +60,7 @@ export default function Booking() {
   ];
 
   async function onSubmit(data) {
+    setIsLoading(true);
     const someInpustInalid = Object.values(data).some((s) =>
       [null, undefined, ''].includes(s),
     );
@@ -73,6 +81,7 @@ export default function Booking() {
       });
       if (res.ok) {
         setShowDialog(false);
+        resetForm();
       } else {
         const data = await res.json();
         setToast(data.message, 'error', '/api/auth/register');
@@ -122,12 +131,15 @@ export default function Booking() {
             />
 
             <div className="flex flex-row-reverse w-full gap-4 p-3">
-              <Button color="mindaro" text="Add" />
+              <Button color="mindaro" text="Add" isLoading={isLoading} />
               <Button
                 color="orchid"
                 type="outline"
                 text="Cancel"
-                onClick={() => setShowDialog(false)}
+                onClick={() => {
+                  resetForm();
+                  setShowDialog(false);
+                }}
               />
             </div>
           </form>

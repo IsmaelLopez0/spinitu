@@ -233,7 +233,7 @@ export default function ScheduleBooking() {
                 <div className="flex justify-between">
                   <p className="flex items-center">
                     <span
-                      className={`text-center material-symbols-outlined text-mindaro-400 mr-1 select-none`}
+                      className={`text-center material-symbols-outlined text-swirl-950 mr-1 select-none`}
                     >
                       directions_bike
                     </span>
@@ -241,7 +241,7 @@ export default function ScheduleBooking() {
                   </p>
                   <p className="flex items-center">
                     <span
-                      className={`text-center material-symbols-outlined text-orchid-400 mr-1 select-none`}
+                      className={`text-center material-symbols-outlined text-swirl-200 mr-1 select-none`}
                     >
                       directions_bike
                     </span>
@@ -281,7 +281,7 @@ export default function ScheduleBooking() {
                     >
                       <div class="has-tooltip">
                         <span
-                          className={`text-center material-symbols-outlined ${!isReserved ? 'text-mindaro-400' : 'text-orchid-400'}`}
+                          className={`text-center material-symbols-outlined ${!isReserved ? 'text-swirl-950' : 'text-swirl-200'}`}
                           style={{ fontSize: '60px' }}
                         >
                           directions_bike
@@ -347,7 +347,7 @@ export default function ScheduleBooking() {
             </p>
             <div className="flex flex-col items-center justify-center p-2 border rounded">
               {confirmReserve.payload?.position}
-              <span className="text-center material-symbols-outlined text-mindaro-400">
+              <span className="text-center material-symbols-outlined text-swirl-950">
                 directions_bike
               </span>
             </div>

@@ -5,13 +5,21 @@ import Profile from '../atoms/Profile';
 import NavMenuItems from '../atoms/NavMenuItems';
 
 const outSessionMenu = [
-  { href: '/auth/login', title: 'Login' },
+  // { href: '/auth/login', title: 'Login' },
   // { href: '/auth/register', title: 'Register' },
 ];
 
 const inSessionMenu = [
-  { href: '/booking', title: 'Booking' },
-  { href: '/availability', title: 'Availability' },
+  {
+    href: '/booking',
+    title: 'Booking',
+    roles: ['RECEPTIONIST', 'ADMINISTRATOR'],
+  },
+  {
+    href: '/availability',
+    title: 'Availability',
+    roles: ['COACH', 'ADMINISTRATOR'],
+  },
   // { href: '/dashboard', title: 'Dashboard' },
   { component: <Notifications /> },
   { component: <Profile /> },
