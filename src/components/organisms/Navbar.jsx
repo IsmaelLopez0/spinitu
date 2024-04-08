@@ -6,7 +6,7 @@ import NavMenuItems from '../atoms/NavMenuItems';
 
 const outSessionMenu = [
   { href: '/auth/login', title: 'Login' },
-  { href: '/auth/register', title: 'Register' },
+  // { href: '/auth/register', title: 'Register' },
 ];
 
 const inSessionMenu = [
