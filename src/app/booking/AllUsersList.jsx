@@ -6,8 +6,10 @@ import Input from '@/components/atoms/Input';
 import Button from '@/components/atoms/Button';
 import Autocomplete from '@/components/atoms/Autocomplete';
 import Dialog from '@/components/atoms/Dialog';
+import RadioGroup from '@/components/atoms/RadioGroup';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
+import { useUserConfig } from '@/stores/useUserConfig';
 
 const headers = [
   { title: 'Name', key: 'name' },
@@ -18,11 +20,21 @@ const headers = [
   { title: 'End of membership', key: 'end_date' },
 ];
 
+const paymentOptions = [
+  { value: 'CASH', name: 'Cash' },
+  { value: 'CREDIT_CARD', name: 'Credit Card' },
+  { value: 'DEBIT', name: 'Debit' },
+  { value: 'BANK_TRANSFERS', name: 'Bank Transfers' },
+];
+
 export default function AllUsersList(props) {
   const [data, setData] = useState([]);
   const [addClassDialog, setAddClassDialog] = useState({ show: false });
   const [memberships, setMemberships] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState('CASH');
+  const [isLoading, setIsLoading] = useState(false);
   const [membershipSelected, setMembershipSelected] = useState();
+  const user = useUserConfig((state) => state.user);
   const { control, handleSubmit } = useForm({
     defaultValues: {
       search: '',
@@ -79,16 +91,29 @@ export default function AllUsersList(props) {
   }
 
   function createMembership(payload) {
+    if (!payload.id || !membershipSelected.id || !paymentMethod) {
+      setToast(
+        'You need to fill out some of the fields',
+        'error',
+        '/membership',
+      );
+      return;
+    }
+    setIsLoading(true);
     const body = {
       userId: payload.id,
       membershipTypeId: membershipSelected.id,
+      receptionstId: user.id,
+      method: paymentMethod,
     };
     const params = { url: '/membership', method: 'POST', body };
     genericFetch(params).then((res) => {
+      setIsLoading(false);
       if (res.statusCode === 200) {
-        setAddClassDialog({ show: false });
-        setToast('Membership updated', 'success', '/membership');
         getClients();
+        setMembershipSelected();
+        setToast('Membership updated', 'success', '/membership');
+        setAddClassDialog({ show: false });
       } else {
         setToast('Something went wrong', 'error', '/membership');
       }
@@ -142,6 +167,14 @@ export default function AllUsersList(props) {
             selected={membershipSelected}
             setSelected={setMembershipSelected}
           />
+          <RadioGroup
+            groupName="Payment Method"
+            type="column"
+            defaultValue="CASH"
+            options={paymentOptions}
+            className="mt-2"
+            setValue={setPaymentMethod}
+          />
           <div className="flex justify-end gap-3 mt-3">
             <Button
               color="orchid"
@@ -152,6 +185,7 @@ export default function AllUsersList(props) {
             </Button>
             <Button
               color="mindaro"
+              isLoading={isLoading}
               onClick={() => createMembership(addClassDialog.payload)}
             >
               Add
