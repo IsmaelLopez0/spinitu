@@ -36,7 +36,8 @@ export default function LoginPage() {
   }
 
   if (user) {
-    router.push('/booking');
+    if (user.rol !== 'COACH') router.push('/booking');
+    else router.push('/availability');
   }
 
   return (

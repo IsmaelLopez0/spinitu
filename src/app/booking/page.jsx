@@ -1,6 +1,7 @@
 'use client';
 import { useReducer, useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 import Tabs from '@/components/atoms/Tabs';
 import Dialog from '@/components/atoms/Dialog';
 import Input from '@/components/atoms/Input';
@@ -11,6 +12,7 @@ import AllUsersList from './AllUsersList';
 import { setToast } from '@/libs/notificationsAPIs';
 import { genericFetch } from '@/libs/externalAPIs';
 import Autocomplete from '@/components/atoms/Autocomplete';
+import { useUserConfig } from '@/stores/useUserConfig';
 
 function tabsReducer(state = [], action) {
   const tempState = state.slice();
@@ -43,7 +45,13 @@ export default function Booking() {
     { title: 'Schedule', content: <ScheduleBooking /> },
     { title: 'All Users', content: <AllUsersList /> },
   ]);
+  const router = useRouter();
   const { control, handleSubmit, reset } = useForm();
+  const user = useUserConfig((state) => state.user);
+
+  if (user?.rol === 'COACH') {
+    router.push('/availability');
+  }
 
   const resetForm = () => {
     reset();
