@@ -328,17 +328,22 @@ export default function AvailabilityPage() {
                           <Button
                             text="Select"
                             className="text-sm bg-mindaro-600"
-                            onClick={() =>
-                              updateClass(
-                                classDetail.payload?.classExist?.id,
-                                couch.id,
-                                classDetail.payload?.dateStart,
-                                couch.id,
-                              ).then((res) => {
-                                getClassExist();
-                                setClassDetail({ show: false });
-                              })
-                            }
+                            onClick={() => {
+                              if (
+                                classDetail.payload?.classExist?.verified ===
+                                false
+                              ) {
+                                updateClass(
+                                  classDetail.payload?.classExist?.id,
+                                  couch.id,
+                                  classDetail.payload?.dateStart,
+                                  couch.id,
+                                ).then((res) => {
+                                  getClassExist();
+                                  setClassDetail({ show: false });
+                                });
+                              }
+                            }}
                           />
                         ) : (
                           <p className="flex flex-row items-center">

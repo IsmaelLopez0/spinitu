@@ -72,9 +72,9 @@ export async function PUT(request) {
       const specializationsParsed = specializations
         .split(',')
         .map((e) => e.trim());
-      await prisma.coach.create({
+      await prisma.coach.update({
+        where: { user_id: newUser.id },
         data: {
-          user_id: newUser.id,
           specializations: JSON.stringify(specializationsParsed),
         },
       });
@@ -83,6 +83,6 @@ export async function PUT(request) {
     return NextResponse.json(user, { status: 200 });
   } catch (err) {
     console.log(err);
-    return NextResponse.json({ message: err.message }, { status: 400 });
+    return NextResponse.json('Something went wrong', { status: 400 });
   }
 }
