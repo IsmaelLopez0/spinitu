@@ -4,6 +4,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   CheckIcon,
+  CheckBadgeIcon,
 } from '@heroicons/react/16/solid';
 import GenericLoading from '@/components/atoms/GenericLoading';
 import ScheduleByDayComponent from '@/components/atoms/ScheduleByDayComponent';
@@ -84,6 +85,26 @@ async function updateClass(classId, instructorId, dateStart, oldInstructor) {
       oldInstructor,
       'You will no longer teach the class',
       `An administrator assigned someone else to class for the day ${dateStart.toLocaleString()}`,
+    );
+  } else {
+    setToast(res.body.error, 'error', params.url + res.statusCode);
+  }
+}
+
+async function verifyClass(classId, user, instructorId, dateStart) {
+  const { name, lastname, id } = user;
+  const params = {
+    url: '/class',
+    body: { classId, verifiedBy: id },
+    method: 'PUT',
+  };
+  console.log({ user });
+  const res = await genericFetch(params);
+  if (res.statusCode === 200) {
+    createNotification(
+      instructorId,
+      'An administrator approved your class',
+      `The administrator ${name} ${lastname} confirmed that you will teach the class ${dateStart.toLocaleString()}`,
     );
   } else {
     setToast(res.body.error, 'error', params.url + res.statusCode);
@@ -231,7 +252,36 @@ export default function AvailabilityPage() {
           title={`Class ${classDetail.payload?.dateStart?.toDateString()}`}
           description={`Class schedule ${classDetail.payload?.dateStart.toTimeString()}`}
           footer={
-            <>
+            <div className="flex justify-between w-full">
+              <div>
+                {classDetail.payload?.classExist?.verified === true ? (
+                  <div class="has-tooltip flex gap-2">
+                    <CheckBadgeIcon className="h-5 text-swirl-800" />
+                    <p>Verified class</p>
+                    <span class="tooltip rounded shadow-lg p-1 bg-cararra-100 left-40">
+                      By {classDetail.payload?.classExist?.admin_verified.name}{' '}
+                      {classDetail.payload?.classExist?.admin_verified.lastname}
+                    </span>
+                  </div>
+                ) : (
+                  <Button
+                    text="Check the class"
+                    color="mindaro"
+                    className="ml-3 text-sm"
+                    onClick={() => {
+                      verifyClass(
+                        classDetail.payload?.classExist?.id,
+                        user,
+                        classDetail.payload?.classExist?.instructor_id,
+                        classDetail.payload?.dateStart,
+                      ).then((res) => {
+                        getClassExist();
+                        setClassDetail({ show: false });
+                      });
+                    }}
+                  />
+                )}
+              </div>
               <Button
                 text="Close"
                 className="ml-3 text-sm"
@@ -254,7 +304,7 @@ export default function AvailabilityPage() {
                   }
                 />
               ) : null}
-            </>
+            </div>
           }
         >
           {classDetail.payload?.classExist?.couchesDisponibility.length > 0 ? (

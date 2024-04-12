@@ -1,4 +1,5 @@
 import { compareDates, getIsValidDifference } from '@/libs/_utilsFunctions';
+import { CheckBadgeIcon } from '@heroicons/react/16/solid';
 
 const validSchedule = {
   1: { start: '6:15', end: '7:00' },
@@ -53,8 +54,8 @@ export default function ScheduleByDayComponent({
     const hour = validSchedule[currSchedule].start.replace(/:.*/, '');
     const dayWithHour = currentDay.setHours(hour, 15);
     const isDisable = isCoach
-      ? getIsValidDifference(currentDay.setHours(hour, 15), 10)
-      : compareDates(today, currentDay.setHours(hour, 15)) !== 1;
+      ? getIsValidDifference(currentDay.setHours(hour), 10)
+      : compareDates(today, currentDay.setHours(hour - 1, 45)) !== 1;
     const classExist = classesExist[dayWithHour];
     const totalCoaches = classExist?.couchesDisponibility?.length ?? 0;
     const defaultCoach =
@@ -73,12 +74,19 @@ export default function ScheduleByDayComponent({
           !isDisable && onClick(new Date(dayWithHour), classExist);
         }}
       >
-        <p className="text-sm">Availables: {totalCoaches}</p>
-        {totalCoaches > 0 ? (
-          <p className="text-xs">
-            Assigned: {defaultCoach.name} {defaultCoach.lastname}
-          </p>
-        ) : null}
+        <div className="relative z-0 w-full h-full">
+          <div className="flex flex-col items-center justify-center w-full h-full">
+            <p className="z-0 text-sm">Availables: {totalCoaches}</p>
+            {totalCoaches > 0 ? (
+              <p className="text-xs">
+                Assigned: {defaultCoach.name} {defaultCoach.lastname}
+              </p>
+            ) : null}
+          </div>
+          {classExist?.verified ? (
+            <CheckBadgeIcon className="absolute h-4 bottom-1 right-1" />
+          ) : null}
+        </div>
       </div>
     );
   });
