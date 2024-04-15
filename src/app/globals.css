@@ -21,4 +21,11 @@
     'opsz' 48;
 }
 
+#my-chart .bar {
+  --color: red;
+  --labels-size: 150px;
+  --labels-align-inline: start;
+  --labels-align-block: center;
+}
+
 @tailwind utilities;
