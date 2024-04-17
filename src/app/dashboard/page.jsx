@@ -4,14 +4,21 @@ import { BarList, Card } from '@tremor/react';
 import Select from '@/components/atoms/Select';
 import { genericFetch } from '@/libs/externalAPIs';
 import { obtenerNombreMes } from '@/libs/_utilsFunctions';
+import { paymentOptions } from '@/libs/vars';
+import Table from '@/components/atoms/Table';
 
 async function getData() {
-  const params = {
-    url: '/report/coaches-class',
-    method: 'GET',
-  };
-  const response = await genericFetch(params);
-  return response;
+  const [coachesClass, purchases] = await Promise.all([
+    genericFetch({
+      url: '/report/coaches-class',
+      method: 'GET',
+    }),
+    genericFetch({
+      url: '/report/purchases',
+      method: 'GET',
+    }),
+  ]);
+  return [coachesClass, purchases];
 }
 
 const getHalfMonthDate = (dateEnd) => {
@@ -25,17 +32,27 @@ const getHalfMonthDate = (dateEnd) => {
   return `Second ${endText}`;
 };
 
+const purchasedHeaders = [
+  { title: 'Client', key: 'client', class: 'min-w-48' },
+  { title: 'Date', key: 'date', class: 'min-w-44' },
+  { title: 'Package', key: 'membership' },
+  { title: 'Total', key: 'amount' },
+  { title: 'Method', key: 'method', class: 'min-w-36' },
+  { title: 'Seller', key: 'seller', class: 'min-w-48' },
+];
+
 export default function DashboardPage() {
-  const [data, setData] = useState([]);
+  const [coachesClass, setCoachesClass] = useState([]);
+  const [purshases, setPurchases] = useState([]);
   const [coaches, setCoaches] = useState({});
   const [optionSelected, setOptionSelected] = useState(0);
   const [dateOptions, setDateOptions] = useState([]);
 
   useEffect(() => {
-    getData().then((res) => {
-      if (res.statusCode === 200) {
-        const { coaches, data } = res.body;
-        setData(Object.values(data));
+    getData().then(([resCoachesClass, resPurchases]) => {
+      if (resCoachesClass.statusCode === 200) {
+        const { coaches, data } = resCoachesClass.body;
+        setCoachesClass(Object.values(data));
         setDateOptions(
           Object.values(data).map(({ fin }) => ({
             name: getHalfMonthDate(fin),
@@ -45,23 +62,45 @@ export default function DashboardPage() {
       } else {
         setToast('Could not recover data', 'error', '/report/coaches-class');
       }
+      console.log(resPurchases);
+      if (resPurchases.statusCode === 200) {
+        const { data } = resPurchases.body;
+        setPurchases(
+          data.map((e) =>
+            e.map((item) => ({
+              client: `${item.client.name} ${item.client.lastname}`,
+              date: new Date(item.date).toDateString(),
+              membership: item.membership.name,
+              amount: item.amount,
+              method: paymentOptions[item.method],
+              seller: `${item.receptionst.name} ${item.receptionst.lastname}`,
+            })),
+          ),
+        );
+      } else {
+        setToast('Could not recover data', 'error', '/purchases');
+      }
     });
   }, []);
 
   return (
-    <section className="h-[calc(100vh-7rem)]">
-      <Select options={dateOptions} onChange={setOptionSelected} />
+    <section className="h-[calc(100vh-7rem)] grid grid-cols-2 grid-rows-[40px_minmax(0,_1fr)] gap-4">
+      <div className="flex justify-center w-full col-span-2">
+        <Select options={dateOptions} onChange={setOptionSelected} />
+      </div>
       <Card
         decoration
-        className="z-0 max-w-lg mt-3 border-0 tremor-border-transparent tremor-swirl-200 dark:bg-tremor-swirl-200"
+        className="z-0 w-full border-0 tremor-border-transparent tremor-swirl-200 dark:bg-tremor-swirl-200"
       >
-        <h3 className="font-medium">Classes by Coach</h3>
+        <h3 className="font-semibold text-left text-gray-90">
+          Classes by Coach
+        </h3>
         <p className="flex items-center justify-between mt-4">
           <span>Name</span>
           <span>Classes</span>
         </p>
         <BarList
-          data={Object.entries(data[optionSelected]?.classes ?? {}).map(
+          data={Object.entries(coachesClass[optionSelected]?.classes ?? {}).map(
             ([couchId, count]) => ({
               name: coaches[couchId],
               value: count,
@@ -71,6 +110,12 @@ export default function DashboardPage() {
           sortOrder="descending"
         />
       </Card>
+      <Table
+        title="Packages purchased"
+        caption=""
+        headers={purchasedHeaders}
+        data={purshases[optionSelected] ?? []}
+      />
     </section>
   );
 }

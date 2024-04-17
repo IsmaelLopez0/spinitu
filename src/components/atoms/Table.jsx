@@ -1,8 +1,8 @@
 export default function Table({ title, headers, data, Actions, ...props }) {
   return (
-    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-      <table className="w-full text-sm text-left text-gray-500 rtl:text-right ">
-        <caption className="p-5 text-lg font-semibold text-left text-gray-900 bg-white rtl:text-right ">
+    <div className="relative overflow-x-auto bg-white tremor-card ring-1 ring-black/10 rounded-tremor-default sm:rounded-lg">
+      <table className="w-full text-sm text-left text-gray-500 rtl:text-right">
+        <caption className="p-5 text-lg font-semibold text-left text-gray-900 rtl:text-right">
           {title}
           {props.caption ? (
             <p className="mt-1 text-sm font-normal text-gray-500 ">
@@ -10,13 +10,13 @@ export default function Table({ title, headers, data, Actions, ...props }) {
             </p>
           ) : null}
         </caption>
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
+        <thead className="sticky top-0 text-xs text-gray-700 uppercase bg-gray-50 ">
           <tr>
             {headers.map((header) => (
               <th
                 key={header.key}
                 scope="col"
-                className={`px-6 py-3 text-center ${header.class ?? ''}`}
+                className={`px-6 py-3 text-center text-xs ${header.class ?? ''}`}
               >
                 {header.title}
               </th>

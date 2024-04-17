@@ -13,13 +13,13 @@ export default function Select({ options, defaultValue, onChange }) {
   }
 
   return (
-    <div className="w-56">
+    <div className="w-fit">
       <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white rounded-md bg-black/20 hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
+          <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium border rounded-md text-swirl-900 border-swirl-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
             {options[selected]?.name}
             <ChevronDownIcon
-              className="w-5 h-5 ml-2 -mr-1 text-violet-200 hover:text-violet-100"
+              className="w-5 h-5 ml-2 -mr-1 text-swirl-900"
               aria-hidden="true"
             />
           </Menu.Button>
@@ -35,7 +35,7 @@ export default function Select({ options, defaultValue, onChange }) {
         >
           <Menu.Items className="absolute left-0 z-10 w-56 mt-2 bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none">
             {options.map((option, index) => (
-              <div className="px-1 py-1 ">
+              <div className="px-1 py-1 " key={index}>
                 <Menu.Item>
                   {({ active }) => (
                     <button
