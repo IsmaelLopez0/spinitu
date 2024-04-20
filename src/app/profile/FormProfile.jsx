@@ -5,6 +5,7 @@ import Input from '@/components/atoms/Input';
 import Button from '@/components/atoms/Button';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
+import { resizeFile } from '@/libs/_utilsFunctions';
 
 export default function FormProfile(props) {
   const [isLoadingButton, setIsLoadingButton] = useState(false);
