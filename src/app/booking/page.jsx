@@ -1,5 +1,5 @@
 'use client';
-import { useReducer, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import Tabs from '@/components/atoms/Tabs';

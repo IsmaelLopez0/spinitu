@@ -12,6 +12,7 @@ export default function Tabs({
   actionButtons = [],
   currentTab = 0,
   setCurrentTab,
+  customLeft,
 }) {
   const [selectedTab, setSelectedTab] = useState(currentTab);
 
@@ -49,6 +50,7 @@ export default function Tabs({
             {actionButtons.map((button, index) => (
               <Button key={index} {...button} />
             ))}
+            {customLeft && customLeft}
           </div>
         </Tab.List>
         <Tab.Panels className="mt-4">

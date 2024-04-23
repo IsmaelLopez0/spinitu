@@ -8,6 +8,7 @@ import {
   getDay,
   obtenerNombreMes,
   getCurrentWeek,
+  formatDate,
 } from '@/libs/_utilsFunctions';
 import Button from '../atoms/Button';
 import Autocomplete from '../atoms/Autocomplete';
@@ -25,7 +26,10 @@ async function getWeekClasses(firstDayWeek) {
   const lastDayWeek = new Date(tempDate.setDate(tempDate.getDate() + 7));
   const params = {
     url: '/class',
-    query: { firstDayWeek, lastDayWeek },
+    query: {
+      firstDayWeek: formatDate(firstDayWeek),
+      lastDayWeek: formatDate(lastDayWeek),
+    },
     method: 'GET',
   };
   const res = await genericFetch(params);
@@ -251,11 +255,11 @@ export default function ScheduleBooking() {
                 </div>
               </div>
               <hr />
-              <div className="grid grid-cols-4 grid-rows-4 gap-4 mt-3">
-                {Array.from(Array(12)).map((e, i) => {
+              <div className="grid grid-cols-3 grid-rows-3 gap-4 mt-3">
+                {Array.from(Array(9)).map((e, i) => {
                   const currentReservations =
                     classDetail.payload.classExist.reservations;
-                  const position = 12 - i;
+                  const position = 9 - i;
                   const isReserved = currentReservations.find(
                     (f) => f.position === position,
                   );
@@ -280,7 +284,7 @@ export default function ScheduleBooking() {
                         }
                       }}
                     >
-                      <div class="has-tooltip">
+                      <div className="has-tooltip">
                         <span
                           className={`text-center material-symbols-outlined ${!isReserved ? 'text-swirl-950' : 'text-swirl-200'}`}
                           style={{ fontSize: '60px' }}
@@ -291,7 +295,7 @@ export default function ScheduleBooking() {
                           {position}
                         </span>
                         {isReserved && (
-                          <span class="tooltip rounded shadow-lg p-1 bg-cararra-100 -left-2 -bottom-2">
+                          <span className="p-1 rounded shadow-lg tooltip bg-cararra-100 -left-2 -bottom-2">
                             {isReserved?.user?.name}
                           </span>
                         )}
@@ -299,7 +303,7 @@ export default function ScheduleBooking() {
                     </div>
                   );
                 })}
-                <div className="relative col-span-4 text-center cursor-default select-none rounded-xl">
+                <div className="relative col-span-3 text-center cursor-default select-none rounded-xl">
                   <span
                     className="text-center text-cararra-700 material-symbols-outlined"
                     style={{ fontSize: '48px' }}

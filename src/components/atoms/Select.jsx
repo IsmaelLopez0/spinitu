@@ -16,7 +16,7 @@ export default function Select({ options, defaultValue, onChange }) {
     <div className="w-fit">
       <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium border rounded-md text-swirl-900 border-swirl-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
+          <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium bg-white border rounded-md text-swirl-900 border-swirl-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
             {options[selected]?.name}
             <ChevronDownIcon
               className="w-5 h-5 ml-2 -mr-1 text-swirl-900"
@@ -33,7 +33,7 @@ export default function Select({ options, defaultValue, onChange }) {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute left-0 z-10 w-56 mt-2 bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none">
+          <Menu.Items className="absolute right-0 z-10 w-56 mt-2 bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black/25 focus:outline-none">
             {options.map((option, index) => (
               <div className="px-1 py-1 " key={index}>
                 <Menu.Item>
