@@ -13,7 +13,7 @@ const inSessionMenu = [
   {
     href: '/booking',
     title: 'Booking',
-    roles: ['RECEPTIONIST', 'ADMINISTRATOR'],
+    roles: ['RECEPTIONIST', 'ADMINISTRATOR', 'COACH'],
   },
   {
     href: '/availability',

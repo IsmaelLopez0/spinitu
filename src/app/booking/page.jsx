@@ -1,7 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
 import Tabs from '@/components/atoms/Tabs';
 import Dialog from '@/components/atoms/Dialog';
 import Input from '@/components/atoms/Input';
@@ -31,21 +30,21 @@ export default function Booking() {
     { title: 'Schedule', content: <ScheduleBooking /> },
     { title: 'All Users', content: <AllUsersList /> },
   ]);
-  const router = useRouter();
   const { control, handleSubmit, reset } = useForm();
   const user = useUserConfig((state) => state.user);
 
-  if (user?.rol === 'COACH') {
-    router.push('/availability');
-  }
-
   function setIsLoadingOnSubmit(isLoading) {
     setIsLoading(isLoading);
-    setTabs([
-      { title: 'Today', content: <UserList isLoading={isLoading} /> },
-      { title: 'Schedule', content: <ScheduleBooking /> },
-      { title: 'All Users', content: <AllUsersList isLoading={isLoading} /> },
-    ]);
+    const isCoach = user?.rol === 'COACH';
+    if (isCoach) {
+      setTabs([{ title: 'Schedule', content: <ScheduleBooking /> }]);
+    } else {
+      setTabs([
+        { title: 'Today', content: <UserList isLoading={isLoading} /> },
+        { title: 'Schedule', content: <ScheduleBooking /> },
+        { title: 'All Users', content: <AllUsersList isLoading={isLoading} /> },
+      ]);
+    }
   }
 
   const resetForm = () => {
@@ -100,12 +99,16 @@ export default function Booking() {
       } else {
         setToast('Something went wrong', 'error', '/membership-types');
       }
+      setIsLoadingOnSubmit(false);
     });
   }, []);
 
   return (
     <>
-      <Tabs tabs={tabs} actionButtons={actionButtons} />
+      <Tabs
+        tabs={tabs}
+        actionButtons={user?.rol === 'COACH' ? [] : actionButtons}
+      />
       {showDialog ? (
         <Dialog title="Add new user">
           <form onSubmit={handleSubmit(onSubmit)}>

@@ -268,7 +268,11 @@ export default function ScheduleBooking() {
                       key={i}
                       className={`relative text-center rounded-xl select-none hover:bg-cararra-50 ${!isReserved ? 'cursor-pointer' : 'cursor-not-allowed'}`}
                       onClick={() => {
-                        if (!isReserved && !classDetail.payload.isDisable) {
+                        if (
+                          user.rol !== 'COACH' &&
+                          !isReserved &&
+                          !classDetail.payload.isDisable
+                        ) {
                           setConfirmReserve({
                             show: true,
                             payload: {
