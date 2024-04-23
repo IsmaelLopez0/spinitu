@@ -29,6 +29,7 @@ const paymentOptions = [
 
 export default function AllUsersList(props) {
   const [data, setData] = useState([]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
   const [addClassDialog, setAddClassDialog] = useState({ show: false });
   const [memberships, setMemberships] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState('CASH');
@@ -68,6 +69,8 @@ export default function AllUsersList(props) {
     const query = {};
     if (emailOrName) query.emailOrName = emailOrName;
     const params = { url: '/user/allClients', method: 'GET', query };
+    setData([]);
+    setIsLoadingData(true);
     genericFetch(params).then((res) => {
       if (res.statusCode === 200) {
         const newData = res.body.map(({ memberships, ...item }) => {
@@ -87,6 +90,7 @@ export default function AllUsersList(props) {
       } else {
         setToast('Something went wrong', 'error', '/user/allClients');
       }
+      setIsLoadingData(false);
     });
   }
 
@@ -130,7 +134,7 @@ export default function AllUsersList(props) {
         setToast('Something went wrong', 'error', '/membership-types');
       }
     });
-  }, []);
+  }, [props.isLoading]);
 
   return (
     <div>
@@ -147,7 +151,13 @@ export default function AllUsersList(props) {
         />
         <Button text="Search" className="px-3 py-1 h-1/2" color="mindaro" />
       </form>
-      <Table title="All users" caption="" headers={headers} data={data} />
+      <Table
+        title="All users"
+        caption=""
+        headers={headers}
+        data={data}
+        isloading={isLoadingData || props.isLoading}
+      />
       {addClassDialog.show ? (
         <Dialog title="Add classes">
           <p>

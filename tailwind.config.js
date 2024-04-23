@@ -130,6 +130,11 @@ module.exports = {
       'tremor-small': '0.375rem',
       'tremor-default': '0.5rem',
       'tremor-full': '9999px',
+      sm: '0.125rem',
+      DEFAULT: '0.25rem',
+      md: '0.375rem',
+      lg: '0.5rem',
+      full: '9999px',
     },
     fontSize: {
       'tremor-label': ['0.75rem', { lineHeight: '1rem' }],

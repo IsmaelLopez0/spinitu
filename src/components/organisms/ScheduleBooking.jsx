@@ -147,6 +147,7 @@ export default function ScheduleBooking() {
       setConfirmReserve({ show: false });
       getClients(true);
       getClassExist();
+      setUserSelected({});
     } else {
       const data = await res.json();
       setToast(data.message, 'error', '/api/reservation');

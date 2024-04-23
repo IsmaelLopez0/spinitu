@@ -14,20 +14,6 @@ import { genericFetch } from '@/libs/externalAPIs';
 import Autocomplete from '@/components/atoms/Autocomplete';
 import { useUserConfig } from '@/stores/useUserConfig';
 
-function tabsReducer(state = [], action) {
-  const tempState = state.slice();
-  if (action.type === 'updateToday') {
-    tempState[0].content = action.payload;
-  }
-  if (action.type === 'updateSchedule') {
-    tempState[1].content = action.payload;
-  }
-  if (action.type === 'updateAllUser') {
-    tempState[1].content = action.payload;
-  }
-  return tempState;
-}
-
 const inputsToAddUser = [
   { name: 'name', label: 'Name', placeholder: 'Name' },
   { name: 'lastname', label: 'Last Name', placeholder: 'Last Name' },
@@ -40,7 +26,7 @@ export default function Booking() {
   const [memberships, setMemberships] = useState([]);
   const [membershipSelected, setMembershipSelected] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const [tabs] = useReducer(tabsReducer, [
+  const [tabs, setTabs] = useState([
     { title: 'Today', content: <UserList /> },
     { title: 'Schedule', content: <ScheduleBooking /> },
     { title: 'All Users', content: <AllUsersList /> },
@@ -53,10 +39,19 @@ export default function Booking() {
     router.push('/availability');
   }
 
+  function setIsLoadingOnSubmit(isLoading) {
+    setIsLoading(isLoading);
+    setTabs([
+      { title: 'Today', content: <UserList isLoading={isLoading} /> },
+      { title: 'Schedule', content: <ScheduleBooking /> },
+      { title: 'All Users', content: <AllUsersList isLoading={isLoading} /> },
+    ]);
+  }
+
   const resetForm = () => {
     reset();
     setMembershipSelected();
-    setIsLoading(false);
+    setIsLoadingOnSubmit(false);
   };
 
   const actionButtons = [
@@ -68,7 +63,7 @@ export default function Booking() {
   ];
 
   async function onSubmit(data) {
-    setIsLoading(true);
+    setIsLoadingOnSubmit(true);
     const someInpustInalid = Object.values(data).some((s) =>
       [null, undefined, ''].includes(s),
     );

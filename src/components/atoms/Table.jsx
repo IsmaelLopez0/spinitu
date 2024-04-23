@@ -29,27 +29,56 @@ export default function Table({ title, headers, data, Actions, ...props }) {
           </tr>
         </thead>
         <tbody>
-          {data.map((item, row) => (
-            <tr key={`${item.id}-${row}`} className="bg-white border-b ">
-              {headers.map(({ key }, col) => {
-                const valueData = item[key];
-                return col === 0 ? (
-                  <th
-                    key={`${key}-${col}`}
-                    scope="row"
-                    className="px-6 py-4 font-medium text-center text-gray-900 whitespace-nowrap"
-                  >
-                    {valueData}
-                  </th>
-                ) : (
-                  <td key={`${key}-${col}`} className="px-6 py-4 text-center">
-                    {valueData}
-                  </td>
-                );
-              })}
-              {Actions ? <Actions item={item} /> : null}
-            </tr>
-          ))}
+          {props.isloading
+            ? Array.apply(null, Array(10)).map((_, i) => (
+                <tr
+                  key={i}
+                  className="bg-white border-b rounded-md animate-pulse"
+                >
+                  {headers.map(({ key }, col) =>
+                    col === 0 ? (
+                      <th
+                        key={`${key}-${col}`}
+                        scope="row"
+                        className="px-6 py-4 font-medium text-center text-gray-900 whitespace-nowrap"
+                      >
+                        <div class="h-2 bg-slate-700 rounded"></div>
+                      </th>
+                    ) : (
+                      <td
+                        key={`${key}-${col}`}
+                        className="px-6 py-4 text-center rounded"
+                      >
+                        <div class="h-2 bg-slate-700 rounded"></div>
+                      </td>
+                    ),
+                  )}
+                  {Actions ? <Actions item={item} /> : null}
+                </tr>
+              ))
+            : null}
+          {!props.isloading &&
+            data.map((item, row) => (
+              <tr key={`${item.id}-${row}`} className="bg-white border-b ">
+                {headers.map(({ key }, col) => {
+                  const valueData = item[key];
+                  return col === 0 ? (
+                    <th
+                      key={`${key}-${col}`}
+                      scope="row"
+                      className="px-6 py-4 font-medium text-center text-gray-900 whitespace-nowrap"
+                    >
+                      {valueData}
+                    </th>
+                  ) : (
+                    <td key={`${key}-${col}`} className="px-6 py-4 text-center">
+                      {valueData}
+                    </td>
+                  );
+                })}
+                {Actions ? <Actions item={item} /> : null}
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>

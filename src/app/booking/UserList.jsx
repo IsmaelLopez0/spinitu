@@ -15,6 +15,7 @@ const headers = [
 
 export default function UserList(props) {
   const [data, setData] = useState([]);
+  const [isLoadingData, setIsLoadingData] = useState(false);
   const { control, handleSubmit } = useForm({
     defaultValues: {
       search: '',
@@ -45,6 +46,7 @@ export default function UserList(props) {
     const query = { dateStart, dateEnd };
     if (emailOrName) query.emailOrName = emailOrName;
     const params = { url: '/user/clients', method: 'GET', query };
+    setIsLoadingData(true);
     genericFetch(params).then((res) => {
       if (res.statusCode === 200) {
         const newData = res.body.map(({ memberships, ...item }) => ({
@@ -57,12 +59,13 @@ export default function UserList(props) {
       } else {
         setToast('Something went wrong', 'error', '/user/clients');
       }
+      setIsLoadingData(false);
     });
   }
 
   useEffect(() => {
     getClients();
-  }, []);
+  }, [props.isLoading]);
 
   return (
     <div>
@@ -84,6 +87,7 @@ export default function UserList(props) {
         caption="The people who appear in the following list are those who have class today"
         headers={headers}
         data={data}
+        isloading={isLoadingData || props.isLoading}
       />
     </div>
   );
