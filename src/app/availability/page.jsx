@@ -98,7 +98,6 @@ async function verifyClass(classId, user, instructorId, dateStart) {
     body: { classId, verifiedBy: id },
     method: 'PUT',
   };
-  console.log({ user });
   const res = await genericFetch(params);
   if (res.statusCode === 200) {
     createNotification(

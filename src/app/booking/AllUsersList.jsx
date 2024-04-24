@@ -20,13 +20,6 @@ const headers = [
   { title: 'End of membership', key: 'end_date' },
 ];
 
-const paymentOptions = [
-  { value: 'CASH', name: 'Cash' },
-  { value: 'CREDIT_CARD', name: 'Credit Card' },
-  { value: 'DEBIT', name: 'Debit' },
-  { value: 'BANK_TRANSFERS', name: 'Bank Transfers' },
-];
-
 export default function AllUsersList(props) {
   const [data, setData] = useState([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
@@ -181,7 +174,7 @@ export default function AllUsersList(props) {
             groupName="Payment Method"
             type="column"
             defaultValue="CASH"
-            options={paymentOptions}
+            options={props.paymentOptions}
             className="mt-2"
             setValue={setPaymentMethod}
           />

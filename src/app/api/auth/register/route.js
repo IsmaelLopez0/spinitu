@@ -17,8 +17,14 @@ export async function POST(request) {
     if (!isUser) {
       hashedPassword = await bcrypt.hash(data.password, 10);
     }
-    const { confirmPassword, specializations, membershipTypeId, ...userData } =
-      data;
+    const {
+      confirmPassword,
+      specializations,
+      membershipTypeId,
+      paymentMethod,
+      createdBy,
+      ...userData
+    } = data;
     const newData = { ...userData };
     if (hashedPassword) {
       newData.password = hashedPassword;
@@ -31,6 +37,16 @@ export async function POST(request) {
         body: { userId: newUser.id, membershipTypeId },
       };
       await genericFetch(params);
+    }
+    if (paymentMethod) {
+      const body = {
+        userId: newUser.id,
+        membershipTypeId,
+        receptionstId: createdBy,
+        method: paymentMethod,
+      };
+      const params = { url: '/membership', method: 'POST', body };
+      genericFetch(params);
     }
     if (specializations) {
       const specializationsParsed = specializations

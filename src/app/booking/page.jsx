@@ -11,6 +11,7 @@ import AllUsersList from './AllUsersList';
 import { setToast } from '@/libs/notificationsAPIs';
 import { genericFetch } from '@/libs/externalAPIs';
 import Autocomplete from '@/components/atoms/Autocomplete';
+import RadioGroup from '@/components/atoms/RadioGroup';
 import { useUserConfig } from '@/stores/useUserConfig';
 
 const inputsToAddUser = [
@@ -20,15 +21,26 @@ const inputsToAddUser = [
   { name: 'phone', label: 'Phone', placeholder: 'Phone' },
 ];
 
+const paymentOptions = [
+  { value: 'CASH', name: 'Cash' },
+  { value: 'CREDIT_CARD', name: 'Credit Card' },
+  { value: 'DEBIT', name: 'Debit' },
+  { value: 'BANK_TRANSFERS', name: 'Bank Transfers' },
+];
+
 export default function Booking() {
   const [showDialog, setShowDialog] = useState(false);
   const [memberships, setMemberships] = useState([]);
   const [membershipSelected, setMembershipSelected] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('CASH');
   const [tabs, setTabs] = useState([
     { title: 'Today', content: <UserList /> },
     { title: 'Schedule', content: <ScheduleBooking /> },
-    { title: 'All Users', content: <AllUsersList /> },
+    {
+      title: 'All Users',
+      content: <AllUsersList paymentOptions={paymentOptions} />,
+    },
   ]);
   const { control, handleSubmit, reset } = useForm();
   const user = useUserConfig((state) => state.user);
@@ -42,7 +54,15 @@ export default function Booking() {
       setTabs([
         { title: 'Today', content: <UserList isLoading={isLoading} /> },
         { title: 'Schedule', content: <ScheduleBooking /> },
-        { title: 'All Users', content: <AllUsersList isLoading={isLoading} /> },
+        {
+          title: 'All Users',
+          content: (
+            <AllUsersList
+              paymentOptions={paymentOptions}
+              isLoading={isLoading}
+            />
+          ),
+        },
       ]);
     }
   }
@@ -67,7 +87,7 @@ export default function Booking() {
       [null, undefined, ''].includes(s),
     );
     const invalidMembership = membershipSelected === undefined;
-    if (someInpustInalid || invalidMembership) {
+    if (someInpustInalid || invalidMembership || !paymentMethod) {
       setToast('Fill out all the fields', 'error', '/api/auth/register');
     } else {
       const res = await fetch('/api/auth/register', {
@@ -76,6 +96,8 @@ export default function Booking() {
           ...data,
           rol: 'USER',
           membershipTypeId: membershipSelected.id,
+          paymentMethod,
+          createdBy: user?.id,
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -134,6 +156,15 @@ export default function Booking() {
               list={memberships}
               selected={membershipSelected}
               setSelected={setMembershipSelected}
+            />
+
+            <RadioGroup
+              groupName="Payment Method"
+              type="column"
+              defaultValue="CASH"
+              options={paymentOptions}
+              className="mt-2"
+              setValue={setPaymentMethod}
             />
 
             <div className="flex flex-row-reverse w-full gap-4 p-3">

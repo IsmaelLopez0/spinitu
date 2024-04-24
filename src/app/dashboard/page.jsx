@@ -65,7 +65,6 @@ export default function DashboardPage() {
   ]);
 
   function updateTabs() {
-    console.log({ coachesClass });
     setTabs([
       {
         title: 'Classes by Coach',
@@ -110,6 +109,10 @@ export default function DashboardPage() {
         setToast('Could not recover data', 'error', '/report/coaches-class');
       }
       if (resPurchases.statusCode === 200) {
+        const numberFormat = new Intl.NumberFormat('es-MX', {
+          style: 'currency',
+          currency: 'MXN',
+        });
         const { data } = resPurchases.body;
         setPurchases(
           data.map((e) =>
@@ -117,7 +120,7 @@ export default function DashboardPage() {
               client: `${item.client.name} ${item.client.lastname}`,
               date: new Date(item.date).toDateString(),
               membership: item.membership.name,
-              amount: item.amount,
+              amount: numberFormat.format(item.amount),
               method: paymentOptions[item.method],
               seller: `${item.receptionst.name} ${item.receptionst.lastname}`,
             })),
