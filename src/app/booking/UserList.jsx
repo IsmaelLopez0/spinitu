@@ -9,6 +9,7 @@ import { sumDaysToDate } from '@/libs/_utilsFunctions';
 const headers = [
   { title: 'Name', key: 'name' },
   { title: 'Email', key: 'email' },
+  { title: 'Phone', key: 'phone' },
   { title: 'Hour', key: 'hour' },
   { title: 'Remaining classes', key: 'days_to_access' },
 ];
@@ -52,6 +53,7 @@ export default function UserList(props) {
         const newData = res.body.map(({ memberships, ...item }) => ({
           ...item,
           name: `${item.name ?? ''} ${item.lastname ?? ''}`,
+          phone: item.phone ?? '',
           hour: getTime(new Date(item.date_start)),
           ...memberships[0],
         }));

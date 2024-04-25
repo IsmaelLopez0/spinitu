@@ -34,19 +34,13 @@ export default function Booking() {
   const [membershipSelected, setMembershipSelected] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('CASH');
-  const [tabs, setTabs] = useState([
-    { title: 'Today', content: <UserList /> },
-    { title: 'Schedule', content: <ScheduleBooking /> },
-    {
-      title: 'All Users',
-      content: <AllUsersList paymentOptions={paymentOptions} />,
-    },
-  ]);
+  const [tabs, setTabs] = useState([]);
   const { control, handleSubmit, reset } = useForm();
   const user = useUserConfig((state) => state.user);
 
   function setIsLoadingOnSubmit(isLoading) {
     setIsLoading(isLoading);
+    if (!user) return;
     const isCoach = user?.rol === 'COACH';
     if (isCoach) {
       setTabs([{ title: 'Schedule', content: <ScheduleBooking /> }]);
@@ -125,11 +119,15 @@ export default function Booking() {
     });
   }, []);
 
+  useEffect(() => {
+    setIsLoadingOnSubmit(false);
+  }, [user]);
+
   return (
     <>
       <Tabs
         tabs={tabs}
-        actionButtons={user?.rol === 'COACH' ? [] : actionButtons}
+        actionButtons={!user || user?.rol === 'COACH' ? [] : actionButtons}
       />
       {showDialog ? (
         <Dialog title="Add new user">

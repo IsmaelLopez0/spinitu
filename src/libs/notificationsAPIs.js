@@ -13,7 +13,7 @@ export const setToast = (message, type, id) => {
 };
 
 export async function createNotification(userId, title, body) {
-  if (userId) return;
+  if (!userId) return;
   const params = {
     url: URL,
     body: { userId, title, body },
@@ -24,6 +24,7 @@ export async function createNotification(userId, title, body) {
     return res.body;
   }
   setToast(res.body.error, 'error', params.url + res.statusCode);
+  return res;
 }
 
 export async function readNotification(userId) {

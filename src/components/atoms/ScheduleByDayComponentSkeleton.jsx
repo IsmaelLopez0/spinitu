@@ -1,5 +1,3 @@
-import { compareDates, getIsValidDifference } from '@/libs/_utilsFunctions';
-
 const validSchedule = {
   1: { start: '6:15', end: '7:00' },
   2: { start: '7:15', end: '8:00' },
@@ -60,25 +58,5 @@ export default function ScheduleByDayComponentSkeleton({ day }) {
         </div>
       </div>
     );
-    // return (
-    //   <div
-    //     key={day + '-' + i}
-    //     className={`animate-pulse text-cararra-100 w-full h-24 flex flex-col justify-center items-center rounded-md ${
-    //       isDisable
-    //         ? 'bg-orchid-200 cursor-not-allowed'
-    //         : 'bg-orchid-400 cursor-pointer'
-    //     }`}
-    //     onClick={() => {
-    //       !isDisable && onClick(new Date(dayWithHour), classExist);
-    //     }}
-    //   >
-    //     <p className="text-sm">Availables: {totalCoaches}</p>
-    //     {totalCoaches > 0 ? (
-    //       <p className="text-xs">
-    //         Assigned: {defaultCoach.name} {defaultCoach.lastname}
-    //       </p>
-    //     ) : null}
-    //   </div>
-    // );
   });
 }

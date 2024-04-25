@@ -16,9 +16,8 @@ import {
   getCurrentWeek,
 } from '@/libs/_utilsFunctions';
 import Button from '@/components/atoms/Button';
-import { createNotification } from '@/libs/notificationsAPIs';
 import { genericFetch } from '@/libs/externalAPIs';
-import { setToast } from '@/libs/notificationsAPIs';
+import { setToast, createNotification } from '@/libs/notificationsAPIs';
 import { useUserConfig } from '@/stores/useUserConfig';
 
 const dias = ['Time', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -76,16 +75,19 @@ async function updateClass(classId, instructorId, dateStart, oldInstructor) {
   };
   const res = await genericFetch(params);
   if (res.statusCode === 200) {
-    createNotification(
-      instructorId,
-      'You were assigned a class',
-      `You have been assigned the class of ${dateStart.toLocaleString()}`,
-    );
-    createNotification(
-      oldInstructor,
-      'You will no longer teach the class',
-      `An administrator assigned someone else to class for the day ${dateStart.toLocaleString()}`,
-    );
+    const res = await Promise.all([
+      createNotification(
+        instructorId,
+        'You were assigned a class',
+        `You have been assigned the class of ${dateStart.toLocaleString()}`,
+      ),
+      createNotification(
+        oldInstructor,
+        'You will no longer teach the class',
+        `An administrator assigned someone else to class for the day ${dateStart.toLocaleString()}`,
+      ),
+    ]);
+    console.log({ res });
   } else {
     setToast(res.body.error, 'error', params.url + res.statusCode);
   }
@@ -100,11 +102,12 @@ async function verifyClass(classId, user, instructorId, dateStart) {
   };
   const res = await genericFetch(params);
   if (res.statusCode === 200) {
-    createNotification(
+    const res = await createNotification(
       instructorId,
       'An administrator approved your class',
       `The administrator ${name} ${lastname} confirmed that you will teach the class ${dateStart.toLocaleString()}`,
     );
+    console.log({ res });
   } else {
     setToast(res.body.error, 'error', params.url + res.statusCode);
   }
@@ -178,11 +181,13 @@ export default function AvailabilityPage() {
     let id = classId;
     if (!id) {
       id = await createClass(dateStart, user?.coaches.user_id);
-      createNotification(
+      console.log({ user });
+      const res = await createNotification(
         user?.coaches.user_id,
         'Default asignation',
         `You have been assigned by default the class of ${dateStart.toLocaleString()}`,
       );
+      console.log({ res });
     }
     await createDisponibility(id, user?.coaches.user_id);
     setClassDetail({ show: false });
@@ -222,9 +227,15 @@ export default function AvailabilityPage() {
                 </div>
               ) : (
                 <div
-                  className="sticky top-[65px] bg-cararra-100 flex items-center justify-center nm-10"
+                  className="text-xs text-white sticky top-[60px] bg-cararra-100 flex flex-col gap-4 gap-y-2 py-2 px-5"
                   key={day + '-' + i}
-                />
+                >
+                  <span className="p-1 rounded bg-orchid-200">Past</span>
+                  <span className="p-1 rounded bg-orchid-500/50">No coach</span>
+                  <span className="h-full p-1 rounded bg-orchid-700">
+                    With Coach
+                  </span>
+                </div>
               )}
               {isLoading ? (
                 <ScheduleByDayComponentSkeleton day={i} />
@@ -262,7 +273,7 @@ export default function AvailabilityPage() {
                       {classDetail.payload?.classExist?.admin_verified.lastname}
                     </span>
                   </div>
-                ) : (
+                ) : user && user.rol === 'ADMINISTRATOR' ? (
                   <Button
                     text="Check the class"
                     color="mindaro"
@@ -273,13 +284,13 @@ export default function AvailabilityPage() {
                         user,
                         classDetail.payload?.classExist?.instructor_id,
                         classDetail.payload?.dateStart,
-                      ).then((res) => {
+                      ).then(() => {
                         getClassExist();
                         setClassDetail({ show: false });
                       });
                     }}
                   />
-                )}
+                ) : null}
               </div>
               <Button
                 text="Close"
@@ -324,26 +335,28 @@ export default function AvailabilityPage() {
                       <span>
                         {couch.id !==
                         classDetail.payload?.classExist?.instructor_id ? (
-                          <Button
-                            text="Select"
-                            className="text-sm bg-mindaro-600"
-                            onClick={() => {
-                              if (
-                                classDetail.payload?.classExist?.verified ===
-                                false
-                              ) {
-                                updateClass(
-                                  classDetail.payload?.classExist?.id,
-                                  couch.id,
-                                  classDetail.payload?.dateStart,
-                                  couch.id,
-                                ).then((res) => {
-                                  getClassExist();
-                                  setClassDetail({ show: false });
-                                });
-                              }
-                            }}
-                          />
+                          user.rol === 'ADMINISTRATOR' ? (
+                            <Button
+                              text="Select"
+                              className="text-sm bg-mindaro-600"
+                              onClick={() => {
+                                if (
+                                  classDetail.payload?.classExist?.verified ===
+                                  false
+                                ) {
+                                  updateClass(
+                                    classDetail.payload?.classExist?.id,
+                                    couch.id,
+                                    classDetail.payload?.dateStart,
+                                    couch.id,
+                                  ).then((res) => {
+                                    getClassExist();
+                                    setClassDetail({ show: false });
+                                  });
+                                }
+                              }}
+                            />
+                          ) : null
                         ) : (
                           <p className="flex flex-row items-center">
                             Selected

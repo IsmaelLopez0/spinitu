@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tab } from '@headlessui/react';
 import Button from '@/components/atoms/Button';
 
@@ -23,10 +23,17 @@ export default function Tabs({
     }
   }
 
+  useEffect(() => {
+    setTab(currentTab);
+  }, [tabs]);
+
   return (
     <div className="flex flex-col">
       <Tab.Group>
-        <Tab.List className="flex justify-between p-4 space-x-4 rounded-md bg-cararra-200">
+        <Tab.List
+          selectedIndex={selectedTab}
+          className="flex justify-between p-4 space-x-4 rounded-md bg-cararra-200"
+        >
           <div className="flex gap-2">
             {tabs.map((tab, index) => (
               <Tab

@@ -68,7 +68,7 @@ export default function ScheduleByDayComponent({
         className={`text-cararra-100 w-full h-24 flex flex-col justify-center items-center rounded-md ${
           isDisable
             ? 'bg-orchid-200 cursor-not-allowed'
-            : `bg-orchid-${totalCoaches > 1 ? '700' : '400'} cursor-pointer`
+            : `bg-orchid-${totalCoaches > 0 ? '700' : '500'} cursor-pointer`
         }`}
         onClick={() => {
           !isDisable && onClick(new Date(dayWithHour), classExist);

@@ -14,6 +14,7 @@ import { useUserConfig } from '@/stores/useUserConfig';
 const headers = [
   { title: 'Name', key: 'name' },
   { title: 'Email', key: 'email' },
+  { title: 'Phone', key: 'phone' },
   { title: 'Next class', key: 'next' },
   { title: 'Hour', key: 'hour' },
   { title: 'Remaining classes', key: 'days_to_access' },
@@ -43,7 +44,7 @@ export default function AllUsersList(props) {
     const tempHour = date.getHours();
     const hour = tempHour < 10 ? `0${tempHour}` : tempHour;
     const minutes = date.getMinutes();
-    return `${hour}:0${minutes}`;
+    return `${hour}:${minutes}`;
   }
 
   function RemainingClases(props) {
@@ -72,6 +73,7 @@ export default function AllUsersList(props) {
             ...item,
             next: item.class?.date_start ? dateStart.toDateString() : '',
             name: `${item.name ?? ''} ${item.lastname ?? ''}`,
+            phone: item.phone ?? '',
             hour: item.class?.date_start ? getTime(dateStart) : '',
             end_date: item.end_date
               ? new Date(item.end_date).toDateString()
