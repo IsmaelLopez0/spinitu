@@ -1,13 +1,13 @@
-"use client";
-import { Fragment, useState, useEffect } from "react";
-import { getSession } from "next-auth/react";
-import { Dialog, Transition } from "@headlessui/react";
-import { XMarkIcon, BellIcon } from "@heroicons/react/16/solid";
-import { readNotification, updateNotification } from "@/libs/notificationsAPIs";
-import { useUserConfig } from "@/stores/useUserConfig";
-import Card from "../organisms/Card";
-import { genericFetch } from "@/libs/externalAPIs";
-import { setToast } from "@/libs/notificationsAPIs";
+'use client';
+import { Fragment, useState, useEffect } from 'react';
+import { getSession } from 'next-auth/react';
+import { Dialog, Transition } from '@headlessui/react';
+import { XMarkIcon, BellIcon } from '@heroicons/react/16/solid';
+import { readNotification, updateNotification } from '@/libs/notificationsAPIs';
+import { useUserConfig } from '@/stores/useUserConfig';
+import Card from '../organisms/Card';
+import { genericFetch } from '@/libs/externalAPIs';
+import { setToast } from '@/libs/notificationsAPIs';
 
 export default function Notifications() {
   const [open, setOpen] = useState(false);
@@ -19,15 +19,15 @@ export default function Notifications() {
     if (!user?.name) {
       getSession().then(({ user }) => {
         const params = {
-          url: "/user/user",
+          url: '/user/user',
           query: { email: user.email },
-          method: "GET",
+          method: 'GET',
         };
         genericFetch(params).then((res) => {
           if (res.statusCode === 200) {
             setUser(res.body);
           } else {
-            setToast(res.body.error, "error", params.url);
+            setToast(res.body.error, 'error', params.url);
           }
         });
       });
@@ -45,10 +45,14 @@ export default function Notifications() {
     });
   }
 
+  useEffect(() => {
+    getNotifications();
+  }, []);
+
   return (
     <>
       <BellIcon
-        className="h-6 cursor-pointer"
+        className={`h-6 cursor-pointer ${notifications.find((f) => !f.leido) ? 'animate-bounce' : ''}`}
         onClick={() => {
           setOpen(true);
           getNotifications();
@@ -113,23 +117,27 @@ export default function Notifications() {
                       </div>
                       <div className="relative flex flex-col flex-1 gap-2 px-4 mt-6 sm:px-6">
                         {notifications.map((n) => (
-                          <Card
-                            key={n.id}
-                            data={{
-                              title: n.title,
-                              description: new Date(n.fecha).toDateString(),
-                            }}
+                          <div
+                            className={`border rounded-md shadow-2xl ${n.leido ? 'border-swirl-200 shadow-swirl-200' : 'border-mindaro-500 shadow-mindaro-500'}`}
                           >
-                            <p>{n.body}</p>
-                            {n.leido === false ? (
-                              <span
-                                className="text-xs cursor-pointer hover:font-semibold"
-                                onClick={() => putNotifications(n.id)}
-                              >
-                                Mark as read
-                              </span>
-                            ) : null}
-                          </Card>
+                            <Card
+                              key={n.id}
+                              data={{
+                                title: n.title,
+                                description: new Date(n.fecha).toDateString(),
+                              }}
+                            >
+                              <p>{n.body}</p>
+                              {n.leido === false ? (
+                                <p
+                                  className="w-full text-xs text-right cursor-pointer text-mindaro-700 hover:font-semibold"
+                                  onClick={() => putNotifications(n.id)}
+                                >
+                                  Mark as read
+                                </p>
+                              ) : null}
+                            </Card>
+                          </div>
                         ))}
                       </div>
                     </div>

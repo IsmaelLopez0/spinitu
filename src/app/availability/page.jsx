@@ -75,7 +75,7 @@ async function updateClass(classId, instructorId, dateStart, oldInstructor) {
   };
   const res = await genericFetch(params);
   if (res.statusCode === 200) {
-    const res = await Promise.all([
+    /*await Promise.all([
       createNotification(
         instructorId,
         'You were assigned a class',
@@ -86,8 +86,8 @@ async function updateClass(classId, instructorId, dateStart, oldInstructor) {
         'You will no longer teach the class',
         `An administrator assigned someone else to class for the day ${dateStart.toLocaleString()}`,
       ),
-    ]);
-    console.log({ res });
+    ]);*/
+    return res.body;
   } else {
     setToast(res.body.error, 'error', params.url + res.statusCode);
   }
@@ -134,6 +134,7 @@ export default function AvailabilityPage() {
   const [classesExist, setClassesExist] = useState({});
   const [classDetail, setClassDetail] = useState({ show: false });
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingClassDetail, setIsLoadingClassDetail] = useState(false);
   const user = useUserConfig((state) => state.user);
 
   useEffect(() => {
@@ -190,7 +191,6 @@ export default function AvailabilityPage() {
       console.log({ res });
     }
     await createDisponibility(id, user?.coaches.user_id);
-    setClassDetail({ show: false });
     getClassExist();
   }
 
@@ -335,15 +335,19 @@ export default function AvailabilityPage() {
                       <span>
                         {couch.id !==
                         classDetail.payload?.classExist?.instructor_id ? (
-                          user.rol === 'ADMINISTRATOR' ? (
+                          user.rol === 'ADMINISTRATOR' &&
+                          classDetail.payload?.classExist?.verified ===
+                            false ? (
                             <Button
                               text="Select"
                               className="text-sm bg-mindaro-600"
+                              isLoading={isLoadingClassDetail}
                               onClick={() => {
                                 if (
                                   classDetail.payload?.classExist?.verified ===
                                   false
                                 ) {
+                                  setIsLoadingClassDetail(true);
                                   updateClass(
                                     classDetail.payload?.classExist?.id,
                                     couch.id,
@@ -351,7 +355,15 @@ export default function AvailabilityPage() {
                                     couch.id,
                                   ).then((res) => {
                                     getClassExist();
-                                    setClassDetail({ show: false });
+                                    console.log('a', res);
+                                    setClassDetail((prev) => ({
+                                      ...prev,
+                                      payload: {
+                                        ...prev.payload,
+                                        classExist: res,
+                                      },
+                                    }));
+                                    setIsLoadingClassDetail(false);
                                   });
                                 }
                               }}
