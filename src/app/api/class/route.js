@@ -7,7 +7,7 @@ export async function POST(req) {
   const body = await req.json();
   try {
     const dateStart = new Date(body.dateStart);
-    const name = `Class ${dateStart.toDateString()}`;
+    const name = `Class ${convertTZ(dateStart)}`;
     const description = `Class schedule ${dateStart.toTimeString()}`;
     const res = await prisma.class.create({
       data: {

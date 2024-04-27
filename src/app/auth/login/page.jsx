@@ -15,12 +15,12 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm();
   const router = useRouter();
-  const [isLoading, setLoading] = useState(false);
+  const [isloading, setIsloading] = useState(false);
   const [error, setError] = useState();
   const user = useUserConfig((state) => state.user);
 
   async function onSubmit(data) {
-    setLoading(true);
+    setIsloading(true);
     const res = await signIn('credentials', {
       email: data.email,
       password: data.password,
@@ -32,7 +32,7 @@ export default function LoginPage() {
       router.push('/booking');
       router.refresh();
     }
-    setLoading(false);
+    setIsloading(false);
   }
 
   if (user) {
@@ -97,7 +97,7 @@ export default function LoginPage() {
         />
 
         <Button
-          isLoading={isLoading}
+          isloading={isloading}
           color="mindaro"
           type="solid"
           className="w-full"

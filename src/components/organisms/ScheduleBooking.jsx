@@ -9,12 +9,14 @@ import {
   obtenerNombreMes,
   getCurrentWeek,
   formatDate,
+  convertTZ,
 } from '@/libs/_utilsFunctions';
 import Button from '../atoms/Button';
 import Autocomplete from '../atoms/Autocomplete';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
 import { useUserConfig } from '@/stores/useUserConfig';
+import { IconBike } from '@tabler/icons-react';
 
 const dias = ['Time', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -58,7 +60,7 @@ export default function ScheduleBooking() {
   const [classDetail, setClassDetail] = useState({ show: false });
   const [confirmReserve, setConfirmReserve] = useState({ show: false });
   const [userSelected, setUserSelected] = useState();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isloading, setIsloading] = useState(false);
   const [isLoadingReservation, setIsLoadingReservation] = useState(false);
   const user = useUserConfig((state) => state.user);
 
@@ -112,10 +114,10 @@ export default function ScheduleBooking() {
   }
 
   function getClassExist() {
-    setIsLoading(true);
+    setIsloading(true);
     getWeekClasses(firstDayWeek).then((res) => {
       setClassesExist(res);
-      setIsLoading(false);
+      setIsloading(false);
       setIsLoadingReservation(false);
     });
   }
@@ -203,7 +205,7 @@ export default function ScheduleBooking() {
                   </span>
                 </div>
               )}
-              {isLoading ? (
+              {isloading ? (
                 <ScheduleByDayComponentSkeleton day={i} />
               ) : (
                 <ScheduleByDayComponentBooking
@@ -227,29 +229,18 @@ export default function ScheduleBooking() {
           {classDetail.payload?.classExist ? (
             <>
               <div className="grid grid-cols-2 grid-rows-2 gap-4">
-                <p>Date: {classDetail.payload?.dateStart?.toDateString()}</p>
-                <p>
-                  Hours:{' '}
-                  {classDetail.payload?.dateStart.toLocaleTimeString('en-US')}
-                </p>
+                <p>Date: {convertTZ(classDetail.payload?.dateStart)}</p>
+                <p>Hours: {convertTZ(classDetail.payload?.dateStart)}</p>
                 <p>
                   Coach: {getInstructorName(classDetail.payload?.classExist)}
                 </p>
                 <div className="flex justify-between">
                   <p className="flex items-center">
-                    <span
-                      className={`text-center material-symbols-outlined text-swirl-950 mr-1 select-none`}
-                    >
-                      directions_bike
-                    </span>
+                    <IconBike color="#292221" className="mr-2" />
                     Available
                   </p>
                   <p className="flex items-center">
-                    <span
-                      className={`text-center material-symbols-outlined text-swirl-200 mr-1 select-none`}
-                    >
-                      directions_bike
-                    </span>
+                    <IconBike color="#d6cfc8" className="mr-2" />
                     Reserved
                   </p>
                 </div>
@@ -289,12 +280,12 @@ export default function ScheduleBooking() {
                       }}
                     >
                       <div className="has-tooltip">
-                        <span
-                          className={`text-center material-symbols-outlined ${!isReserved ? 'text-swirl-950' : 'text-swirl-200'}`}
-                          style={{ fontSize: '60px' }}
-                        >
-                          directions_bike
-                        </span>
+                        <div className="flex justify-center">
+                          <IconBike
+                            color={!isReserved ? '#292221' : '#d6cfc8'}
+                            size={60}
+                          />
+                        </div>
                         <span className="absolute bottom-0 text-center bg-white border rounded-full left-2/3 w-7">
                           {position}
                         </span>
@@ -308,13 +299,10 @@ export default function ScheduleBooking() {
                   );
                 })}
                 <div className="relative col-span-3 text-center cursor-default select-none rounded-xl">
-                  <span
-                    className="text-center text-cararra-700 material-symbols-outlined"
-                    style={{ fontSize: '48px' }}
-                  >
-                    directions_bike
-                  </span>
-                  <span className="absolute px-1 text-center bg-white rounded-full bottom-[-2px] left-[45%]">
+                  <div className="flex justify-center">
+                    <IconBike color="#736c5b" size={48} />
+                  </div>
+                  <span className="absolute px-1 text-center bg-white rounded-full left-[45%]">
                     Coach
                   </span>
                 </div>
@@ -348,17 +336,15 @@ export default function ScheduleBooking() {
             <p>
               Search and select a user to assign to the class{' '}
               <span className="underline decoration-solid">
-                {confirmReserve.payload?.dateStart?.toDateString()}{' '}
+                {convertTZ(confirmReserve.payload?.dateStart)}{' '}
               </span>
               <span className="underline decoration-solid">
-                {confirmReserve.payload?.dateStart.toLocaleTimeString('en-US')}
+                {convertTZ(confirmReserve.payload?.dateStart)}
               </span>
             </p>
             <div className="flex flex-col items-center justify-center p-2 border rounded">
               {confirmReserve.payload?.position}
-              <span className="text-center material-symbols-outlined text-swirl-950">
-                directions_bike
-              </span>
+              <IconBike color="#292221" />
             </div>
           </div>
           <div className="flex flex-col justify-between overflow-auto">
@@ -381,7 +367,7 @@ export default function ScheduleBooking() {
                 color="mindaro"
                 disabled={!userSelected}
                 onClick={() => reservClass(confirmReserve.payload)}
-                isLoading={isLoadingReservation}
+                isloading={isLoadingReservation}
               >
                 Add to class
               </Button>

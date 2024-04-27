@@ -8,6 +8,7 @@ import { useUserConfig } from '@/stores/useUserConfig';
 import Card from '../organisms/Card';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
+import { convertTZ } from '@/libs/_utilsFunctions';
 
 export default function Notifications() {
   const [open, setOpen] = useState(false);
@@ -35,6 +36,7 @@ export default function Notifications() {
   }, [setUser, user]);
 
   async function getNotifications() {
+    if (!user?.id) return;
     const data = await readNotification(user.id);
     setNotifications(data);
   }
@@ -47,7 +49,7 @@ export default function Notifications() {
 
   useEffect(() => {
     getNotifications();
-  }, []);
+  }, [user]);
 
   return (
     <>
@@ -118,13 +120,13 @@ export default function Notifications() {
                       <div className="relative flex flex-col flex-1 gap-2 px-4 mt-6 sm:px-6">
                         {notifications.map((n) => (
                           <div
+                            key={n.id}
                             className={`border rounded-md shadow-2xl ${n.leido ? 'border-swirl-200 shadow-swirl-200' : 'border-mindaro-500 shadow-mindaro-500'}`}
                           >
                             <Card
-                              key={n.id}
                               data={{
                                 title: n.title,
-                                description: new Date(n.fecha).toDateString(),
+                                description: convertTZ(n.fecha),
                               }}
                             >
                               <p>{n.body}</p>

@@ -91,7 +91,7 @@ export default function FormProfile(props) {
       />
 
       <Button
-        isLoading={isLoadingButton}
+        isloading={isLoadingButton}
         color="mindaro"
         type="solid"
         className="w-full"

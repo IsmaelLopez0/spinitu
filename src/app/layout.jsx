@@ -3,8 +3,6 @@ import localFont from 'next/font/local';
 import NavBar from '@/components/organisms/Navbar';
 import { Toaster } from 'sonner';
 import './globals.css';
-// import 'material-symbols';
-import 'material-symbols/outlined.css';
 
 const inter = Inter({ subsets: ['latin'] });
 

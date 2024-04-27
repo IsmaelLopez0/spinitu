@@ -64,6 +64,8 @@ async function createDisponibility(classId, userId) {
   const res = await genericFetch(params);
   if (res.statusCode !== 200) {
     setToast(res.body.error, 'error', params.url + res.statusCode);
+  } else {
+    setToast('Successfully applied', 'success', params.url + res.statusCode);
   }
 }
 
@@ -76,14 +78,9 @@ async function updateClass(classId, instructorId, dateStart, oldInstructor) {
   const res = await genericFetch(params);
   if (res.statusCode === 200) {
     createNotification(
-      instructorId,
-      'You were assigned a class',
-      `You have been assigned the class of ${dateStart.toLocaleString()}`,
-    );
-    createNotification(
       oldInstructor,
       'You will no longer teach the class',
-      `An administrator assigned someone else to class for the day ${dateStart.toLocaleString()}`,
+      `An administrator assigned someone else to class for the day ${convertTZ(dateStart)}`,
     );
   } else {
     setToast(res.body.error, 'error', params.url + res.statusCode);
@@ -110,7 +107,8 @@ export default function Schedule() {
   const [firstDayWeek, setFirstDayWeek] = useState();
   const [classesExist, setClassesExist] = useState({});
   const [classDetail, setClassDetail] = useState({ show: false });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isloading, setIsloading] = useState(false);
+  const [isLoadingModalBtn, setIsLoadingModalBtn] = useState(false);
   const user = useUserConfig((state) => state.user);
 
   useEffect(() => {
@@ -132,7 +130,7 @@ export default function Schedule() {
   }, [week]);
 
   useEffect(() => {
-    if (firstDayWeek && isLoading === false) {
+    if (firstDayWeek && isloading === false) {
       getClassExist();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -143,10 +141,10 @@ export default function Schedule() {
   }
 
   function getClassExist() {
-    setIsLoading(true);
+    setIsloading(true);
     getWeekClasses(firstDayWeek).then((res) => {
       setClassesExist(res);
-      setIsLoading(false);
+      setIsloading(false);
     });
   }
 
@@ -161,12 +159,13 @@ export default function Schedule() {
       createNotification(
         user?.coaches.user_id,
         'Default asignation',
-        `You have been assigned by default the class of ${dateStart.toLocaleString()}`,
+        `You have been assigned by default the class of ${convertTZ(dateStart)}`,
       );
     }
     await createDisponibility(id, user?.coaches.user_id);
     setClassDetail({ show: false });
     getClassExist();
+    setIsLoadingModalBtn(false);
   }
 
   return (
@@ -206,7 +205,7 @@ export default function Schedule() {
                   key={day + '-' + i}
                 />
               )}
-              {isLoading ? (
+              {isloading ? (
                 <ScheduleByDayComponentSkeleton day={i} />
               ) : (
                 <ScheduleByDayComponent
@@ -228,7 +227,7 @@ export default function Schedule() {
       </div>
       {classDetail.show ? (
         <Dialog
-          title={`Class ${classDetail.payload?.dateStart?.toDateString()}`}
+          title={`Class ${convertTZ(classDetail.payload?.dateStart)}`}
           description={`Class schedule ${classDetail.payload?.dateStart.toTimeString()}`}
           footer={
             <>
@@ -246,12 +245,14 @@ export default function Schedule() {
                   text="I'm available"
                   className="text-sm"
                   color="mindaro"
-                  onClick={() =>
+                  isloading={isLoadingModalBtn}
+                  onClick={() => {
+                    setIsLoadingModalBtn(true);
                     setDisponibility(
                       classDetail.payload?.dateStart,
                       classDetail.payload?.classExist?.id,
-                    )
-                  }
+                    );
+                  }}
                 />
               ) : null}
             </>

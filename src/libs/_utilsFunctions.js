@@ -58,3 +58,10 @@ export function formatDate(d) {
 
   return [year, month, day].join('-');
 }
+
+export function convertTZ(date, tzString = 'America/Mexico_City') {
+  const dateBase = typeof date === 'string' ? new Date(date) : date;
+  return dateBase.toLocaleString('es-MX', {
+    timeZone: tzString,
+  });
+}

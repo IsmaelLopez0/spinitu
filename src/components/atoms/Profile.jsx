@@ -15,12 +15,12 @@ import { genericFetch } from '@/libs/externalAPIs';
 import { useUserConfig } from '@/stores/useUserConfig';
 
 export default function Profile() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isloading, setIsloading] = useState(false);
   const user = useUserConfig((state) => state.user);
   const setUser = useUserConfig((state) => state.setUser);
   useEffect(() => {
-    if (!user?.name && !isLoading) {
-      setIsLoading(true);
+    if (!user?.name && !isloading) {
+      setIsloading(true);
       getSession().then(({ user }) => {
         const params = {
           url: '/user/user',

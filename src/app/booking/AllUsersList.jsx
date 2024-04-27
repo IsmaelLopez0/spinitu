@@ -27,7 +27,7 @@ export default function AllUsersList(props) {
   const [addClassDialog, setAddClassDialog] = useState({ show: false });
   const [memberships, setMemberships] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState('CASH');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isloading, setIsloading] = useState(false);
   const [membershipSelected, setMembershipSelected] = useState();
   const user = useUserConfig((state) => state.user);
   const { control, handleSubmit } = useForm({
@@ -71,13 +71,11 @@ export default function AllUsersList(props) {
           const dateStart = new Date(item.class?.date_start);
           return {
             ...item,
-            next: item.class?.date_start ? dateStart.toDateString() : '',
+            next: item.class?.date_start ? convertTZ(dateStart) : '',
             name: `${item.name ?? ''} ${item.lastname ?? ''}`,
             phone: item.phone ?? '',
             hour: item.class?.date_start ? getTime(dateStart) : '',
-            end_date: item.end_date
-              ? new Date(item.end_date).toDateString()
-              : '',
+            end_date: item.end_date ? convertTZ(item.end_date) : '',
             days_to_access: <RemainingClases {...item} />,
           };
         });
@@ -98,7 +96,7 @@ export default function AllUsersList(props) {
       );
       return;
     }
-    setIsLoading(true);
+    setIsloading(true);
     const body = {
       userId: payload.id,
       membershipTypeId: membershipSelected.id,
@@ -107,7 +105,7 @@ export default function AllUsersList(props) {
     };
     const params = { url: '/membership', method: 'POST', body };
     genericFetch(params).then((res) => {
-      setIsLoading(false);
+      setIsloading(false);
       if (res.statusCode === 200) {
         getClients();
         setMembershipSelected();
@@ -129,7 +127,7 @@ export default function AllUsersList(props) {
         setToast('Something went wrong', 'error', '/membership-types');
       }
     });
-  }, [props.isLoading]);
+  }, [props.isloading]);
 
   return (
     <div>
@@ -151,7 +149,7 @@ export default function AllUsersList(props) {
         caption=""
         headers={headers}
         data={data}
-        isloading={isLoadingData || props.isLoading}
+        isloading={isLoadingData || props.isloading}
       />
       {addClassDialog.show ? (
         <Dialog title="Add classes">
@@ -190,7 +188,7 @@ export default function AllUsersList(props) {
             </Button>
             <Button
               color="mindaro"
-              isLoading={isLoading}
+              isloading={isloading}
               onClick={() => createMembership(addClassDialog.payload)}
             >
               Add

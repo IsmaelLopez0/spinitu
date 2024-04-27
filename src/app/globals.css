@@ -13,14 +13,6 @@
   margin: 0 -10px;
 }
 
-.material-symbols-outlined-48 {
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 48;
-}
-
 #my-chart .bar {
   --color: red;
   --labels-size: 150px;

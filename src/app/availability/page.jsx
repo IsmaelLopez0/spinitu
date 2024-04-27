@@ -14,6 +14,7 @@ import {
   getDay,
   obtenerNombreMes,
   getCurrentWeek,
+  convertTZ,
 } from '@/libs/_utilsFunctions';
 import Button from '@/components/atoms/Button';
 import { genericFetch } from '@/libs/externalAPIs';
@@ -64,6 +65,8 @@ async function createDisponibility(classId, userId) {
   const res = await genericFetch(params);
   if (res.statusCode !== 200) {
     setToast(res.body.error, 'error', params.url + res.statusCode);
+  } else {
+    setToast('Successfully applied', 'success', params.url + res.statusCode);
   }
 }
 
@@ -75,18 +78,11 @@ async function updateClass(classId, instructorId, dateStart, oldInstructor) {
   };
   const res = await genericFetch(params);
   if (res.statusCode === 200) {
-    /*await Promise.all([
-      createNotification(
-        instructorId,
-        'You were assigned a class',
-        `You have been assigned the class of ${dateStart.toLocaleString()}`,
-      ),
-      createNotification(
-        oldInstructor,
-        'You will no longer teach the class',
-        `An administrator assigned someone else to class for the day ${dateStart.toLocaleString()}`,
-      ),
-    ]);*/
+    createNotification(
+      oldInstructor,
+      'You will no longer teach the class',
+      `An administrator assigned someone else to class for the day ${convertTZ(dateStart)}`,
+    );
     return res.body;
   } else {
     setToast(res.body.error, 'error', params.url + res.statusCode);
@@ -105,9 +101,8 @@ async function verifyClass(classId, user, instructorId, dateStart) {
     const res = await createNotification(
       instructorId,
       'An administrator approved your class',
-      `The administrator ${name} ${lastname} confirmed that you will teach the class ${dateStart.toLocaleString()}`,
+      `The administrator ${name} ${lastname} confirmed that you will teach the class ${convertTZ(dateStart)}`,
     );
-    console.log({ res });
   } else {
     setToast(res.body.error, 'error', params.url + res.statusCode);
   }
@@ -133,8 +128,9 @@ export default function AvailabilityPage() {
   const [firstDayWeek, setFirstDayWeek] = useState();
   const [classesExist, setClassesExist] = useState({});
   const [classDetail, setClassDetail] = useState({ show: false });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isloading, setIsloading] = useState(false);
   const [isLoadingClassDetail, setIsLoadingClassDetail] = useState(false);
+  const [isLoadingModalBtn, setIsLoadingModalBtn] = useState(false);
   const user = useUserConfig((state) => state.user);
 
   useEffect(() => {
@@ -156,7 +152,7 @@ export default function AvailabilityPage() {
   }, [week]);
 
   useEffect(() => {
-    if (firstDayWeek && isLoading === false) {
+    if (firstDayWeek && isloading === false) {
       getClassExist();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -167,10 +163,10 @@ export default function AvailabilityPage() {
   }
 
   function getClassExist() {
-    setIsLoading(true);
+    setIsloading(true);
     getWeekClasses(firstDayWeek).then((res) => {
       setClassesExist(res);
-      setIsLoading(false);
+      setIsloading(false);
     });
   }
 
@@ -182,15 +178,15 @@ export default function AvailabilityPage() {
     let id = classId;
     if (!id) {
       id = await createClass(dateStart, user?.coaches.user_id);
-      console.log({ user });
-      const res = await createNotification(
+      await createNotification(
         user?.coaches.user_id,
         'Default asignation',
-        `You have been assigned by default the class of ${dateStart.toLocaleString()}`,
+        `You have been assigned by default the class of ${convertTZ(dateStart)}`,
       );
-      console.log({ res });
     }
     await createDisponibility(id, user?.coaches.user_id);
+    setClassDetail({ show: false });
+    setIsLoadingModalBtn(false);
     getClassExist();
   }
 
@@ -201,7 +197,7 @@ export default function AvailabilityPage() {
           const { currentDay, monthDay } = getDay(firstDayWeek, i - 1);
           const istoday = isToday(currentDay);
           return (
-            <React.Fragment key={currentDay}>
+            <React.Fragment key={`${currentDay}-${i}`}>
               {i > 0 ? (
                 <div className="sticky top-[60px] bg-cararra-100 flex items-center justify-center nm-10">
                   {i === 1 ? (
@@ -237,7 +233,7 @@ export default function AvailabilityPage() {
                   </span>
                 </div>
               )}
-              {isLoading ? (
+              {isloading ? (
                 <ScheduleByDayComponentSkeleton day={i} />
               ) : (
                 <ScheduleByDayComponent
@@ -259,7 +255,7 @@ export default function AvailabilityPage() {
       </div>
       {classDetail.show ? (
         <Dialog
-          title={`Class ${classDetail.payload?.dateStart?.toDateString()}`}
+          title={`Class ${convertTZ(classDetail.payload?.dateStart)}`}
           description={`Class schedule ${classDetail.payload?.dateStart.toTimeString()}`}
           footer={
             <div className="flex justify-between w-full">
@@ -306,12 +302,14 @@ export default function AvailabilityPage() {
                   text="I'm available"
                   className="text-sm"
                   color="mindaro"
-                  onClick={() =>
+                  isloading={isLoadingModalBtn}
+                  onClick={() => {
+                    setIsLoadingModalBtn(true);
                     setDisponibility(
                       classDetail.payload?.dateStart,
                       classDetail.payload?.classExist?.id,
-                    )
-                  }
+                    );
+                  }}
                 />
               ) : null}
             </div>
@@ -324,7 +322,7 @@ export default function AvailabilityPage() {
                 {classDetail.payload?.classExist?.couchesDisponibility?.map(
                   (couch, i) => (
                     <li
-                      key={couch.id}
+                      key={`${couch.id}-${classDetail.payload?.classExist?.id}`}
                       className={`border-b border-swirl-200 p-3 flex justify-between items-center ${
                         i % 2 === 0 ? 'bg-cararra-100' : ''
                       }`}
@@ -341,7 +339,7 @@ export default function AvailabilityPage() {
                             <Button
                               text="Select"
                               className="text-sm bg-mindaro-600"
-                              isLoading={isLoadingClassDetail}
+                              isloading={isLoadingClassDetail}
                               onClick={() => {
                                 if (
                                   classDetail.payload?.classExist?.verified ===
@@ -355,7 +353,6 @@ export default function AvailabilityPage() {
                                     couch.id,
                                   ).then((res) => {
                                     getClassExist();
-                                    console.log('a', res);
                                     setClassDetail((prev) => ({
                                       ...prev,
                                       payload: {

@@ -32,28 +32,28 @@ export default function Booking() {
   const [showDialog, setShowDialog] = useState(false);
   const [memberships, setMemberships] = useState([]);
   const [membershipSelected, setMembershipSelected] = useState();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isloading, setIsloading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('CASH');
   const [tabs, setTabs] = useState([]);
   const { control, handleSubmit, reset } = useForm();
   const user = useUserConfig((state) => state.user);
 
-  function setIsLoadingOnSubmit(isLoading) {
-    setIsLoading(isLoading);
+  function setIsLoadingOnSubmit(isloading) {
+    setIsloading(isloading);
     if (!user) return;
     const isCoach = user?.rol === 'COACH';
     if (isCoach) {
       setTabs([{ title: 'Schedule', content: <ScheduleBooking /> }]);
     } else {
       setTabs([
-        { title: 'Today', content: <UserList isLoading={isLoading} /> },
+        { title: 'Today', content: <UserList isloading={isloading} /> },
         { title: 'Schedule', content: <ScheduleBooking /> },
         {
           title: 'All Users',
           content: (
             <AllUsersList
               paymentOptions={paymentOptions}
-              isLoading={isLoading}
+              isloading={isloading}
             />
           ),
         },
@@ -166,7 +166,7 @@ export default function Booking() {
             />
 
             <div className="flex flex-row-reverse w-full gap-4 p-3">
-              <Button color="mindaro" text="Add" isLoading={isLoading} />
+              <Button color="mindaro" text="Add" isloading={isloading} />
               <Button
                 color="orchid"
                 type="outline"

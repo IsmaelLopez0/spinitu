@@ -118,7 +118,7 @@ export default function DashboardPage() {
           data.map((e) =>
             e.map((item) => ({
               client: `${item.client.name} ${item.client.lastname}`,
-              date: new Date(item.date).toDateString(),
+              date: convertTZ(item.date),
               membership: item.membership.name,
               amount: numberFormat.format(item.amount),
               method: paymentOptions[item.method],

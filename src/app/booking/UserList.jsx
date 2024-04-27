@@ -67,7 +67,7 @@ export default function UserList(props) {
 
   useEffect(() => {
     getClients();
-  }, [props.isLoading]);
+  }, [props.isloading]);
 
   return (
     <div>
@@ -89,7 +89,7 @@ export default function UserList(props) {
         caption="The people who appear in the following list are those who have class today"
         headers={headers}
         data={data}
-        isloading={isLoadingData || props.isLoading}
+        isloading={isLoadingData || props.isloading}
       />
     </div>
   );
