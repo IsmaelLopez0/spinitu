@@ -40,7 +40,7 @@ export default function Tabs({
                 key={tab.title}
                 className={({ selected }) =>
                   classNames(
-                    'rounded-lg p-2 text-sm font-medium leading-5',
+                    'rounded-lg p-2 font-medium leading-5',
                     'ring-white/60 ring-offset-2 ring-offset-cararra-100 focus:outline-none focus:ring-2',
                     selected
                       ? 'bg-cararra-100 shadow'

@@ -4,7 +4,7 @@ import { BarList, Card } from '@tremor/react';
 import Select from '@/components/atoms/Select';
 import Tabs from '@/components/atoms/Tabs';
 import { genericFetch } from '@/libs/externalAPIs';
-import { obtenerNombreMes } from '@/libs/_utilsFunctions';
+import { obtenerNombreMes, convertTZ } from '@/libs/_utilsFunctions';
 import { paymentOptions } from '@/libs/vars';
 import Table from '@/components/atoms/Table';
 import { setToast } from '@/libs/notificationsAPIs';
@@ -39,7 +39,7 @@ const getHalfMonthDate = (dateEnd) => {
 };
 
 const purchasedHeaders = [
-  { title: 'Client', key: 'client', class: 'min-w-48' },
+  { title: 'Clīent', key: 'client', class: 'min-w-48' },
   { title: 'Date', key: 'date', class: 'min-w-44' },
   { title: 'Package', key: 'membership' },
   { title: 'Total', key: 'amount' },

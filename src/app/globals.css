@@ -13,6 +13,17 @@
   margin: 0 -10px;
 }
 
+.cormorant {
+  font-family: var(--font-cormorant);
+  font-size: 18px;
+  font-weight: 600;
+}
+.cormorant_upright {
+  font-family: var(--font-cormorant_upright);
+  font-size: 18px;
+  font-weight: 600;
+}
+
 #my-chart .bar {
   --color: red;
   --labels-size: 150px;

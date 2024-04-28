@@ -8,10 +8,10 @@ import { sumDaysToDate } from '@/libs/_utilsFunctions';
 
 const headers = [
   { title: 'Name', key: 'name' },
-  { title: 'Email', key: 'email' },
+  { title: 'Emaīl', key: 'email' },
   { title: 'Phone', key: 'phone' },
   { title: 'Hour', key: 'hour' },
-  { title: 'Remaining classes', key: 'days_to_access' },
+  { title: 'Remaīnīng classes', key: 'days_to_access' },
 ];
 
 export default function UserList(props) {

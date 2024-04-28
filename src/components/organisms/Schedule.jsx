@@ -19,6 +19,7 @@ import { createNotification } from '@/libs/notificationsAPIs';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
 import { useUserConfig } from '@/stores/useUserConfig';
+import { convertTZ } from '@/libs/_utilsFunctions';
 
 const dias = ['Time', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -78,10 +79,15 @@ async function updateClass(classId, instructorId, dateStart, oldInstructor) {
   const res = await genericFetch(params);
   if (res.statusCode === 200) {
     createNotification(
-      oldInstructor,
-      'You will no longer teach the class',
-      `An administrator assigned someone else to class for the day ${convertTZ(dateStart)}`,
+      instructorId,
+      'You were assigned a class',
+      `You have been assigned the class of ${dateStart.toLocaleString()}`,
     );
+    /* createNotification(
+        oldInstructor,
+        'You will no longer teach the class',
+        `An administrator assigned someone else to class for the day ${dateStart.toLocaleString()}`,
+      ) */
   } else {
     setToast(res.body.error, 'error', params.url + res.statusCode);
   }

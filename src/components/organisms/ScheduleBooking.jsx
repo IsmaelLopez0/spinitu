@@ -193,14 +193,16 @@ export default function ScheduleBooking() {
                 </div>
               ) : (
                 <div
-                  className="text-xs text-white sticky top-[60px] bg-cararra-100 flex flex-col gap-4 gap-y-2 py-2 px-5"
+                  className="text-white sticky top-[60px] bg-cararra-100 flex flex-col gap-4 gap-y-2 py-2 px-5"
                   key={day + '-' + i}
                 >
-                  <span className="p-1 rounded bg-orchid-500/50">
+                  <span className="p-1 text-xs rounded bg-orchid-500/50">
                     Not available
                   </span>
-                  <span className="p-1 rounded bg-orchid-500">Available</span>
-                  <span className="h-full p-1 rounded bg-orchid-700">
+                  <span className="p-1 text-xs rounded bg-orchid-500">
+                    Available
+                  </span>
+                  <span className="h-full p-1 text-xs rounded bg-orchid-700">
                     Full house
                   </span>
                 </div>

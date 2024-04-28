@@ -7,7 +7,7 @@ export default function SignOutButton({ isMenu, active }) {
   if (isMenu) {
     return (
       <button
-        className="flex items-center w-full text-sm rounded-md"
+        className="flex items-center w-full rounded-md"
         onClick={signOutFunc}
       >
         <svg
@@ -30,7 +30,7 @@ export default function SignOutButton({ isMenu, active }) {
   }
 
   return (
-    <Button color="orchid" className="px-3 py-1 text-sm" onClick={signOutFunc}>
+    <Button color="orchid" className="px-3 py-1" onClick={signOutFunc}>
       Sign out
     </Button>
   );

@@ -79,10 +79,15 @@ async function updateClass(classId, instructorId, dateStart, oldInstructor) {
   const res = await genericFetch(params);
   if (res.statusCode === 200) {
     createNotification(
-      oldInstructor,
-      'You will no longer teach the class',
-      `An administrator assigned someone else to class for the day ${convertTZ(dateStart)}`,
+      instructorId,
+      'You were assigned a class',
+      `You have been assigned the class of ${dateStart.toLocaleString()}`,
     );
+    /* createNotification(
+        oldInstructor,
+        'You will no longer teach the class',
+        `An administrator assigned someone else to class for the day ${dateStart.toLocaleString()}`,
+      ) */
     return res.body;
   } else {
     setToast(res.body.error, 'error', params.url + res.statusCode);
@@ -261,10 +266,10 @@ export default function AvailabilityPage() {
             <div className="flex justify-between w-full">
               <div>
                 {classDetail.payload?.classExist?.verified === true ? (
-                  <div class="has-tooltip flex gap-2">
+                  <div className="flex gap-2 has-tooltip">
                     <CheckBadgeIcon className="h-5 text-swirl-800" />
                     <p>Verified class</p>
-                    <span class="tooltip rounded shadow-lg p-1 bg-cararra-100 left-40">
+                    <span className="p-1 rounded shadow-lg tooltip bg-cararra-100 left-40">
                       By {classDetail.payload?.classExist?.admin_verified.name}{' '}
                       {classDetail.payload?.classExist?.admin_verified.lastname}
                     </span>

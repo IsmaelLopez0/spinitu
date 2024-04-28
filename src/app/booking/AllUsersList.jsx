@@ -10,15 +10,16 @@ import RadioGroup from '@/components/atoms/RadioGroup';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
 import { useUserConfig } from '@/stores/useUserConfig';
+import { convertTZ } from '@/libs/_utilsFunctions';
 
 const headers = [
   { title: 'Name', key: 'name' },
-  { title: 'Email', key: 'email' },
+  { title: 'Emaīl', key: 'email' },
   { title: 'Phone', key: 'phone' },
   { title: 'Next class', key: 'next' },
   { title: 'Hour', key: 'hour' },
-  { title: 'Remaining classes', key: 'days_to_access' },
-  { title: 'End of membership', key: 'end_date' },
+  { title: 'Remaīnīng classes', key: 'days_to_access' },
+  { title: 'End of membershīp', key: 'end_date' },
 ];
 
 export default function AllUsersList(props) {

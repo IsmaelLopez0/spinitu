@@ -28,7 +28,7 @@ async function getUsers() {
 const headers = [
   { key: 'name', title: 'Name' },
   { key: 'lastname', title: 'Last Name' },
-  { key: 'email', title: 'Email' },
+  { key: 'email', title: 'Emaīl' },
   { key: 'phone', title: 'Phone' },
 ];
 
@@ -158,7 +158,7 @@ export default function UsersPage() {
       const temp = headers.slice();
       temp.splice(2, 0, {
         key: 'specializationsParsed',
-        title: 'Specializations',
+        title: 'Specīalīzatīons',
       });
       const coachData = COACH.map((coach) => ({
         ...coach,

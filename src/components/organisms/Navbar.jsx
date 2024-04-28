@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import Notifications from '../atoms/Notifications';
@@ -28,9 +29,14 @@ const inSessionMenu = [
 async function NavBar() {
   const session = await getServerSession(authOptions);
   return (
-    <nav className="sticky top-0 z-10 flex items-center justify-between px-24 py-3 border-b bg-cararra-100 text-swirl-800 border-swirl-200">
+    <nav className="sticky top-0 z-10 flex items-center justify-between px-24 py-3 border-b font-cormorant bg-cararra-100 text-swirl-800 border-swirl-200">
       <div className="flex flex-row items-center">
-        <h1 className="text-xl font-bold font-theseasons">SPĪNĪTU</h1>
+        <Image
+          src="/images/icons/SPINITU.ico"
+          alt="SPĪNĪTU Logo"
+          width="85"
+          height="55"
+        />
       </div>
       <ul className="flex items-center">
         <NavMenuItems items={!session?.user ? outSessionMenu : inSessionMenu} />

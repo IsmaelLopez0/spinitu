@@ -1,7 +1,7 @@
 export default function Table({ title, headers, data, Actions, ...props }) {
   return (
     <div className="relative overflow-x-auto bg-white tremor-card ring-1 ring-black/10 rounded-tremor-default sm:rounded-lg">
-      <table className="w-full text-sm text-left text-gray-500 rtl:text-right">
+      <table className="w-full text-left text-gray-500 rtl:text-right">
         <caption className="p-5 text-lg font-semibold text-left text-gray-900 rtl:text-right">
           {title}
           {props.caption ? (
@@ -10,13 +10,13 @@ export default function Table({ title, headers, data, Actions, ...props }) {
             </p>
           ) : null}
         </caption>
-        <thead className="sticky top-0 text-xs text-gray-700 uppercase bg-gray-50 ">
+        <thead className="sticky top-0 text-gray-700 bg-gray-50 ">
           <tr>
             {headers.map((header) => (
               <th
                 key={header.key}
                 scope="col"
-                className={`px-6 py-3 text-center text-xs ${header.class ?? ''}`}
+                className={`px-6 py-3 text-center ${header.class ?? ''}`}
               >
                 {header.title}
               </th>
@@ -42,14 +42,14 @@ export default function Table({ title, headers, data, Actions, ...props }) {
                         scope="row"
                         className="px-6 py-4 font-medium text-center text-gray-900 whitespace-nowrap"
                       >
-                        <div class="h-2 bg-slate-700 rounded"></div>
+                        <div className="h-2 rounded bg-slate-700"></div>
                       </th>
                     ) : (
                       <td
                         key={`${key}-${col}`}
                         className="px-6 py-4 text-center rounded"
                       >
-                        <div class="h-2 bg-slate-700 rounded"></div>
+                        <div className="h-2 rounded bg-slate-700"></div>
                       </td>
                     ),
                   )}

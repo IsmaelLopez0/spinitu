@@ -84,8 +84,8 @@ export default function AdminCoaches({ setCallbackAddCoach, handleDialog }) {
 
   return (
     <div className="relative h-full overflow-x-auto">
-      <table className="w-full text-sm text-left text-gray-500 rtl:text-right">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+      <table className="w-full text-left text-gray-500 rtl:text-right">
+        <thead className="text-gray-700 uppercase bg-gray-50">
           <tr>
             <th scope="col" className="px-6 py-3 text-center">
               Name
@@ -94,16 +94,16 @@ export default function AdminCoaches({ setCallbackAddCoach, handleDialog }) {
               Last Name
             </th>
             <th scope="col" className="px-6 py-3 text-center">
-              Specializations
+              Specīalīzatīons
             </th>
             <th scope="col" className="px-6 py-3 text-center">
-              Email
+              Emaīl
             </th>
             <th scope="col" className="px-6 py-3 text-center">
               Phone
             </th>
             <th scope="col" className="px-6 py-3 text-center">
-              Actions
+              Actīons
             </th>
           </tr>
         </thead>

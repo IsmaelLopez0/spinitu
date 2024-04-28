@@ -8,7 +8,6 @@ import { useUserConfig } from '@/stores/useUserConfig';
 import Card from '../organisms/Card';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
-import { convertTZ } from '@/libs/_utilsFunctions';
 
 export default function Notifications() {
   const [open, setOpen] = useState(false);
@@ -117,28 +116,23 @@ export default function Notifications() {
                           </div>
                         </Transition.Child>
                       </div>
-                      <div className="relative flex flex-col flex-1 gap-2 px-4 mt-6 sm:px-6">
+                      <div className="relative flex flex-col flex-1 gap-2 mt-6 sm:px-6">
                         {notifications.map((n) => (
                           <div
                             key={n.id}
-                            className={`border rounded-md shadow-2xl ${n.leido ? 'border-swirl-200 shadow-swirl-200' : 'border-mindaro-500 shadow-mindaro-500'}`}
+                            className={`border px-2 rounded-md shadow-2xl ${n.leido ? 'border-swirl-200 shadow-swirl-200' : 'border-mindaro-500 shadow-mindaro-500'}`}
                           >
-                            <Card
-                              data={{
-                                title: n.title,
-                                description: convertTZ(n.fecha),
-                              }}
-                            >
-                              <p>{n.body}</p>
-                              {n.leido === false ? (
-                                <p
-                                  className="w-full text-xs text-right cursor-pointer text-mindaro-700 hover:font-semibold"
-                                  onClick={() => putNotifications(n.id)}
-                                >
-                                  Mark as read
-                                </p>
-                              ) : null}
-                            </Card>
+                            <h3 className="text-lg font-medium">{n.title}</h3>
+                            <p className="text-sm text-gray-500">{n.fecha}</p>
+                            <p className="text-md">{n.body}</p>
+                            {n.leido === false ? (
+                              <p
+                                className="text-sm text-right cursor-pointer w-fit text-mindaro-700 hover:font-semibold"
+                                onClick={() => putNotifications(n.id)}
+                              >
+                                Mark as read
+                              </p>
+                            ) : null}
                           </div>
                         ))}
                       </div>

@@ -45,7 +45,7 @@ export default function Profile() {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium bg-transparent border rounded text-swirl-700 border-swirl-200 hover:bg-swirl-200">
+        <Menu.Button className="inline-flex items-center justify-center w-full px-4 py-2 font-medium bg-transparent border rounded text-swirl-700 border-swirl-200 hover:bg-swirl-200">
           {user?.name}
           <UserCircleIcon
             className="w-5 h-5 ml-2 -mr-1 text-swirl-700"
@@ -64,25 +64,21 @@ export default function Profile() {
       >
         <Menu.Items className="absolute right-0 w-56 py-2 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none">
           <div className="px-1 py-1 ">
-            <Menu.Item>
-              {() => (
-                <div className="flex flex-col flex-wrap items-center justify-center w-full overflow-hidden">
-                  <p className="truncate max-w-[215px] text-center text-sm">
-                    {user?.name ?? ''} {user?.lastname ?? ''}
-                  </p>
-                  <p className="truncate max-w-[215px] text-center text-sm">
-                    {user?.email}
-                  </p>
-                  <span
-                    className={
-                      'bg-swirl-300 px-2 rounded-md my-1 text-white w-fit text-sm capitalize'
-                    }
-                  >
-                    {capitalizeRol(user.rol)}
-                  </span>
-                </div>
-              )}
-            </Menu.Item>
+            <div className="flex flex-col flex-wrap items-center justify-center w-full overflow-hidden">
+              <p className="truncate max-w-[215px] text-center">
+                {user?.name ?? ''} {user?.lastname ?? ''}
+              </p>
+              <p className="truncate max-w-[215px] text-center">
+                {user?.email}
+              </p>
+              <span
+                className={
+                  'bg-swirl-300 px-2 rounded-md my-1 text-white w-fit capitalize'
+                }
+              >
+                {capitalizeRol(user.rol)}
+              </span>
+            </div>
           </div>
           <div className="px-1 py-1">
             <Menu.Item>
@@ -91,7 +87,7 @@ export default function Profile() {
                   href="/profile"
                   className={`${
                     active ? 'bg-swirl-400 text-white' : 'text-gray-900'
-                  } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                  } group flex w-full items-center rounded-md px-2 py-2`}
                 >
                   <UserCircleIconSM
                     className={`w-5 h-5 mr-2 ${active ? 'text-white' : 'text-swirl-700'}`}
@@ -109,10 +105,10 @@ export default function Profile() {
                       href="/users"
                       className={`${
                         active ? 'bg-swirl-400 text-white' : 'text-gray-900'
-                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      } group flex w-full items-center rounded-md px-2 py-2`}
                     >
                       <UsersIcon
-                        className={`w-5 h-5 mr-2 text-sm ${active ? 'text-white' : 'text-swirl-700'}`}
+                        className={`w-5 h-5 mr-2 ${active ? 'text-white' : 'text-swirl-700'}`}
                         aria-hidden="true"
                       />
                       Users
@@ -125,10 +121,10 @@ export default function Profile() {
                       href="/dashboard"
                       className={`${
                         active ? 'bg-swirl-400 text-white' : 'text-gray-900'
-                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      } group flex w-full items-center rounded-md px-2 py-2`}
                     >
                       <ChartBarIcon
-                        className={`w-5 h-5 mr-2 text-sm ${active ? 'text-white' : 'text-swirl-700'}`}
+                        className={`w-5 h-5 mr-2 ${active ? 'text-white' : 'text-swirl-700'}`}
                         aria-hidden="true"
                       />
                       Dashboard
@@ -144,7 +140,7 @@ export default function Profile() {
                 <div
                   className={`${
                     active ? 'bg-orchid-500  text-cararra-50' : 'text-gray-900'
-                  } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                  } group flex w-full items-center rounded-md px-2 py-2`}
                 >
                   <SignOutButton isMenu active={active} />
                 </div>

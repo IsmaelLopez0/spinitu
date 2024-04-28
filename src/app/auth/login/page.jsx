@@ -51,7 +51,7 @@ export default function LoginPage() {
             {error}
           </p>
         )}
-        <h1 className="mb-4 text-4xl font-bold text-center text-swirl-800">
+        <h1 className="mb-4 text-4xl font-bold text-center uppercase text-swirl-800">
           Login
         </h1>
         <Controller

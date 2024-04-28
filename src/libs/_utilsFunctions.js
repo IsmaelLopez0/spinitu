@@ -61,7 +61,7 @@ export function formatDate(d) {
 
 export function convertTZ(date, tzString = 'America/Mexico_City') {
   const dateBase = typeof date === 'string' ? new Date(date) : date;
-  return dateBase.toLocaleString('es-MX', {
+  return dateBase.toLocaleString('es-CL', {
     timeZone: tzString,
   });
 }
