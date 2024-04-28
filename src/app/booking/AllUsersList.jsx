@@ -17,7 +17,7 @@ const headers = [
   { title: 'Emaīl', key: 'email' },
   { title: 'Phone', key: 'phone' },
   { title: 'Next class', key: 'next' },
-  { title: 'Hour', key: 'hour' },
+  // { title: 'Hour', key: 'hour' },
   { title: 'Remaīnīng classes', key: 'days_to_access' },
   { title: 'End of membershīp', key: 'end_date' },
 ];
