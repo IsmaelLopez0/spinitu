@@ -40,7 +40,7 @@ export default function Profile() {
   }, []);
 
   const capitalizeRol = (rol = '') =>
-    `${rol.charAt(0)}${rol.substring(1, rol.length).toLowerCase()}`;
+    rol ? `${rol.charAt(0)}${rol.substring(1, rol.length).toLowerCase()}` : '';
 
   return (
     <Menu as="div" className="relative inline-block text-left">
@@ -76,7 +76,7 @@ export default function Profile() {
                   'bg-swirl-300 px-2 rounded-md my-1 text-white w-fit capitalize'
                 }
               >
-                {capitalizeRol(user.rol)}
+                {capitalizeRol(user?.rol)}
               </span>
             </div>
           </div>
