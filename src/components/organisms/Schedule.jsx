@@ -233,8 +233,8 @@ export default function Schedule() {
       </div>
       {classDetail.show ? (
         <Dialog
-          title={`Class ${convertTZ(classDetail.payload?.dateStart)}`}
-          description={`Class schedule ${classDetail.payload?.dateStart.toTimeString()}`}
+          title={`Class ${convertTZ(classDetail.payload?.dateStart, { onlyDate: true })}`}
+          description={`Class schedule ${convertTZ(classDetail.payload?.dateStart)}`}
           footer={
             <>
               <Button

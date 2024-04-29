@@ -76,7 +76,11 @@ export default function AllUsersList(props) {
             name: `${item.name ?? ''} ${item.lastname ?? ''}`,
             phone: item.phone ?? '',
             hour: item.class?.date_start ? getTime(dateStart) : '',
-            end_date: item.end_date ? convertTZ(item.end_date) : '',
+            end_date: item.end_date
+              ? convertTZ(item.end_date, {
+                  onlyDate: true,
+                })
+              : '',
             days_to_access: <RemainingClases {...item} />,
           };
         });

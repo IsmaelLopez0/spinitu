@@ -59,9 +59,15 @@ export function formatDate(d) {
   return [year, month, day].join('-');
 }
 
-export function convertTZ(date, tzString = 'America/Mexico_City') {
+export function convertTZ(date, options = {}) {
+  const { onlyDate, tzString } = options;
   const dateBase = typeof date === 'string' ? new Date(date) : date;
-  return dateBase.toLocaleString('es-CL', {
-    timeZone: tzString,
-  });
+  const toReturn = dateBase
+    .toLocaleString('es-CL', {
+      timeZone: tzString ?? 'America/Mexico_City',
+    })
+    .replace(/:00$/, '')
+    .replace(/-/g, '/');
+  if (onlyDate) return toReturn.replace(/, .*/, '');
+  return toReturn;
 }
