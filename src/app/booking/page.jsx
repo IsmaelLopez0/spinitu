@@ -17,8 +17,8 @@ import { useUserConfig } from '@/stores/useUserConfig';
 const inputsToAddUser = [
   { name: 'name', label: 'Name', placeholder: 'Name' },
   { name: 'lastname', label: 'Last Name', placeholder: 'Last Name' },
-  { name: 'email', label: 'Email', placeholder: 'Email' },
-  { name: 'phone', label: 'Phone', placeholder: 'Phone' },
+  { name: 'email', label: 'Email', placeholder: 'Email', type: 'email' },
+  { name: 'phone', label: 'Phone', placeholder: 'Phone', type: 'tel' },
 ];
 
 const paymentOptions = [
@@ -35,6 +35,7 @@ export default function Booking() {
   const [isloading, setIsloading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('CASH');
   const [tabs, setTabs] = useState([]);
+  const [currentTab, setCurrentTab] = useState(0);
   const { control, handleSubmit, reset } = useForm();
   const user = useUserConfig((state) => state.user);
 
@@ -83,6 +84,7 @@ export default function Booking() {
     const invalidMembership = membershipSelected === undefined;
     if (someInpustInalid || invalidMembership || !paymentMethod) {
       setToast('Fill out all the fields', 'error', '/api/auth/register');
+      setIsLoadingOnSubmit(false);
     } else {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
@@ -127,6 +129,8 @@ export default function Booking() {
     <>
       <Tabs
         tabs={tabs}
+        currentTab={currentTab}
+        setCurrentTab={setCurrentTab}
         actionButtons={!user || user?.rol === 'COACH' ? [] : actionButtons}
       />
       {showDialog ? (
@@ -142,6 +146,7 @@ export default function Booking() {
                       label={input.label}
                       name={input.name}
                       placeholder={input.placeholder}
+                      type={input.type ?? 'text'}
                       {...field}
                     />
                   )}

@@ -27,18 +27,13 @@ export async function POST(request) {
     } = data;
     const newData = { ...userData };
     if (hashedPassword) {
+      newData.tempPass = newData.password;
       newData.password = hashedPassword;
     }
-    const newUser = await prisma.user.create({ data: newData });
-    if (isUser && membershipTypeId) {
-      const params = {
-        url: '/membership',
-        method: 'POST',
-        body: { userId: newUser.id, membershipTypeId },
-      };
-      await genericFetch(params);
-    }
-    if (paymentMethod) {
+    const newUser = await prisma.user.create({
+      data: newData,
+    });
+    if (isUser && membershipTypeId && paymentMethod) {
       const body = {
         userId: newUser.id,
         membershipTypeId,
@@ -46,7 +41,7 @@ export async function POST(request) {
         method: paymentMethod,
       };
       const params = { url: '/membership', method: 'POST', body };
-      genericFetch(params);
+      await genericFetch(params);
     }
     if (specializations) {
       const specializationsParsed = specializations
