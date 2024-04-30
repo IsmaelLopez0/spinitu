@@ -54,7 +54,7 @@ const isToday = (someDate) => {
 export default function ScheduleBooking() {
   const [data, setData] = useState([]);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
-  const [week, setWeek] = useState(1);
+  const [week, setWeek] = useState(currentWeek ?? 1);
   const [firstDayWeek, setFirstDayWeek] = useState();
   const [classesExist, setClassesExist] = useState({});
   const [classDetail, setClassDetail] = useState({ show: false });
@@ -86,21 +86,30 @@ export default function ScheduleBooking() {
   }
 
   useEffect(() => {
-    if (isFirstLoad && user?.name) {
-      getClients();
-      setWeek(currentWeek);
-      setIsFirstLoad(false);
-    }
-  }, [isFirstLoad, user]);
-
-  useEffect(() => {
     const añoActual = new Date().getFullYear();
     const firstDayYear = new Date(añoActual, 0, 1);
     const firstDayWeek = new Date(
       firstDayYear.getTime() + (week - 1) * 7 * 24 * 60 * 60 * 1000,
     );
-    setFirstDayWeek(firstDayWeek);
+    console.log({
+      isFirstLoad,
+      day: firstDayWeek.getDay(),
+      firstDayWeek,
+      week,
+    });
+    if (isFirstLoad && new Date().getDay() === 1) {
+      setWeek(currentWeek + 1);
+    } else {
+      setFirstDayWeek(firstDayWeek);
+    }
   }, [week]);
+
+  useEffect(() => {
+    if (isFirstLoad && user?.name) {
+      getClients();
+      setIsFirstLoad(false);
+    }
+  }, [isFirstLoad, user]);
 
   useEffect(() => {
     if (firstDayWeek) {

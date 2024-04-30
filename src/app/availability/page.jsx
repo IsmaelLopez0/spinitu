@@ -129,7 +129,7 @@ const isToday = (someDate) => {
 export default function AvailabilityPage() {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [isCoach, setIsCoach] = useState(false);
-  const [week, setWeek] = useState(1);
+  const [week, setWeek] = useState(currentWeek ?? 1);
   const [firstDayWeek, setFirstDayWeek] = useState();
   const [classesExist, setClassesExist] = useState({});
   const [classDetail, setClassDetail] = useState({ show: false });
@@ -139,22 +139,25 @@ export default function AvailabilityPage() {
   const user = useUserConfig((state) => state.user);
 
   useEffect(() => {
-    if (isFirstLoad && user?.name) {
-      const coach = Boolean(user?.rol === 'COACH');
-      setIsCoach(coach);
-      setWeek(currentWeek);
-      setIsFirstLoad(false);
-    }
-  }, [isFirstLoad, user]);
-
-  useEffect(() => {
     const añoActual = new Date().getFullYear();
     const firstDayYear = new Date(añoActual, 0, 1);
     const firstDayWeek = new Date(
       firstDayYear.getTime() + (week - 1) * 7 * 24 * 60 * 60 * 1000,
     );
-    setFirstDayWeek(firstDayWeek);
+    if (isFirstLoad && new Date().getDay() === 1) {
+      setWeek(currentWeek + 1);
+    } else {
+      setFirstDayWeek(firstDayWeek);
+    }
   }, [week]);
+
+  useEffect(() => {
+    if (isFirstLoad && user?.name) {
+      const coach = Boolean(user?.rol === 'COACH');
+      setIsCoach(coach);
+      setIsFirstLoad(false);
+    }
+  }, [isFirstLoad, user]);
 
   useEffect(() => {
     if (firstDayWeek && isloading === false) {
