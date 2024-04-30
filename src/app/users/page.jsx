@@ -10,7 +10,7 @@ import { XCircleIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
 import { setToast } from '@/libs/notificationsAPIs';
 
 const AddBottonTitle = ['New Coach', 'New Receptionist', 'New Administrator'];
-const TabsTitles = ['Coach', 'Receptionist', 'Administrator'];
+const TabsTitles = ['Coaches', 'Receptionists', 'Administrators'];
 
 async function getUsers() {
   const params = {
@@ -45,16 +45,16 @@ export default function UsersPage() {
   function handleDialog(data) {
     let currTab = 'Coach';
     const tabRol = {
-      COACH: 'Coach',
-      RECEPTIONIST: 'Receptionist',
-      ADMINISTRATOR: 'Administrator',
+      COACH: 'Coaches',
+      RECEPTIONIST: 'Receptionists',
+      ADMINISTRATOR: 'Administrators',
     };
     let currRol = 'COACH';
-    if (TabsTitles[currentTab] === 'Receptionist') {
+    if (TabsTitles[currentTab] === 'Receptionists') {
       currTab = 'Receptionist';
       currRol = 'RECEPTIONIST';
     }
-    if (TabsTitles[currentTab] === 'Administrator') {
+    if (TabsTitles[currentTab] === 'Administrators') {
       currTab = 'Administrator';
       currRol = 'ADMINISTRATOR';
     }

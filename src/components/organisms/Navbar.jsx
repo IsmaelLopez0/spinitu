@@ -32,7 +32,7 @@ async function NavBar() {
     <nav className="sticky top-0 z-10 flex items-center justify-between px-24 py-3 border-b font-cormorant bg-cararra-100 text-swirl-800 border-swirl-200">
       <div className="flex flex-row items-center">
         <Image
-          src="/images/icons/SPINITU.ico"
+          src="\images\SPINITU_logo.svg"
           alt="SPĪNĪTU Logo"
           width="85"
           height="55"

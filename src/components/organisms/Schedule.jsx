@@ -81,7 +81,7 @@ async function updateClass(classId, instructorId, dateStart, oldInstructor) {
     createNotification(
       instructorId,
       'You were assigned a class',
-      `You have been assigned the class of ${dateStart.toLocaleString()}`,
+      `You have been assigned the class of ${convertTZ(dateStart)}`,
     );
     /* createNotification(
         oldInstructor,

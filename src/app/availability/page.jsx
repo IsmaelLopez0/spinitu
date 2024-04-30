@@ -81,7 +81,7 @@ async function updateClass(classId, instructorId, dateStart, oldInstructor) {
     createNotification(
       instructorId,
       'You were assigned a class',
-      `You have been assigned the class of ${dateStart.toLocaleString()}`,
+      `You have been assigned the class of ${convertTZ(dateStart)}`,
     );
     /* createNotification(
         oldInstructor,
@@ -183,7 +183,7 @@ export default function AvailabilityPage() {
     let id = classId;
     if (!id) {
       id = await createClass(dateStart, user?.coaches.user_id);
-      await createNotification(
+      createNotification(
         user?.coaches.user_id,
         'Default asignation',
         `You have been assigned by default the class of ${convertTZ(dateStart)}`,
