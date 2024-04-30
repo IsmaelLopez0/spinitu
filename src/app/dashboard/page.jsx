@@ -53,6 +53,7 @@ export default function DashboardPage() {
   const [coaches, setCoaches] = useState({});
   const [optionSelected, setOptionSelected] = useState(0);
   const [dateOptions, setDateOptions] = useState([]);
+  const [currentTab, setCurrentTab] = useState(0);
   const [tabs, setTabs] = useState([
     {
       title: 'Classes by Coach',
@@ -135,6 +136,8 @@ export default function DashboardPage() {
   return (
     <Tabs
       tabs={tabs}
+      currentTab={currentTab}
+      setCurrentTab={setCurrentTab}
       customLeft={<Select options={dateOptions} onChange={setOptionSelected} />}
     />
   );
