@@ -1,27 +1,8 @@
+import Image from 'next/image';
 import { compareDates } from '@/libs/_utilsFunctions';
-
-const validSchedule = {
-  1: { start: '6:15', end: '7:00' },
-  2: { start: '7:15', end: '8:00' },
-  3: { start: '8:15', end: '9:00' },
-  4: { start: '9:15', end: '10:00' },
-  5: { start: '10:15', end: '11:00' },
-  6: { start: '18:15', end: '19:00' },
-  7: { start: '19:15', end: '20:00' },
-  8: { start: '20:15', end: '21:00' },
-  9: { start: '21:15', end: '22:00' },
-};
-
-const shedulByDay = [
-  [1, 2, 3, 4, 5, 6, 7, 8, 9],
-  [1, 2, 3, 4, null, 6, 7, 8, 9],
-  [1, 2, 3, 4, null, 6, 7, 8, 9],
-  [1, 2, 3, 4, null, 6, 7, 8, 9],
-  [1, 2, 3, 4, null, 6, 7, 8, 9],
-  [1, 2, 3, 4, null, 6, 7, 8, 9],
-  [null, 2, 3, 4, 5, null, null, null, null],
-  [null, 2, 3, 4, 5, null, null, null, null],
-];
+import { validSchedule, scheduleByDay, CYCLING, BARRE } from '@/libs/vars';
+import SpinningIcon from '../../../public/images/icons/Icono_Spinitu_Spinning.svg';
+import BarreIcon from '../../../public/images/icons/Icono_Spinitu_Barre.svg';
 
 export default function ScheduleByDayComponentBooking({
   day,
@@ -29,8 +10,8 @@ export default function ScheduleByDayComponentBooking({
   classesExist,
   onClick = () => {},
 }) {
-  return shedulByDay[day].map((currSchedule, i) => {
-    if (currSchedule === null) {
+  return scheduleByDay[day].map(({ id, type }, i) => {
+    if (id === null) {
       return (
         <div className="w-full bg-transparent h-100px" key={day + '-' + i} />
       );
@@ -42,14 +23,13 @@ export default function ScheduleByDayComponentBooking({
           key={day + '-' + i}
         >
           <p>
-            {validSchedule[currSchedule].start} -{' '}
-            {validSchedule[currSchedule].end}
+            {validSchedule[id].start} - {validSchedule[id].end}
           </p>
         </div>
       );
     }
     const today = new Date();
-    const hour = validSchedule[currSchedule].start.replace(/:.*/, '');
+    const hour = validSchedule[id].start.replace(/:.*/, '');
     const dayWithHour = currentDay.setHours(hour, 15);
     const classExist = classesExist[dayWithHour];
     const isDisable =
@@ -71,13 +51,31 @@ export default function ScheduleByDayComponentBooking({
           isDisable ? 'bg-orchid-500/50' : `${color} cursor-pointer`
         }`}
         onClick={() => {
-          onClick(new Date(dayWithHour), classExist, isDisable);
+          onClick(new Date(dayWithHour), classExist, isDisable, type);
         }}
       >
-        <p className="text-sm">Assistants: {totalAssistants}</p>
-        <p className="text-xs">
-          Coach: {defaultCoach.name} {defaultCoach.lastname}
-        </p>
+        <div className="relative z-0 w-full h-full">
+          <div className="flex flex-col items-center justify-center w-full h-full">
+            <p className="z-0 text-sm">Assistants: {totalAssistants}</p>
+            <p className="text-xs">
+              Coach: {defaultCoach.name} {defaultCoach.lastname}
+            </p>
+          </div>
+          {type === CYCLING ? (
+            <Image
+              src={SpinningIcon}
+              alt="Spinning"
+              className={`absolute h-4 bottom-1 left-3 w-fit ${isDisable ? 'opacity-50' : ''}`}
+            />
+          ) : null}
+          {type === BARRE ? (
+            <Image
+              src={BarreIcon}
+              alt="Barré"
+              className={`absolute h-4 bottom-1 left-3 w-fit ${isDisable ? 'opacity-50' : ''}`}
+            />
+          ) : null}
+        </div>
       </div>
     );
   });

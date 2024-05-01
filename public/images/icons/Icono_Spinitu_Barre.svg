@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Icono_barré" data-name="Icono barré" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 243.22 310.04">
+  <defs>
+    <style>
+      .cls-1, .cls-2, .cls-3 {
+        stroke-miterlimit: 10;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4 {
+        fill: none;
+        stroke: #1d1d1b;
+      }
+
+      .cls-1, .cls-2, .cls-4 {
+        stroke-linecap: round;
+      }
+
+      .cls-1, .cls-3 {
+        stroke-width: 15px;
+      }
+
+      .cls-2, .cls-4 {
+        stroke-width: 30px;
+      }
+
+      .cls-5 {
+        fill: #1d1d1b;
+      }
+
+      .cls-4 {
+        stroke-linejoin: round;
+      }
+    </style>
+  </defs>
+  <circle class="cls-5" cx="181.78" cy="97.93" r="15.31"/>
+  <line class="cls-3" x1="181.78" y1="118.91" x2="181.78" y2="309.95"/>
+  <polyline class="cls-4" points="177.27 75.55 79.9 97.93 15 206.97 107.81 206.97"/>
+  <line class="cls-2" x1="107.81" y1="208.11" x2="106.96" y2="294.93"/>
+  <circle class="cls-5" cx="91" cy="36.23" r="36.05"/>
+  <line class="cls-1" x1="235.72" y1="251.52" x2="213.59" y2="251.52"/>
+  <line class="cls-1" x1="235.72" y1="302.54" x2="213.59" y2="302.54"/>
+  <line class="cls-3" x1="224.66" y1="261.71" x2="224.66" y2="292.35"/>
+</svg>

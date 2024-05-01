@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/16/solid';
 import GenericLoading from '../atoms/GenericLoading';
@@ -17,6 +18,9 @@ import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
 import { useUserConfig } from '@/stores/useUserConfig';
 import { IconBike } from '@tabler/icons-react';
+import { CYCLING, BARRE } from '@/libs/vars';
+import SpinningIcon from '../../../public/images/icons/Icono_Spinitu_Spinning.svg';
+import BarreIcon from '../../../public/images/icons/Icono_Spinitu_Barre.svg';
 
 const dias = ['Time', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -171,7 +175,7 @@ export default function ScheduleBooking() {
 
   return (
     <>
-      <div className="grid grid-flow-col grid-cols-8 h-full grid-rows-10 gap-2.5 gap-y-0 text-center">
+      <div className="grid grid-flow-col grid-cols-8 h-full grid-rows-12 gap-2.5 gap-y-0 text-center">
         {dias.map((day, i) => {
           const { currentDay, monthDay } = getDay(firstDayWeek, i - 1);
           const istoday = isToday(currentDay);
@@ -223,10 +227,10 @@ export default function ScheduleBooking() {
                   day={i}
                   currentDay={currentDay}
                   classesExist={classesExist}
-                  onClick={(dateStart, classExist, isDisable) => {
+                  onClick={(dateStart, classExist, isDisable, type) => {
                     setClassDetail({
                       show: true,
-                      payload: { classExist, dateStart, isDisable },
+                      payload: { classExist, dateStart, isDisable, type },
                     });
                   }}
                 />
@@ -247,11 +251,17 @@ export default function ScheduleBooking() {
                 </p>
                 <div className="flex justify-between">
                   <p className="flex items-center">
-                    <IconBike color="#292221" className="mr-2" />
+                    <IconByType
+                      type={classDetail.payload?.type}
+                      color="swirl-950"
+                    />
                     Available
                   </p>
                   <p className="flex items-center">
-                    <IconBike color="#d6cfc8" className="mr-2" />
+                    <IconByType
+                      type={classDetail.payload?.type}
+                      color="swirl-200"
+                    />
                     Reserved
                   </p>
                 </div>
@@ -292,9 +302,10 @@ export default function ScheduleBooking() {
                     >
                       <div className="has-tooltip">
                         <div className="flex justify-center">
-                          <IconBike
-                            color={!isReserved ? '#292221' : '#d6cfc8'}
-                            size={60}
+                          <IconByType
+                            type={classDetail.payload?.type}
+                            className="w-16 h-16"
+                            color={isReserved ? 'swirl-200' : 'swirl-950'}
                           />
                         </div>
                         <span className="absolute bottom-0 text-center bg-white border rounded-full left-2/3 w-7">
@@ -311,7 +322,11 @@ export default function ScheduleBooking() {
                 })}
                 <div className="relative col-span-3 text-center cursor-default select-none rounded-xl">
                   <div className="flex justify-center">
-                    <IconBike color="#736c5b" size={48} />
+                    <IconByType
+                      type={classDetail.payload?.type}
+                      className="w-14 h-14"
+                      color="cararra-700"
+                    />
                   </div>
                   <span className="absolute px-1 text-center bg-white rounded-full left-[45%]">
                     Coach
@@ -355,7 +370,10 @@ export default function ScheduleBooking() {
             </p>
             <div className="flex flex-col items-center justify-center p-2 border rounded">
               {confirmReserve.payload?.position}
-              <IconBike color="#292221" />
+              <IconByType
+                type={confirmReserve.payload?.type}
+                color="wirl-950"
+              />
             </div>
           </div>
           <div className="flex flex-col justify-between overflow-auto">
@@ -389,3 +407,33 @@ export default function ScheduleBooking() {
     </>
   );
 }
+
+const IconByType = ({ type, className, color }) => {
+  const colorToFilter = {
+    'swirl-950':
+      'invert-[.05] sepia-[.59] saturate-[3.55] hue-rotate-[320deg] brightness-[.92] contrast-[.81]',
+    'swirl-200':
+      'invert-[.94] sepia-[.07] saturate-[2.26] hue-rotate-[348deg] brightness-[.88] contrast-[.93]',
+    'cararra-700':
+      'invert-[.4] sepia-[.34] saturate-[2.12] hue-rotate-[5deg] brightness-[.95] contrast-[.85]',
+  };
+  if (type === CYCLING) {
+    return (
+      <Image
+        src={SpinningIcon}
+        alt="Spinning"
+        className={`h-4 mr-2 w-fit ${colorToFilter[color]} ${className}`}
+      />
+    );
+  }
+  if (type === BARRE) {
+    return (
+      <Image
+        src={BarreIcon}
+        alt="Barré"
+        className={`h-4 mr-2 w-fit ${colorToFilter[color]} ${className}`}
+      />
+    );
+  }
+  return null;
+};

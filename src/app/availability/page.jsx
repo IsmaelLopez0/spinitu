@@ -25,10 +25,10 @@ const dias = ['Time', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 const currentWeek = getCurrentWeek();
 
-async function createClass(dateStart, instructorId) {
+async function createClass(dateStart, instructorId, type) {
   const params = {
     url: '/class',
-    body: { dateStart, instructorId },
+    body: { dateStart, instructorId, type },
     method: 'POST',
   };
   const res = await genericFetch(params);
@@ -70,7 +70,7 @@ async function createDisponibility(classId, userId) {
   }
 }
 
-async function updateClass(classId, instructorId, dateStart, oldInstructor) {
+async function updateClass(classId, instructorId, dateStart) {
   const params = {
     url: '/class',
     body: { classId, instructorId },
@@ -83,11 +83,6 @@ async function updateClass(classId, instructorId, dateStart, oldInstructor) {
       'You were assigned a class',
       `You have been assigned the class of ${convertTZ(dateStart)}`,
     );
-    /* createNotification(
-        oldInstructor,
-        'You will no longer teach the class',
-        `An administrator assigned someone else to class for the day ${dateStart.toLocaleString()}`,
-      ) */
     return res.body;
   } else {
     setToast(res.body.error, 'error', params.url + res.statusCode);
@@ -182,10 +177,10 @@ export default function AvailabilityPage() {
     setWeek((state) => (isNextWeek ? state + 1 : state - 1));
   }
 
-  async function setDisponibility(dateStart, classId) {
+  async function setDisponibility(dateStart, classId, type) {
     let id = classId;
     if (!id) {
-      id = await createClass(dateStart, user?.coaches.user_id);
+      id = await createClass(dateStart, user?.coaches.user_id, type);
       createNotification(
         user?.coaches.user_id,
         'Default asignation',
@@ -200,7 +195,7 @@ export default function AvailabilityPage() {
 
   return (
     <>
-      <div className="grid grid-flow-col grid-cols-8 h-full grid-rows-10 gap-2.5 text-center">
+      <div className="grid grid-flow-col grid-cols-8 h-full grid-rows-12 gap-2.5 text-center">
         {dias.map((day, i) => {
           const { currentDay, monthDay } = getDay(firstDayWeek, i - 1);
           const istoday = isToday(currentDay);
@@ -249,10 +244,10 @@ export default function AvailabilityPage() {
                   currentDay={currentDay}
                   isCoach={isCoach}
                   classesExist={classesExist}
-                  onClick={(dateStart, classExist) => {
+                  onClick={(dateStart, classExist, type) => {
                     setClassDetail({
                       show: true,
-                      payload: { classExist, dateStart },
+                      payload: { classExist, dateStart, type },
                     });
                   }}
                 />
@@ -316,6 +311,7 @@ export default function AvailabilityPage() {
                     setDisponibility(
                       classDetail.payload?.dateStart,
                       classDetail.payload?.classExist?.id,
+                      classDetail.payload?.type,
                     );
                   }}
                 />
@@ -358,7 +354,6 @@ export default function AvailabilityPage() {
                                     classDetail.payload?.classExist?.id,
                                     couch.id,
                                     classDetail.payload?.dateStart,
-                                    couch.id,
                                   ).then((res) => {
                                     getClassExist();
                                     setClassDetail((prev) => ({

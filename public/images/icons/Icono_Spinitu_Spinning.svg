@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Icono_Spinning" data-name="Icono Spinning" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 243.22 310.04">
+  <defs>
+    <style>
+      .cls-1 {
+        stroke-miterlimit: 10;
+      }
+
+      .cls-1, .cls-2, .cls-3 {
+        fill: none;
+        stroke: #1d1d1b;
+      }
+
+      .cls-1, .cls-3 {
+        stroke-width: 15px;
+      }
+
+      .cls-4 {
+        fill: #1d1d1b;
+      }
+
+      .cls-2 {
+        stroke-width: 30px;
+      }
+
+      .cls-2, .cls-3 {
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+    </style>
+  </defs>
+  <polyline class="cls-2" points="186.92 127.53 107.43 80.79 73.31 151.04 131.14 184.98 115.58 240.17"/>
+  <circle class="cls-4" cx="139.49" cy="34.1" r="34.1"/>
+  <path class="cls-1" d="m195.3,216.63c-14.76-3.58-119.21-28.91-119.21-28.91-3.84-.92-7.84-1.42-11.96-1.42-28.29,0-51.22,22.93-51.22,51.22s22.93,51.22,51.22,51.22h128.24c19.92,0,36.06-16.14,36.06-36.06s-18.36-32.48-33.13-36.06Z"/>
+  <circle class="cls-4" cx="63.28" cy="239.23" r="26.37"/>
+  <circle class="cls-4" cx="194.56" cy="252.41" r="13.18"/>
+  <polyline class="cls-3" points="188.9 215.08 181.38 156.78 202.92 156.78 215.91 127.08"/>
+  <line class="cls-3" x1="206.05" y1="286.06" x2="220" y2="302.36"/>
+  <line class="cls-3" x1="42.82" y1="286.06" x2="28.87" y2="302.36"/>
+</svg>

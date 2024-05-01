@@ -76,6 +76,7 @@ model Class {
   is_active     Boolean
   verified      Boolean @default(false)
   verified_by   Int?
+  type          ClassType @default(cycling)
   reservations  Reservation[]
   couchesDisponibility ClassCoachDisponibility[]
   instructor        Coach           @relation(fields: [instructor_id], references: [user_id])
@@ -134,4 +135,9 @@ enum PaymentMethod {
   CREDIT_CARD
   DEBIT
   BANK_TRANSFERS
+}
+
+enum ClassType {
+  cycling
+  barre
 }
