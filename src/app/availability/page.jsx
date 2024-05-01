@@ -15,6 +15,7 @@ import {
   obtenerNombreMes,
   getCurrentWeek,
   convertTZ,
+  formatDate,
 } from '@/libs/_utilsFunctions';
 import Button from '@/components/atoms/Button';
 import { genericFetch } from '@/libs/externalAPIs';
@@ -45,7 +46,10 @@ async function getWeekClasses(firstDayWeek) {
   const lastDayWeek = new Date(tempDate.setDate(tempDate.getDate() + 7));
   const params = {
     url: '/class',
-    query: { firstDayWeek, lastDayWeek },
+    query: {
+      firstDayWeek: formatDate(firstDayWeek),
+      lastDayWeek: formatDate(lastDayWeek),
+    },
     method: 'GET',
   };
   const res = await genericFetch(params);
