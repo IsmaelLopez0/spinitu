@@ -199,14 +199,14 @@ export default function AvailabilityPage() {
 
   return (
     <>
-      <div className="grid grid-flow-col grid-cols-8 h-full grid-rows-12 gap-2.5 text-center">
+      <div className="grid grid-flow-col grid-cols-8 h-full grid-rows-11 gap-2.5 text-center">
         {dias.map((day, i) => {
           const { currentDay, monthDay } = getDay(firstDayWeek, i - 1);
           const istoday = isToday(currentDay);
           return (
             <React.Fragment key={`${currentDay}-${i}`}>
               {i > 0 ? (
-                <div className="sticky top-[60px] bg-cararra-100 flex items-center justify-center nm-10">
+                <div className="sticky z-10 top-[66px] bg-cararra-100 flex items-center justify-center nm-10">
                   {i === 1 ? (
                     <ChevronLeftIcon
                       className="mr-2 cursor-pointer text-mindaro-700 h-7"
@@ -230,7 +230,7 @@ export default function AvailabilityPage() {
                 </div>
               ) : (
                 <div
-                  className="text-xs text-white sticky top-[60px] bg-cararra-100 flex flex-col gap-4 gap-y-2 py-2 px-5"
+                  className="text-xs text-white sticky z-10 top-[66px] bg-cararra-100 flex flex-col gap-4 gap-y-2 py-2 px-5"
                   key={day + '-' + i}
                 >
                   <span className="p-1 rounded bg-orchid-200">Past</span>

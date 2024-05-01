@@ -178,14 +178,14 @@ export default function Schedule() {
 
   return (
     <>
-      <div className="grid grid-flow-col grid-cols-8 h-full grid-rows-12 gap-2.5 text-center">
+      <div className="grid grid-flow-col grid-cols-8 h-full grid-rows-11 gap-2.5 text-center">
         {dias.map((day, i) => {
           const { currentDay, monthDay } = getDay(firstDayWeek, i - 1);
           const istoday = isToday(currentDay);
           return (
             <React.Fragment key={currentDay}>
               {i > 0 ? (
-                <div className="sticky top-[60px] bg-cararra-100 flex items-center justify-center nm-10">
+                <div className="sticky z-10 top-[66px] bg-cararra-100 flex items-center justify-center nm-10">
                   {i === 1 ? (
                     <ChevronLeftIcon
                       className="mr-2 cursor-pointer text-mindaro-700 h-7"
@@ -209,7 +209,7 @@ export default function Schedule() {
                 </div>
               ) : (
                 <div
-                  className="sticky top-[65px] bg-cararra-100 flex items-center justify-center nm-10"
+                  className="sticky z-10 top-[66px] bg-cararra-100 flex items-center justify-center nm-10"
                   key={day + '-' + i}
                 />
               )}
