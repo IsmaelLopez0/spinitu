@@ -61,7 +61,7 @@ export default function Notifications() {
       <Transition.Root show={open} as={Fragment}>
         <Dialog
           as="div"
-          className="relative z-10 font-cormorant"
+          className="relative z-20 font-cormorant"
           onClose={setOpen}
         >
           <Transition.Child

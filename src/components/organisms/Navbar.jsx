@@ -29,7 +29,7 @@ const inSessionMenu = [
 async function NavBar() {
   const session = await getServerSession(authOptions);
   return (
-    <nav className="sticky top-0 z-10 flex items-center justify-between px-24 py-3 border-b font-cormorant bg-cararra-100 text-swirl-800 border-swirl-200">
+    <nav className="sticky top-0 z-20 flex items-center justify-between px-24 py-3 border-b font-cormorant bg-cararra-100 text-swirl-800 border-swirl-200">
       <div className="flex flex-row items-center">
         <Image
           src="\images\SPINITU_logo.svg"
