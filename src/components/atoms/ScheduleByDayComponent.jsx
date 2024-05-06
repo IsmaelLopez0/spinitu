@@ -33,9 +33,11 @@ export default function ScheduleByDayComponent({
     const today = new Date();
     const hour = validSchedule[id].start.replace(/:.*/, '');
     const dayWithHour = currentDay.setHours(hour, 15);
-    const isDisable = isCoach
-      ? getIsValidDifference(currentDay.setHours(hour), 10)
-      : compareDates(today, currentDay.setHours(hour - 1, 45)) !== 1;
+    // const isDisable = isCoach
+    //   ? getIsValidDifference(currentDay.setHours(hour), 10)
+    //   : compareDates(today, currentDay.setHours(hour - 1, 45)) !== 1;
+    const isDisable =
+      compareDates(today, currentDay.setHours(hour - 1, 45)) !== 1;
     const classExist = classesExist[dayWithHour];
     const totalCoaches = classExist?.couchesDisponibility?.length ?? 0;
     const defaultCoach =
