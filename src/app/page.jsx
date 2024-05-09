@@ -12,5 +12,4 @@ function HomePage() {
     </section>
   );
 }
-
 export default HomePage;
