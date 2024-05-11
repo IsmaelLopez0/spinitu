@@ -4,7 +4,7 @@ import Table from '@/components/atoms/Table';
 import Input from '@/components/atoms/Input';
 import Button from '@/components/atoms/Button';
 import { genericFetch } from '@/libs/externalAPIs';
-import { sumDaysToDate } from '@/libs/_utilsFunctions';
+import { sumDaysToDate, convertTZ } from '@/libs/_utilsFunctions';
 
 const headers = [
   { title: 'Name', key: 'name' },
@@ -28,15 +28,14 @@ export default function UserList(props) {
   }
 
   function formatDate(date) {
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
+    const day = `${date.getDate()}`.padStart(2, '0');
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
     const year = date.getFullYear();
     return `${year}-${month}-${day}`;
   }
 
   function getTime(date) {
-    const tempHour = date.getHours();
-    const hour = tempHour < 10 ? `0${tempHour}` : tempHour;
+    const hour = `${date.getHours()}`.padStart(2, '0');
     const minutes = date.getMinutes();
     return `${hour}:${minutes}`;
   }
@@ -44,7 +43,7 @@ export default function UserList(props) {
   function getClients(emailOrName) {
     const dateStart = formatDate(new Date());
     const dateEnd = formatDate(sumDaysToDate(new Date(), 1));
-    const query = { dateStart, dateEnd };
+    const query = { dateStart };
     if (emailOrName) query.emailOrName = emailOrName;
     const params = { url: '/user/clients', method: 'GET', query };
     setIsLoadingData(true);
@@ -54,7 +53,7 @@ export default function UserList(props) {
           ...item,
           name: `${item.name ?? ''} ${item.lastname ?? ''}`,
           phone: item.phone ?? '',
-          hour: getTime(new Date(item.date_start)),
+          hour: convertTZ(item.date_start),
           ...memberships[0],
         }));
         setData(newData);

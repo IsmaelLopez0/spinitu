@@ -17,7 +17,6 @@ import Autocomplete from '../atoms/Autocomplete';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
 import { useUserConfig } from '@/stores/useUserConfig';
-import { IconBike } from '@tabler/icons-react';
 import { CYCLING, BARRE } from '@/libs/vars';
 import SpinningIcon from '../../../public/images/icons/Icono_Spinitu_Spinning.svg';
 import BarreIcon from '../../../public/images/icons/Icono_Spinitu_Barre.svg';
@@ -95,12 +94,6 @@ export default function ScheduleBooking() {
     const firstDayWeek = new Date(
       firstDayYear.getTime() + (week - 1) * 7 * 24 * 60 * 60 * 1000,
     );
-    console.log({
-      isFirstLoad,
-      day: firstDayWeek.getDay(),
-      firstDayWeek,
-      week,
-    });
     if (isFirstLoad && new Date().getDay() === 1) {
       setWeek(currentWeek + 1);
     } else {
@@ -254,6 +247,7 @@ export default function ScheduleBooking() {
                     <IconByType
                       type={classDetail.payload?.type}
                       color="swirl-950"
+                      small
                     />
                     Available
                   </p>
@@ -261,6 +255,7 @@ export default function ScheduleBooking() {
                     <IconByType
                       type={classDetail.payload?.type}
                       color="swirl-200"
+                      small
                     />
                     Reserved
                   </p>
@@ -408,7 +403,7 @@ export default function ScheduleBooking() {
   );
 }
 
-const IconByType = ({ type, className, color }) => {
+const IconByType = ({ small = false, type, className, color }) => {
   const colorToFilter = {
     'swirl-950':
       'invert-[.05] sepia-[.59] saturate-[3.55] hue-rotate-[320deg] brightness-[.92] contrast-[.81]',
@@ -422,7 +417,7 @@ const IconByType = ({ type, className, color }) => {
       <Image
         src={SpinningIcon}
         alt="Spinning"
-        className={`h-4 mr-2 w-fit ${colorToFilter[color]} ${className}`}
+        className={`${small ? 'h-4 w-fit' : 'h-16'} mr-2 ${colorToFilter[color]} ${className}`}
       />
     );
   }
@@ -431,7 +426,7 @@ const IconByType = ({ type, className, color }) => {
       <Image
         src={BarreIcon}
         alt="Barré"
-        className={`h-4 mr-2 w-fit ${colorToFilter[color]} ${className}`}
+        className={`${small ? 'h-4 w-fit' : 'h-16'} mr-2 ${colorToFilter[color]} ${className}`}
       />
     );
   }
