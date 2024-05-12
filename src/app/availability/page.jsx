@@ -14,21 +14,22 @@ import {
   getDay,
   obtenerNombreMes,
   getCurrentWeek,
+  convertTZ,
+  formatDate,
 } from '@/libs/_utilsFunctions';
 import Button from '@/components/atoms/Button';
-import { createNotification } from '@/libs/notificationsAPIs';
 import { genericFetch } from '@/libs/externalAPIs';
-import { setToast } from '@/libs/notificationsAPIs';
+import { setToast, createNotification } from '@/libs/notificationsAPIs';
 import { useUserConfig } from '@/stores/useUserConfig';
 
 const dias = ['Time', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 const currentWeek = getCurrentWeek();
 
-async function createClass(dateStart, instructorId) {
+async function createClass(dateStart, instructorId, type) {
   const params = {
     url: '/class',
-    body: { dateStart, instructorId },
+    body: { dateStart, instructorId, type },
     method: 'POST',
   };
   const res = await genericFetch(params);
@@ -45,7 +46,10 @@ async function getWeekClasses(firstDayWeek) {
   const lastDayWeek = new Date(tempDate.setDate(tempDate.getDate() + 7));
   const params = {
     url: '/class',
-    query: { firstDayWeek, lastDayWeek },
+    query: {
+      firstDayWeek: formatDate(firstDayWeek),
+      lastDayWeek: formatDate(lastDayWeek),
+    },
     method: 'GET',
   };
   const res = await genericFetch(params);
@@ -65,10 +69,12 @@ async function createDisponibility(classId, userId) {
   const res = await genericFetch(params);
   if (res.statusCode !== 200) {
     setToast(res.body.error, 'error', params.url + res.statusCode);
+  } else {
+    setToast('Successfully applied', 'success', params.url + res.statusCode);
   }
 }
 
-async function updateClass(classId, instructorId, dateStart, oldInstructor) {
+async function updateClass(classId, instructorId, dateStart) {
   const params = {
     url: '/class',
     body: { classId, instructorId },
@@ -79,13 +85,9 @@ async function updateClass(classId, instructorId, dateStart, oldInstructor) {
     createNotification(
       instructorId,
       'You were assigned a class',
-      `You have been assigned the class of ${dateStart.toLocaleString()}`,
+      `You have been assigned the class of ${convertTZ(dateStart)}`,
     );
-    createNotification(
-      oldInstructor,
-      'You will no longer teach the class',
-      `An administrator assigned someone else to class for the day ${dateStart.toLocaleString()}`,
-    );
+    return res.body;
   } else {
     setToast(res.body.error, 'error', params.url + res.statusCode);
   }
@@ -98,13 +100,12 @@ async function verifyClass(classId, user, instructorId, dateStart) {
     body: { classId, verifiedBy: id },
     method: 'PUT',
   };
-  console.log({ user });
   const res = await genericFetch(params);
   if (res.statusCode === 200) {
-    createNotification(
+    const res = await createNotification(
       instructorId,
       'An administrator approved your class',
-      `The administrator ${name} ${lastname} confirmed that you will teach the class ${dateStart.toLocaleString()}`,
+      `The administrator ${name} ${lastname} confirmed that you will teach the class ${convertTZ(dateStart)}`,
     );
   } else {
     setToast(res.body.error, 'error', params.url + res.statusCode);
@@ -127,21 +128,14 @@ const isToday = (someDate) => {
 export default function AvailabilityPage() {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [isCoach, setIsCoach] = useState(false);
-  const [week, setWeek] = useState(1);
+  const [week, setWeek] = useState(currentWeek ?? 1);
   const [firstDayWeek, setFirstDayWeek] = useState();
   const [classesExist, setClassesExist] = useState({});
   const [classDetail, setClassDetail] = useState({ show: false });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isloading, setIsloading] = useState(false);
+  const [isLoadingClassDetail, setIsLoadingClassDetail] = useState(false);
+  const [isLoadingModalBtn, setIsLoadingModalBtn] = useState(false);
   const user = useUserConfig((state) => state.user);
-
-  useEffect(() => {
-    if (isFirstLoad && user?.name) {
-      const coach = Boolean(user?.rol === 'COACH');
-      setIsCoach(coach);
-      setWeek(currentWeek);
-      setIsFirstLoad(false);
-    }
-  }, [isFirstLoad, user]);
 
   useEffect(() => {
     const añoActual = new Date().getFullYear();
@@ -149,11 +143,23 @@ export default function AvailabilityPage() {
     const firstDayWeek = new Date(
       firstDayYear.getTime() + (week - 1) * 7 * 24 * 60 * 60 * 1000,
     );
-    setFirstDayWeek(firstDayWeek);
+    if (isFirstLoad && new Date().getDay() === 1) {
+      setWeek(currentWeek + 1);
+    } else {
+      setFirstDayWeek(firstDayWeek);
+    }
   }, [week]);
 
   useEffect(() => {
-    if (firstDayWeek && isLoading === false) {
+    if (isFirstLoad && user?.name) {
+      const coach = Boolean(user?.rol === 'COACH');
+      setIsCoach(coach);
+      setIsFirstLoad(false);
+    }
+  }, [isFirstLoad, user]);
+
+  useEffect(() => {
+    if (firstDayWeek && isloading === false) {
       getClassExist();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -164,10 +170,10 @@ export default function AvailabilityPage() {
   }
 
   function getClassExist() {
-    setIsLoading(true);
+    setIsloading(true);
     getWeekClasses(firstDayWeek).then((res) => {
       setClassesExist(res);
-      setIsLoading(false);
+      setIsloading(false);
     });
   }
 
@@ -175,31 +181,32 @@ export default function AvailabilityPage() {
     setWeek((state) => (isNextWeek ? state + 1 : state - 1));
   }
 
-  async function setDisponibility(dateStart, classId) {
+  async function setDisponibility(dateStart, classId, type) {
     let id = classId;
     if (!id) {
-      id = await createClass(dateStart, user?.coaches.user_id);
+      id = await createClass(dateStart, user?.coaches.user_id, type);
       createNotification(
         user?.coaches.user_id,
         'Default asignation',
-        `You have been assigned by default the class of ${dateStart.toLocaleString()}`,
+        `You have been assigned by default the class of ${convertTZ(dateStart)}`,
       );
     }
     await createDisponibility(id, user?.coaches.user_id);
     setClassDetail({ show: false });
+    setIsLoadingModalBtn(false);
     getClassExist();
   }
 
   return (
     <>
-      <div className="grid grid-flow-col grid-cols-8 h-full grid-rows-10 gap-2.5 text-center">
+      <div className="grid grid-flow-col grid-cols-8 h-full grid-rows-11 gap-2.5 text-center">
         {dias.map((day, i) => {
           const { currentDay, monthDay } = getDay(firstDayWeek, i - 1);
           const istoday = isToday(currentDay);
           return (
-            <React.Fragment key={currentDay}>
+            <React.Fragment key={`${currentDay}-${i}`}>
               {i > 0 ? (
-                <div className="sticky top-[60px] bg-cararra-100 flex items-center justify-center nm-10">
+                <div className="sticky z-10 top-[66px] bg-cararra-100 flex items-center justify-center nm-10">
                   {i === 1 ? (
                     <ChevronLeftIcon
                       className="mr-2 cursor-pointer text-mindaro-700 h-7"
@@ -223,11 +230,17 @@ export default function AvailabilityPage() {
                 </div>
               ) : (
                 <div
-                  className="sticky top-[65px] bg-cararra-100 flex items-center justify-center nm-10"
+                  className="text-xs text-white sticky z-10 top-[66px] bg-cararra-100 flex flex-col gap-4 gap-y-2 py-2 px-5"
                   key={day + '-' + i}
-                />
+                >
+                  <span className="p-1 rounded bg-orchid-200">Past</span>
+                  <span className="p-1 rounded bg-orchid-500/50">No coach</span>
+                  <span className="h-full p-1 rounded bg-orchid-700">
+                    With Coach
+                  </span>
+                </div>
               )}
-              {isLoading ? (
+              {isloading ? (
                 <ScheduleByDayComponentSkeleton day={i} />
               ) : (
                 <ScheduleByDayComponent
@@ -235,10 +248,10 @@ export default function AvailabilityPage() {
                   currentDay={currentDay}
                   isCoach={isCoach}
                   classesExist={classesExist}
-                  onClick={(dateStart, classExist) => {
+                  onClick={(dateStart, classExist, type) => {
                     setClassDetail({
                       show: true,
-                      payload: { classExist, dateStart },
+                      payload: { classExist, dateStart, type },
                     });
                   }}
                 />
@@ -249,21 +262,21 @@ export default function AvailabilityPage() {
       </div>
       {classDetail.show ? (
         <Dialog
-          title={`Class ${classDetail.payload?.dateStart?.toDateString()}`}
-          description={`Class schedule ${classDetail.payload?.dateStart.toTimeString()}`}
+          title={`Class ${convertTZ(classDetail.payload?.dateStart, { onlyDate: true })}`}
+          description={`Class schedule ${convertTZ(classDetail.payload?.dateStart)}`}
           footer={
             <div className="flex justify-between w-full">
               <div>
                 {classDetail.payload?.classExist?.verified === true ? (
-                  <div class="has-tooltip flex gap-2">
+                  <div className="flex gap-2 has-tooltip">
                     <CheckBadgeIcon className="h-5 text-swirl-800" />
                     <p>Verified class</p>
-                    <span class="tooltip rounded shadow-lg p-1 bg-cararra-100 left-40">
+                    <span className="p-1 rounded shadow-lg tooltip bg-cararra-100 left-40">
                       By {classDetail.payload?.classExist?.admin_verified.name}{' '}
                       {classDetail.payload?.classExist?.admin_verified.lastname}
                     </span>
                   </div>
-                ) : (
+                ) : user && user.rol === 'ADMINISTRATOR' ? (
                   <Button
                     text="Check the class"
                     color="mindaro"
@@ -274,13 +287,13 @@ export default function AvailabilityPage() {
                         user,
                         classDetail.payload?.classExist?.instructor_id,
                         classDetail.payload?.dateStart,
-                      ).then((res) => {
+                      ).then(() => {
                         getClassExist();
                         setClassDetail({ show: false });
                       });
                     }}
                   />
-                )}
+                ) : null}
               </div>
               <Button
                 text="Close"
@@ -296,12 +309,15 @@ export default function AvailabilityPage() {
                   text="I'm available"
                   className="text-sm"
                   color="mindaro"
-                  onClick={() =>
+                  isloading={isLoadingModalBtn}
+                  onClick={() => {
+                    setIsLoadingModalBtn(true);
                     setDisponibility(
                       classDetail.payload?.dateStart,
                       classDetail.payload?.classExist?.id,
-                    )
-                  }
+                      classDetail.payload?.type,
+                    );
+                  }}
                 />
               ) : null}
             </div>
@@ -314,7 +330,7 @@ export default function AvailabilityPage() {
                 {classDetail.payload?.classExist?.couchesDisponibility?.map(
                   (couch, i) => (
                     <li
-                      key={couch.id}
+                      key={`${couch.id}-${classDetail.payload?.classExist?.id}`}
                       className={`border-b border-swirl-200 p-3 flex justify-between items-center ${
                         i % 2 === 0 ? 'bg-cararra-100' : ''
                       }`}
@@ -325,26 +341,38 @@ export default function AvailabilityPage() {
                       <span>
                         {couch.id !==
                         classDetail.payload?.classExist?.instructor_id ? (
-                          <Button
-                            text="Select"
-                            className="text-sm bg-mindaro-600"
-                            onClick={() => {
-                              if (
-                                classDetail.payload?.classExist?.verified ===
-                                false
-                              ) {
-                                updateClass(
-                                  classDetail.payload?.classExist?.id,
-                                  couch.id,
-                                  classDetail.payload?.dateStart,
-                                  couch.id,
-                                ).then((res) => {
-                                  getClassExist();
-                                  setClassDetail({ show: false });
-                                });
-                              }
-                            }}
-                          />
+                          user.rol === 'ADMINISTRATOR' &&
+                          classDetail.payload?.classExist?.verified ===
+                            false ? (
+                            <Button
+                              text="Select"
+                              className="text-sm bg-mindaro-600"
+                              isloading={isLoadingClassDetail}
+                              onClick={() => {
+                                if (
+                                  classDetail.payload?.classExist?.verified ===
+                                  false
+                                ) {
+                                  setIsLoadingClassDetail(true);
+                                  updateClass(
+                                    classDetail.payload?.classExist?.id,
+                                    couch.id,
+                                    classDetail.payload?.dateStart,
+                                  ).then((res) => {
+                                    getClassExist();
+                                    setClassDetail((prev) => ({
+                                      ...prev,
+                                      payload: {
+                                        ...prev.payload,
+                                        classExist: res,
+                                      },
+                                    }));
+                                    setIsLoadingClassDetail(false);
+                                  });
+                                }
+                              }}
+                            />
+                          ) : null
                         ) : (
                           <p className="flex flex-row items-center">
                             Selected

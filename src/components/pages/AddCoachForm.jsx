@@ -6,7 +6,7 @@ import Button from '@/components/atoms/Button';
 import { setToast } from '@/libs/notificationsAPIs';
 
 export default function RegisterPage({ data, rol, isUpdate, ...props }) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isloading, setIsloading] = useState(false);
   const {
     control,
     register,
@@ -28,11 +28,11 @@ export default function RegisterPage({ data, rol, isUpdate, ...props }) {
 
   const resetForm = () => {
     reset();
-    setIsLoading(false);
+    setIsloading(false);
   };
 
   async function onSubmit(data) {
-    setIsLoading(true);
+    setIsloading(true);
     const res = await fetch('/api/auth/register', {
       method: isUpdate ? 'PUT' : 'POST',
       body: JSON.stringify(data),
@@ -198,7 +198,7 @@ export default function RegisterPage({ data, rol, isUpdate, ...props }) {
         >
           Cancel
         </Button>
-        <Button color="mindaro" className="w-full" isLoading={isLoading}>
+        <Button color="mindaro" className="w-full" isloading={isloading}>
           {data ? 'Update' : 'Register'}
         </Button>
       </div>

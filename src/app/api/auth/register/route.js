@@ -17,19 +17,30 @@ export async function POST(request) {
     if (!isUser) {
       hashedPassword = await bcrypt.hash(data.password, 10);
     }
-    const { confirmPassword, specializations, membershipTypeId, ...userData } =
-      data;
+    const {
+      confirmPassword,
+      specializations,
+      membershipTypeId,
+      paymentMethod,
+      createdBy,
+      ...userData
+    } = data;
     const newData = { ...userData };
     if (hashedPassword) {
+      newData.tempPass = newData.password;
       newData.password = hashedPassword;
     }
-    const newUser = await prisma.user.create({ data: newData });
-    if (isUser && membershipTypeId) {
-      const params = {
-        url: '/membership',
-        method: 'POST',
-        body: { userId: newUser.id, membershipTypeId },
+    const newUser = await prisma.user.create({
+      data: newData,
+    });
+    if (isUser && membershipTypeId && paymentMethod) {
+      const body = {
+        userId: newUser.id,
+        membershipTypeId,
+        receptionstId: createdBy,
+        method: paymentMethod,
       };
+      const params = { url: '/membership', method: 'POST', body };
       await genericFetch(params);
     }
     if (specializations) {

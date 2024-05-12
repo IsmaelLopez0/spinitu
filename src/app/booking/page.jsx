@@ -1,7 +1,6 @@
 'use client';
-import { useReducer, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
 import Tabs from '@/components/atoms/Tabs';
 import Dialog from '@/components/atoms/Dialog';
 import Input from '@/components/atoms/Input';
@@ -12,51 +11,61 @@ import AllUsersList from './AllUsersList';
 import { setToast } from '@/libs/notificationsAPIs';
 import { genericFetch } from '@/libs/externalAPIs';
 import Autocomplete from '@/components/atoms/Autocomplete';
+import RadioGroup from '@/components/atoms/RadioGroup';
 import { useUserConfig } from '@/stores/useUserConfig';
-
-function tabsReducer(state = [], action) {
-  const tempState = state.slice();
-  if (action.type === 'updateToday') {
-    tempState[0].content = action.payload;
-  }
-  if (action.type === 'updateSchedule') {
-    tempState[1].content = action.payload;
-  }
-  if (action.type === 'updateAllUser') {
-    tempState[1].content = action.payload;
-  }
-  return tempState;
-}
 
 const inputsToAddUser = [
   { name: 'name', label: 'Name', placeholder: 'Name' },
   { name: 'lastname', label: 'Last Name', placeholder: 'Last Name' },
-  { name: 'email', label: 'Email', placeholder: 'Email' },
-  { name: 'phone', label: 'Phone', placeholder: 'Phone' },
+  { name: 'email', label: 'Email', placeholder: 'Email', type: 'email' },
+  { name: 'phone', label: 'Phone', placeholder: 'Phone', type: 'tel' },
+];
+
+const paymentOptions = [
+  { value: 'CASH', name: 'Cash' },
+  { value: 'CREDIT_CARD', name: 'Credit Card' },
+  { value: 'DEBIT', name: 'Debit' },
+  { value: 'BANK_TRANSFERS', name: 'Bank Transfers' },
 ];
 
 export default function Booking() {
   const [showDialog, setShowDialog] = useState(false);
   const [memberships, setMemberships] = useState([]);
   const [membershipSelected, setMembershipSelected] = useState();
-  const [isLoading, setIsLoading] = useState(false);
-  const [tabs] = useReducer(tabsReducer, [
-    { title: 'Today', content: <UserList /> },
-    { title: 'Schedule', content: <ScheduleBooking /> },
-    { title: 'All Users', content: <AllUsersList /> },
-  ]);
-  const router = useRouter();
+  const [isloading, setIsloading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('CASH');
+  const [tabs, setTabs] = useState([]);
+  const [currentTab, setCurrentTab] = useState(0);
   const { control, handleSubmit, reset } = useForm();
   const user = useUserConfig((state) => state.user);
 
-  if (user?.rol === 'COACH') {
-    router.push('/availability');
+  function setIsLoadingOnSubmit(isloading) {
+    setIsloading(isloading);
+    if (!user) return;
+    const isCoach = user?.rol === 'COACH';
+    if (isCoach) {
+      setTabs([{ title: 'Schedule', content: <ScheduleBooking /> }]);
+    } else {
+      setTabs([
+        { title: 'Today', content: <UserList isloading={isloading} /> },
+        { title: 'Schedule', content: <ScheduleBooking /> },
+        {
+          title: 'All Users',
+          content: (
+            <AllUsersList
+              paymentOptions={paymentOptions}
+              isloading={isloading}
+            />
+          ),
+        },
+      ]);
+    }
   }
 
   const resetForm = () => {
     reset();
     setMembershipSelected();
-    setIsLoading(false);
+    setIsLoadingOnSubmit(false);
   };
 
   const actionButtons = [
@@ -68,13 +77,14 @@ export default function Booking() {
   ];
 
   async function onSubmit(data) {
-    setIsLoading(true);
+    setIsLoadingOnSubmit(true);
     const someInpustInalid = Object.values(data).some((s) =>
       [null, undefined, ''].includes(s),
     );
     const invalidMembership = membershipSelected === undefined;
-    if (someInpustInalid || invalidMembership) {
+    if (someInpustInalid || invalidMembership || !paymentMethod) {
       setToast('Fill out all the fields', 'error', '/api/auth/register');
+      setIsLoadingOnSubmit(false);
     } else {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
@@ -82,6 +92,8 @@ export default function Booking() {
           ...data,
           rol: 'USER',
           membershipTypeId: membershipSelected.id,
+          paymentMethod,
+          createdBy: user?.id,
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -105,12 +117,22 @@ export default function Booking() {
       } else {
         setToast('Something went wrong', 'error', '/membership-types');
       }
+      setIsLoadingOnSubmit(false);
     });
   }, []);
 
+  useEffect(() => {
+    setIsLoadingOnSubmit(false);
+  }, [user]);
+
   return (
     <>
-      <Tabs tabs={tabs} actionButtons={actionButtons} />
+      <Tabs
+        tabs={tabs}
+        currentTab={currentTab}
+        setCurrentTab={setCurrentTab}
+        actionButtons={!user || user?.rol === 'COACH' ? [] : actionButtons}
+      />
       {showDialog ? (
         <Dialog title="Add new user">
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -124,6 +146,7 @@ export default function Booking() {
                       label={input.label}
                       name={input.name}
                       placeholder={input.placeholder}
+                      type={input.type ?? 'text'}
                       {...field}
                     />
                   )}
@@ -138,8 +161,17 @@ export default function Booking() {
               setSelected={setMembershipSelected}
             />
 
+            <RadioGroup
+              groupName="Payment Method"
+              type="column"
+              defaultValue="CASH"
+              options={paymentOptions}
+              className="mt-2"
+              setValue={setPaymentMethod}
+            />
+
             <div className="flex flex-row-reverse w-full gap-4 p-3">
-              <Button color="mindaro" text="Add" isLoading={isLoading} />
+              <Button color="mindaro" text="Add" isloading={isloading} />
               <Button
                 color="orchid"
                 type="outline"

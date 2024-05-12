@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/16/solid';
 import GenericLoading from '../atoms/GenericLoading';
@@ -8,12 +9,17 @@ import {
   getDay,
   obtenerNombreMes,
   getCurrentWeek,
+  formatDate,
+  convertTZ,
 } from '@/libs/_utilsFunctions';
 import Button from '../atoms/Button';
 import Autocomplete from '../atoms/Autocomplete';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
 import { useUserConfig } from '@/stores/useUserConfig';
+import { CYCLING, BARRE } from '@/libs/vars';
+import SpinningIcon from '../../../public/images/icons/Icono_Spinitu_Spinning.svg';
+import BarreIcon from '../../../public/images/icons/Icono_Spinitu_Barre.svg';
 
 const dias = ['Time', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -25,7 +31,10 @@ async function getWeekClasses(firstDayWeek) {
   const lastDayWeek = new Date(tempDate.setDate(tempDate.getDate() + 7));
   const params = {
     url: '/class',
-    query: { firstDayWeek, lastDayWeek },
+    query: {
+      firstDayWeek: formatDate(firstDayWeek),
+      lastDayWeek: formatDate(lastDayWeek),
+    },
     method: 'GET',
   };
   const res = await genericFetch(params);
@@ -48,13 +57,13 @@ const isToday = (someDate) => {
 export default function ScheduleBooking() {
   const [data, setData] = useState([]);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
-  const [week, setWeek] = useState(1);
+  const [week, setWeek] = useState(currentWeek ?? 1);
   const [firstDayWeek, setFirstDayWeek] = useState();
   const [classesExist, setClassesExist] = useState({});
   const [classDetail, setClassDetail] = useState({ show: false });
   const [confirmReserve, setConfirmReserve] = useState({ show: false });
   const [userSelected, setUserSelected] = useState();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isloading, setIsloading] = useState(false);
   const [isLoadingReservation, setIsLoadingReservation] = useState(false);
   const user = useUserConfig((state) => state.user);
 
@@ -80,21 +89,24 @@ export default function ScheduleBooking() {
   }
 
   useEffect(() => {
-    if (isFirstLoad && user?.name) {
-      getClients();
-      setWeek(currentWeek);
-      setIsFirstLoad(false);
-    }
-  }, [isFirstLoad, user]);
-
-  useEffect(() => {
     const añoActual = new Date().getFullYear();
     const firstDayYear = new Date(añoActual, 0, 1);
     const firstDayWeek = new Date(
       firstDayYear.getTime() + (week - 1) * 7 * 24 * 60 * 60 * 1000,
     );
-    setFirstDayWeek(firstDayWeek);
+    if (isFirstLoad && new Date().getDay() === 1) {
+      setWeek(currentWeek + 1);
+    } else {
+      setFirstDayWeek(firstDayWeek);
+    }
   }, [week]);
+
+  useEffect(() => {
+    if (isFirstLoad && user?.name) {
+      getClients();
+      setIsFirstLoad(false);
+    }
+  }, [isFirstLoad, user]);
 
   useEffect(() => {
     if (firstDayWeek) {
@@ -108,10 +120,10 @@ export default function ScheduleBooking() {
   }
 
   function getClassExist() {
-    setIsLoading(true);
+    setIsloading(true);
     getWeekClasses(firstDayWeek).then((res) => {
       setClassesExist(res);
-      setIsLoading(false);
+      setIsloading(false);
       setIsLoadingReservation(false);
     });
   }
@@ -147,6 +159,7 @@ export default function ScheduleBooking() {
       setConfirmReserve({ show: false });
       getClients(true);
       getClassExist();
+      setUserSelected({});
     } else {
       const data = await res.json();
       setToast(data.message, 'error', '/api/reservation');
@@ -155,14 +168,14 @@ export default function ScheduleBooking() {
 
   return (
     <>
-      <div className="grid grid-flow-col grid-cols-8 h-full grid-rows-10 gap-2.5 gap-y-0 text-center">
+      <div className="grid grid-flow-col grid-cols-8 h-full grid-rows-11 gap-2.5 gap-y-0 text-center">
         {dias.map((day, i) => {
           const { currentDay, monthDay } = getDay(firstDayWeek, i - 1);
           const istoday = isToday(currentDay);
           return (
             <React.Fragment key={currentDay}>
               {i > 0 ? (
-                <div className="sticky top-[60px] bg-cararra-100 flex items-center justify-center nm-10">
+                <div className="sticky z-10 top-[66px] bg-cararra-100 flex items-center justify-center nm-10">
                   {i === 1 ? (
                     <ChevronLeftIcon
                       className="mr-2 cursor-pointer text-mindaro-700 h-7"
@@ -186,29 +199,31 @@ export default function ScheduleBooking() {
                 </div>
               ) : (
                 <div
-                  className="text-xs text-white sticky top-[60px] bg-cararra-100 flex flex-col gap-4 gap-y-2 py-2 px-5"
+                  className="text-white sticky z-10 top-[66px] bg-cararra-100 flex flex-col gap-4 gap-y-2 py-2 px-5"
                   key={day + '-' + i}
                 >
-                  <span className="p-1 rounded bg-orchid-500/50">
+                  <span className="p-1 text-xs rounded bg-orchid-500/50">
                     Not available
                   </span>
-                  <span className="p-1 rounded bg-orchid-500">Available</span>
-                  <span className="h-full p-1 rounded bg-orchid-700">
+                  <span className="p-1 text-xs rounded bg-orchid-500">
+                    Available
+                  </span>
+                  <span className="h-full p-1 text-xs rounded bg-orchid-700">
                     Full house
                   </span>
                 </div>
               )}
-              {isLoading ? (
+              {isloading ? (
                 <ScheduleByDayComponentSkeleton day={i} />
               ) : (
                 <ScheduleByDayComponentBooking
                   day={i}
                   currentDay={currentDay}
                   classesExist={classesExist}
-                  onClick={(dateStart, classExist, isDisable) => {
+                  onClick={(dateStart, classExist, isDisable, type) => {
                     setClassDetail({
                       show: true,
-                      payload: { classExist, dateStart, isDisable },
+                      payload: { classExist, dateStart, isDisable, type },
                     });
                   }}
                 />
@@ -222,39 +237,36 @@ export default function ScheduleBooking() {
           {classDetail.payload?.classExist ? (
             <>
               <div className="grid grid-cols-2 grid-rows-2 gap-4">
-                <p>Date: {classDetail.payload?.dateStart?.toDateString()}</p>
-                <p>
-                  Hours:{' '}
-                  {classDetail.payload?.dateStart.toLocaleTimeString('en-US')}
-                </p>
+                <p>Date: {convertTZ(classDetail.payload?.dateStart)}</p>
+                <p>Hours: {convertTZ(classDetail.payload?.dateStart)}</p>
                 <p>
                   Coach: {getInstructorName(classDetail.payload?.classExist)}
                 </p>
                 <div className="flex justify-between">
                   <p className="flex items-center">
-                    <span
-                      className={`text-center material-symbols-outlined text-swirl-950 mr-1 select-none`}
-                    >
-                      directions_bike
-                    </span>
+                    <IconByType
+                      type={classDetail.payload?.type}
+                      color="swirl-950"
+                      small
+                    />
                     Available
                   </p>
                   <p className="flex items-center">
-                    <span
-                      className={`text-center material-symbols-outlined text-swirl-200 mr-1 select-none`}
-                    >
-                      directions_bike
-                    </span>
+                    <IconByType
+                      type={classDetail.payload?.type}
+                      color="swirl-200"
+                      small
+                    />
                     Reserved
                   </p>
                 </div>
               </div>
               <hr />
-              <div className="grid grid-cols-4 grid-rows-4 gap-4 mt-3">
-                {Array.from(Array(12)).map((e, i) => {
+              <div className="grid grid-cols-3 grid-rows-3 gap-4 mt-3">
+                {Array.from(Array(9)).map((e, i) => {
                   const currentReservations =
                     classDetail.payload.classExist.reservations;
-                  const position = 12 - i;
+                  const position = 9 - i;
                   const isReserved = currentReservations.find(
                     (f) => f.position === position,
                   );
@@ -263,7 +275,11 @@ export default function ScheduleBooking() {
                       key={i}
                       className={`relative text-center rounded-xl select-none hover:bg-cararra-50 ${!isReserved ? 'cursor-pointer' : 'cursor-not-allowed'}`}
                       onClick={() => {
-                        if (!isReserved && !classDetail.payload.isDisable) {
+                        if (
+                          user.rol !== 'COACH' &&
+                          !isReserved &&
+                          !classDetail.payload.isDisable
+                        ) {
                           setConfirmReserve({
                             show: true,
                             payload: {
@@ -279,18 +295,19 @@ export default function ScheduleBooking() {
                         }
                       }}
                     >
-                      <div class="has-tooltip">
-                        <span
-                          className={`text-center material-symbols-outlined ${!isReserved ? 'text-swirl-950' : 'text-swirl-200'}`}
-                          style={{ fontSize: '60px' }}
-                        >
-                          directions_bike
-                        </span>
+                      <div className="has-tooltip">
+                        <div className="flex justify-center">
+                          <IconByType
+                            type={classDetail.payload?.type}
+                            className="w-16 h-16"
+                            color={isReserved ? 'swirl-200' : 'swirl-950'}
+                          />
+                        </div>
                         <span className="absolute bottom-0 text-center bg-white border rounded-full left-2/3 w-7">
                           {position}
                         </span>
                         {isReserved && (
-                          <span class="tooltip rounded shadow-lg p-1 bg-cararra-100 -left-2 -bottom-2">
+                          <span className="p-1 rounded shadow-lg tooltip bg-cararra-100 -left-2 -bottom-2">
                             {isReserved?.user?.name}
                           </span>
                         )}
@@ -298,14 +315,15 @@ export default function ScheduleBooking() {
                     </div>
                   );
                 })}
-                <div className="relative col-span-4 text-center cursor-default select-none rounded-xl">
-                  <span
-                    className="text-center text-cararra-700 material-symbols-outlined"
-                    style={{ fontSize: '48px' }}
-                  >
-                    directions_bike
-                  </span>
-                  <span className="absolute px-1 text-center bg-white rounded-full bottom-[-2px] left-[45%]">
+                <div className="relative col-span-3 text-center cursor-default select-none rounded-xl">
+                  <div className="flex justify-center">
+                    <IconByType
+                      type={classDetail.payload?.type}
+                      className="w-14 h-14"
+                      color="cararra-700"
+                    />
+                  </div>
+                  <span className="absolute px-1 text-center bg-white rounded-full left-[45%]">
                     Coach
                   </span>
                 </div>
@@ -339,17 +357,18 @@ export default function ScheduleBooking() {
             <p>
               Search and select a user to assign to the class{' '}
               <span className="underline decoration-solid">
-                {confirmReserve.payload?.dateStart?.toDateString()}{' '}
+                {convertTZ(confirmReserve.payload?.dateStart)}{' '}
               </span>
               <span className="underline decoration-solid">
-                {confirmReserve.payload?.dateStart.toLocaleTimeString('en-US')}
+                {convertTZ(confirmReserve.payload?.dateStart)}
               </span>
             </p>
             <div className="flex flex-col items-center justify-center p-2 border rounded">
               {confirmReserve.payload?.position}
-              <span className="text-center material-symbols-outlined text-swirl-950">
-                directions_bike
-              </span>
+              <IconByType
+                type={confirmReserve.payload?.type}
+                color="wirl-950"
+              />
             </div>
           </div>
           <div className="flex flex-col justify-between overflow-auto">
@@ -372,7 +391,7 @@ export default function ScheduleBooking() {
                 color="mindaro"
                 disabled={!userSelected}
                 onClick={() => reservClass(confirmReserve.payload)}
-                isLoading={isLoadingReservation}
+                isloading={isLoadingReservation}
               >
                 Add to class
               </Button>
@@ -383,3 +402,33 @@ export default function ScheduleBooking() {
     </>
   );
 }
+
+const IconByType = ({ small = false, type, className, color }) => {
+  const colorToFilter = {
+    'swirl-950':
+      'invert-[.05] sepia-[.59] saturate-[3.55] hue-rotate-[320deg] brightness-[.92] contrast-[.81]',
+    'swirl-200':
+      'invert-[.94] sepia-[.07] saturate-[2.26] hue-rotate-[348deg] brightness-[.88] contrast-[.93]',
+    'cararra-700':
+      'invert-[.4] sepia-[.34] saturate-[2.12] hue-rotate-[5deg] brightness-[.95] contrast-[.85]',
+  };
+  if (type === CYCLING) {
+    return (
+      <Image
+        src={SpinningIcon}
+        alt="Spinning"
+        className={`${small ? 'h-4 w-fit' : 'h-16'} mr-2 ${colorToFilter[color]} ${className}`}
+      />
+    );
+  }
+  if (type === BARRE) {
+    return (
+      <Image
+        src={BarreIcon}
+        alt="Barré"
+        className={`${small ? 'h-4 w-fit' : 'h-16'} mr-2 ${colorToFilter[color]} ${className}`}
+      />
+    );
+  }
+  return null;
+};

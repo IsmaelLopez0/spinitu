@@ -1,31 +1,8 @@
-import { compareDates, getIsValidDifference } from '@/libs/_utilsFunctions';
-
-const validSchedule = {
-  1: { start: '6:15', end: '7:00' },
-  2: { start: '7:15', end: '8:00' },
-  3: { start: '8:15', end: '9:00' },
-  4: { start: '9:15', end: '10:00' },
-  5: { start: '10:15', end: '11:00' },
-  6: { start: '18:15', end: '19:00' },
-  7: { start: '19:15', end: '20:00' },
-  8: { start: '20:15', end: '21:00' },
-  9: { start: '21:15', end: '22:00' },
-};
-
-const shedulByDay = [
-  [1, 2, 3, 4, 5, 6, 7, 8, 9],
-  [1, 2, 3, 4, null, 6, 7, 8, 9],
-  [1, 2, 3, 4, null, 6, 7, 8, 9],
-  [1, 2, 3, 4, null, 6, 7, 8, 9],
-  [1, 2, 3, 4, null, 6, 7, 8, 9],
-  [1, 2, 3, 4, null, 6, 7, 8, 9],
-  [null, 2, 3, 4, 5, null, null, null, null],
-  [null, 2, 3, 4, 5, null, null, null, null],
-];
+import { validSchedule, scheduleByDay } from '@/libs/vars';
 
 export default function ScheduleByDayComponentSkeleton({ day }) {
-  return shedulByDay[day].map((currSchedule, i) => {
-    if (currSchedule === null) {
+  return scheduleByDay[day].map(({ id, type }, i) => {
+    if (id === null) {
       return (
         <div className="w-full bg-transparent h-100px" key={day + '-' + i} />
       );
@@ -37,8 +14,7 @@ export default function ScheduleByDayComponentSkeleton({ day }) {
           key={day + '-' + i}
         >
           <p>
-            {validSchedule[currSchedule].start} -{' '}
-            {validSchedule[currSchedule].end}
+            {validSchedule[id].start} - {validSchedule[id].end}
           </p>
         </div>
       );
@@ -60,25 +36,5 @@ export default function ScheduleByDayComponentSkeleton({ day }) {
         </div>
       </div>
     );
-    // return (
-    //   <div
-    //     key={day + '-' + i}
-    //     className={`animate-pulse text-cararra-100 w-full h-24 flex flex-col justify-center items-center rounded-md ${
-    //       isDisable
-    //         ? 'bg-orchid-200 cursor-not-allowed'
-    //         : 'bg-orchid-400 cursor-pointer'
-    //     }`}
-    //     onClick={() => {
-    //       !isDisable && onClick(new Date(dayWithHour), classExist);
-    //     }}
-    //   >
-    //     <p className="text-sm">Availables: {totalCoaches}</p>
-    //     {totalCoaches > 0 ? (
-    //       <p className="text-xs">
-    //         Assigned: {defaultCoach.name} {defaultCoach.lastname}
-    //       </p>
-    //     ) : null}
-    //   </div>
-    // );
   });
 }

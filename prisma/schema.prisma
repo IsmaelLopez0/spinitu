@@ -24,11 +24,15 @@ model User {
   cognito_id    String?
   isActive      Boolean  @default(true)
   rol           UserRoles @default(ADMINISTRATOR)
+  tempPass      String?
   coaches       Coach?
   memberships   Membership[]
   reservations  Reservation[]
   classesDisponibility ClassCoachDisponibility[]
   notifications Notification[]
+  paymentClients        Payments[] @relation("Client")
+  paymentReceptionst    Payments[] @relation("Receptionst")
+  verifiedClasses       Class[]
 }
 
 model Coach {
@@ -46,6 +50,7 @@ model MembershipType {
   price           Float       @default(300.00)
   validity        Int         @default(1)
   membership      Membership[]
+  payments        Payments[]
 }
 
 model Membership {
@@ -69,9 +74,13 @@ model Class {
   duration      DateTime
   instructor_id Int
   is_active     Boolean
+  verified      Boolean @default(false)
+  verified_by   Int?
+  type          ClassType @default(cycling)
   reservations  Reservation[]
   couchesDisponibility ClassCoachDisponibility[]
-  instructor    Coach           @relation(fields: [instructor_id], references: [user_id])
+  instructor        Coach           @relation(fields: [instructor_id], references: [user_id])
+  admin_verified    User?            @relation(fields: [verified_by], references: [id])
 }
 
 model Reservation {
@@ -98,7 +107,20 @@ model Notification {
   title    String
   body     String
   leido    Boolean @default(false)
-  user      User    @relation(fields: [user_id], references: [id])
+  user     User    @relation(fields: [user_id], references: [id])
+}
+
+model Payments {
+  id              Int @id @default(autoincrement())
+  client_id       Int
+  receptionst_id  Int
+  membership_type Int
+  date            DateTime @default(now())
+  amount          Float
+  method          PaymentMethod
+  client          User @relation("Client", fields: [client_id], references: [id])
+  receptionst     User @relation("Receptionst", fields: [receptionst_id], references: [id])
+  membership      MembershipType @relation(fields: [membership_type], references: [id])
 }
 
 enum UserRoles {
@@ -106,4 +128,16 @@ enum UserRoles {
   ADMINISTRATOR
   COACH
   USER
+}
+
+enum PaymentMethod {
+  CASH
+  CREDIT_CARD
+  DEBIT
+  BANK_TRANSFERS
+}
+
+enum ClassType {
+  cycling
+  barre
 }

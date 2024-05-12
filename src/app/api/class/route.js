@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/libs/prisma';
+import { convertTZ } from '@/libs/_utilsFunctions';
 
 export const fetchCache = 'default-no-store';
 
@@ -7,8 +8,8 @@ export async function POST(req) {
   const body = await req.json();
   try {
     const dateStart = new Date(body.dateStart);
-    const name = `Class ${dateStart.toDateString()}`;
-    const description = `Class schedule ${dateStart.toTimeString()}`;
+    const name = `Class ${convertTZ(dateStart, { onlyDate: true })}`;
+    const description = `Class schedule ${convertTZ(dateStart)}`;
     const res = await prisma.class.create({
       data: {
         name,

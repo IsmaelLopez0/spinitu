@@ -14,11 +14,11 @@
     "@headlessui/tailwindcss": "^0.2.0",
     "@heroicons/react": "^2.1.1",
     "@million/lint": "^0.0.73",
-    "@prisma/client": "^5.11.0",
+    "@prisma/client": "^5.13.0",
+    "@tabler/icons-react": "^3.2.0",
     "@tremor/react": "^3.15.1",
     "bcrypt": "^5.1.1",
     "eslint-config-airbnb": "^19.0.4",
-    "material-symbols": "^0.17.1",
     "next": "14.1.0",
     "next-auth": "^4.24.6",
     "react": "^18",
@@ -41,7 +41,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "postcss": "^8",
     "prettier": "^3.2.5",
-    "prisma": "^5.11.0",
+    "prisma": "^5.13.0",
     "tailwindcss": "^3.3.0"
   }
 }

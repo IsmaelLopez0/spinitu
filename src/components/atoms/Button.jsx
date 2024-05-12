@@ -37,10 +37,10 @@ export default function Button({
   return (
     <button
       {...props}
-      onClick={() => props.onClick && !props.isLoading && props.onClick()}
+      onClick={() => props.onClick && !props.isloading && props.onClick()}
       className={`py-3 px-6 rounded-lg ${colors[color]?.type[type]} ${className} disabled:cursor-not-allowed`}
     >
-      {props.isLoading ? <GenericLoading /> : children ?? text}
+      {props.isloading ? <GenericLoading /> : children ?? text}
     </button>
   );
 }

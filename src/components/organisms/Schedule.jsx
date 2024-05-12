@@ -13,12 +13,14 @@ import {
   getDay,
   obtenerNombreMes,
   getCurrentWeek,
+  formatDate,
 } from '@/libs/_utilsFunctions';
 import Button from '../atoms/Button';
 import { createNotification } from '@/libs/notificationsAPIs';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
 import { useUserConfig } from '@/stores/useUserConfig';
+import { convertTZ } from '@/libs/_utilsFunctions';
 
 const dias = ['Time', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -44,7 +46,10 @@ async function getWeekClasses(firstDayWeek) {
   const lastDayWeek = new Date(tempDate.setDate(tempDate.getDate() + 7));
   const params = {
     url: '/class',
-    query: { firstDayWeek, lastDayWeek },
+    query: {
+      firstDayWeek: formatDate(firstDayWeek),
+      lastDayWeek: formatDate(lastDayWeek),
+    },
     method: 'GET',
   };
   const res = await genericFetch(params);
@@ -64,10 +69,12 @@ async function createDisponibility(classId, userId) {
   const res = await genericFetch(params);
   if (res.statusCode !== 200) {
     setToast(res.body.error, 'error', params.url + res.statusCode);
+  } else {
+    setToast('Successfully applied', 'success', params.url + res.statusCode);
   }
 }
 
-async function updateClass(classId, instructorId, dateStart, oldInstructor) {
+async function updateClass(classId, instructorId, dateStart) {
   const params = {
     url: '/class',
     body: { classId, instructorId },
@@ -78,12 +85,7 @@ async function updateClass(classId, instructorId, dateStart, oldInstructor) {
     createNotification(
       instructorId,
       'You were assigned a class',
-      `You have been assigned the class of ${dateStart.toLocaleString()}`,
-    );
-    createNotification(
-      oldInstructor,
-      'You will no longer teach the class',
-      `An administrator assigned someone else to class for the day ${dateStart.toLocaleString()}`,
+      `You have been assigned the class of ${convertTZ(dateStart)}`,
     );
   } else {
     setToast(res.body.error, 'error', params.url + res.statusCode);
@@ -106,21 +108,13 @@ const isToday = (someDate) => {
 export default function Schedule() {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [isCoach, setIsCoach] = useState(false);
-  const [week, setWeek] = useState(1);
+  const [week, setWeek] = useState(currentWeek ?? 1);
   const [firstDayWeek, setFirstDayWeek] = useState();
   const [classesExist, setClassesExist] = useState({});
   const [classDetail, setClassDetail] = useState({ show: false });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isloading, setIsloading] = useState(false);
+  const [isLoadingModalBtn, setIsLoadingModalBtn] = useState(false);
   const user = useUserConfig((state) => state.user);
-
-  useEffect(() => {
-    if (isFirstLoad && user?.name) {
-      const coach = Boolean(user?.rol === 'COACH');
-      setIsCoach(coach);
-      setWeek(currentWeek);
-      setIsFirstLoad(false);
-    }
-  }, [isFirstLoad, user]);
 
   useEffect(() => {
     const añoActual = new Date().getFullYear();
@@ -128,11 +122,23 @@ export default function Schedule() {
     const firstDayWeek = new Date(
       firstDayYear.getTime() + (week - 1) * 7 * 24 * 60 * 60 * 1000,
     );
-    setFirstDayWeek(firstDayWeek);
+    if (isFirstLoad && new Date().getDay() === 1) {
+      setWeek(currentWeek + 1);
+    } else {
+      setFirstDayWeek(firstDayWeek);
+    }
   }, [week]);
 
   useEffect(() => {
-    if (firstDayWeek && isLoading === false) {
+    if (isFirstLoad && user?.name) {
+      const coach = Boolean(user?.rol === 'COACH');
+      setIsCoach(coach);
+      setIsFirstLoad(false);
+    }
+  }, [isFirstLoad, user]);
+
+  useEffect(() => {
+    if (firstDayWeek && isloading === false) {
       getClassExist();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -143,10 +149,10 @@ export default function Schedule() {
   }
 
   function getClassExist() {
-    setIsLoading(true);
+    setIsloading(true);
     getWeekClasses(firstDayWeek).then((res) => {
       setClassesExist(res);
-      setIsLoading(false);
+      setIsloading(false);
     });
   }
 
@@ -161,24 +167,25 @@ export default function Schedule() {
       createNotification(
         user?.coaches.user_id,
         'Default asignation',
-        `You have been assigned by default the class of ${dateStart.toLocaleString()}`,
+        `You have been assigned by default the class of ${convertTZ(dateStart)}`,
       );
     }
     await createDisponibility(id, user?.coaches.user_id);
     setClassDetail({ show: false });
     getClassExist();
+    setIsLoadingModalBtn(false);
   }
 
   return (
     <>
-      <div className="grid grid-flow-col grid-cols-8 h-full grid-rows-10 gap-2.5 text-center">
+      <div className="grid grid-flow-col grid-cols-8 h-full grid-rows-11 gap-2.5 text-center">
         {dias.map((day, i) => {
           const { currentDay, monthDay } = getDay(firstDayWeek, i - 1);
           const istoday = isToday(currentDay);
           return (
             <React.Fragment key={currentDay}>
               {i > 0 ? (
-                <div className="sticky top-[60px] bg-cararra-100 flex items-center justify-center nm-10">
+                <div className="sticky z-10 top-[66px] bg-cararra-100 flex items-center justify-center nm-10">
                   {i === 1 ? (
                     <ChevronLeftIcon
                       className="mr-2 cursor-pointer text-mindaro-700 h-7"
@@ -202,11 +209,11 @@ export default function Schedule() {
                 </div>
               ) : (
                 <div
-                  className="sticky top-[65px] bg-cararra-100 flex items-center justify-center nm-10"
+                  className="sticky z-10 top-[66px] bg-cararra-100 flex items-center justify-center nm-10"
                   key={day + '-' + i}
                 />
               )}
-              {isLoading ? (
+              {isloading ? (
                 <ScheduleByDayComponentSkeleton day={i} />
               ) : (
                 <ScheduleByDayComponent
@@ -228,8 +235,8 @@ export default function Schedule() {
       </div>
       {classDetail.show ? (
         <Dialog
-          title={`Class ${classDetail.payload?.dateStart?.toDateString()}`}
-          description={`Class schedule ${classDetail.payload?.dateStart.toTimeString()}`}
+          title={`Class ${convertTZ(classDetail.payload?.dateStart, { onlyDate: true })}`}
+          description={`Class schedule ${convertTZ(classDetail.payload?.dateStart)}`}
           footer={
             <>
               <Button
@@ -246,12 +253,14 @@ export default function Schedule() {
                   text="I'm available"
                   className="text-sm"
                   color="mindaro"
-                  onClick={() =>
+                  isloading={isLoadingModalBtn}
+                  onClick={() => {
+                    setIsLoadingModalBtn(true);
                     setDisponibility(
                       classDetail.payload?.dateStart,
                       classDetail.payload?.classExist?.id,
-                    )
-                  }
+                    );
+                  }}
                 />
               ) : null}
             </>
@@ -283,7 +292,6 @@ export default function Schedule() {
                                 classDetail.payload?.classExist?.id,
                                 couch.id,
                                 classDetail.payload?.dateStart,
-                                couch.id,
                               ).then((res) => {
                                 getClassExist();
                                 setClassDetail({ show: false });

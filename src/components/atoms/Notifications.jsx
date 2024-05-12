@@ -1,13 +1,12 @@
-"use client";
-import { Fragment, useState, useEffect } from "react";
-import { getSession } from "next-auth/react";
-import { Dialog, Transition } from "@headlessui/react";
-import { XMarkIcon, BellIcon } from "@heroicons/react/16/solid";
-import { readNotification, updateNotification } from "@/libs/notificationsAPIs";
-import { useUserConfig } from "@/stores/useUserConfig";
-import Card from "../organisms/Card";
-import { genericFetch } from "@/libs/externalAPIs";
-import { setToast } from "@/libs/notificationsAPIs";
+'use client';
+import { Fragment, useState, useEffect } from 'react';
+import { getSession } from 'next-auth/react';
+import { Dialog, Transition } from '@headlessui/react';
+import { XMarkIcon, BellIcon, CheckIcon } from '@heroicons/react/16/solid';
+import { readNotification, updateNotification } from '@/libs/notificationsAPIs';
+import { useUserConfig } from '@/stores/useUserConfig';
+import { genericFetch } from '@/libs/externalAPIs';
+import { setToast } from '@/libs/notificationsAPIs';
 
 export default function Notifications() {
   const [open, setOpen] = useState(false);
@@ -19,15 +18,15 @@ export default function Notifications() {
     if (!user?.name) {
       getSession().then(({ user }) => {
         const params = {
-          url: "/user/user",
+          url: '/user/user',
           query: { email: user.email },
-          method: "GET",
+          method: 'GET',
         };
         genericFetch(params).then((res) => {
           if (res.statusCode === 200) {
             setUser(res.body);
           } else {
-            setToast(res.body.error, "error", params.url);
+            setToast(res.body.error, 'error', params.url);
           }
         });
       });
@@ -35,6 +34,7 @@ export default function Notifications() {
   }, [setUser, user]);
 
   async function getNotifications() {
+    if (!user?.id) return;
     const data = await readNotification(user.id);
     setNotifications(data);
   }
@@ -45,17 +45,25 @@ export default function Notifications() {
     });
   }
 
+  useEffect(() => {
+    getNotifications();
+  }, [user]);
+
   return (
     <>
       <BellIcon
-        className="h-6 cursor-pointer"
+        className={`h-6 cursor-pointer ${notifications.find((f) => !f.leido) ? 'animate-bounce' : ''}`}
         onClick={() => {
           setOpen(true);
           getNotifications();
         }}
       />
       <Transition.Root show={open} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={setOpen}>
+        <Dialog
+          as="div"
+          className="relative z-20 font-cormorant"
+          onClose={setOpen}
+        >
           <Transition.Child
             as={Fragment}
             enter="ease-in-out duration-500"
@@ -98,7 +106,7 @@ export default function Notifications() {
                           <div className="flex items-center">
                             <button
                               type="button"
-                              className="text-gray-300 rounded-md hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                              className="rounded-md hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                               onClick={() => setOpen(false)}
                             >
                               <span className="absolute -inset-2.5" />
@@ -111,25 +119,37 @@ export default function Notifications() {
                           </div>
                         </Transition.Child>
                       </div>
-                      <div className="relative flex flex-col flex-1 gap-2 px-4 mt-6 sm:px-6">
+                      <div className="relative flex flex-col flex-1 gap-2 mt-6 sm:px-6">
+                        <span
+                          type="button"
+                          className="flex justify-end"
+                          onClick={() => {
+                            putNotifications();
+                          }}
+                        >
+                          <CheckIcon
+                            className="flex w-6 h-6 text-black"
+                            aria-hidden="true"
+                          />
+                          Mark all as read
+                        </span>
                         {notifications.map((n) => (
-                          <Card
+                          <div
                             key={n.id}
-                            data={{
-                              title: n.title,
-                              description: new Date(n.fecha).toDateString(),
-                            }}
+                            className={`border px-2 rounded-md shadow-xs ${n.leido ? 'border-swirl-200 shadow-swirl-200' : 'border-mindaro-500 shadow-mindaro-500'}`}
                           >
-                            <p>{n.body}</p>
+                            <h3 className="text-lg font-medium">{n.title}</h3>
+                            <p className="text-sm text-gray-500">{n.fecha}</p>
+                            <p className="text-md">{n.body}</p>
                             {n.leido === false ? (
-                              <span
-                                className="text-xs cursor-pointer hover:font-semibold"
+                              <p
+                                className="text-sm text-right cursor-pointer w-fit text-mindaro-700 hover:font-semibold"
                                 onClick={() => putNotifications(n.id)}
                               >
                                 Mark as read
-                              </span>
+                              </p>
                             ) : null}
-                          </Card>
+                          </div>
                         ))}
                       </div>
                     </div>

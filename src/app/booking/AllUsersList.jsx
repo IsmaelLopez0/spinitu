@@ -10,29 +10,25 @@ import RadioGroup from '@/components/atoms/RadioGroup';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
 import { useUserConfig } from '@/stores/useUserConfig';
+import { convertTZ } from '@/libs/_utilsFunctions';
 
 const headers = [
   { title: 'Name', key: 'name' },
-  { title: 'Email', key: 'email' },
+  { title: 'Emaīl', key: 'email' },
+  { title: 'Phone', key: 'phone' },
   { title: 'Next class', key: 'next' },
-  { title: 'Hour', key: 'hour' },
-  { title: 'Remaining classes', key: 'days_to_access' },
-  { title: 'End of membership', key: 'end_date' },
-];
-
-const paymentOptions = [
-  { value: 'CASH', name: 'Cash' },
-  { value: 'CREDIT_CARD', name: 'Credit Card' },
-  { value: 'DEBIT', name: 'Debit' },
-  { value: 'BANK_TRANSFERS', name: 'Bank Transfers' },
+  // { title: 'Hour', key: 'hour' },
+  { title: 'Remaīnīng classes', key: 'days_to_access' },
+  { title: 'End of membershīp', key: 'end_date' },
 ];
 
 export default function AllUsersList(props) {
   const [data, setData] = useState([]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
   const [addClassDialog, setAddClassDialog] = useState({ show: false });
   const [memberships, setMemberships] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState('CASH');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isloading, setIsloading] = useState(false);
   const [membershipSelected, setMembershipSelected] = useState();
   const user = useUserConfig((state) => state.user);
   const { control, handleSubmit } = useForm({
@@ -49,7 +45,7 @@ export default function AllUsersList(props) {
     const tempHour = date.getHours();
     const hour = tempHour < 10 ? `0${tempHour}` : tempHour;
     const minutes = date.getMinutes();
-    return `${hour}:0${minutes}`;
+    return `${hour}:${minutes}`;
   }
 
   function RemainingClases(props) {
@@ -68,17 +64,22 @@ export default function AllUsersList(props) {
     const query = {};
     if (emailOrName) query.emailOrName = emailOrName;
     const params = { url: '/user/allClients', method: 'GET', query };
+    setData([]);
+    setIsLoadingData(true);
     genericFetch(params).then((res) => {
       if (res.statusCode === 200) {
         const newData = res.body.map(({ memberships, ...item }) => {
           const dateStart = new Date(item.class?.date_start);
           return {
             ...item,
-            next: item.class?.date_start ? dateStart.toDateString() : '',
+            next: item.class?.date_start ? convertTZ(dateStart) : '',
             name: `${item.name ?? ''} ${item.lastname ?? ''}`,
+            phone: item.phone ?? '',
             hour: item.class?.date_start ? getTime(dateStart) : '',
             end_date: item.end_date
-              ? new Date(item.end_date).toDateString()
+              ? convertTZ(item.end_date, {
+                  onlyDate: true,
+                })
               : '',
             days_to_access: <RemainingClases {...item} />,
           };
@@ -87,6 +88,7 @@ export default function AllUsersList(props) {
       } else {
         setToast('Something went wrong', 'error', '/user/allClients');
       }
+      setIsLoadingData(false);
     });
   }
 
@@ -99,7 +101,7 @@ export default function AllUsersList(props) {
       );
       return;
     }
-    setIsLoading(true);
+    setIsloading(true);
     const body = {
       userId: payload.id,
       membershipTypeId: membershipSelected.id,
@@ -108,7 +110,7 @@ export default function AllUsersList(props) {
     };
     const params = { url: '/membership', method: 'POST', body };
     genericFetch(params).then((res) => {
-      setIsLoading(false);
+      setIsloading(false);
       if (res.statusCode === 200) {
         getClients();
         setMembershipSelected();
@@ -130,7 +132,7 @@ export default function AllUsersList(props) {
         setToast('Something went wrong', 'error', '/membership-types');
       }
     });
-  }, []);
+  }, [props.isloading]);
 
   return (
     <div>
@@ -147,7 +149,13 @@ export default function AllUsersList(props) {
         />
         <Button text="Search" className="px-3 py-1 h-1/2" color="mindaro" />
       </form>
-      <Table title="All users" caption="" headers={headers} data={data} />
+      <Table
+        title="All users"
+        caption=""
+        headers={headers}
+        data={data}
+        isloading={isLoadingData || props.isloading}
+      />
       {addClassDialog.show ? (
         <Dialog title="Add classes">
           <p>
@@ -171,7 +179,7 @@ export default function AllUsersList(props) {
             groupName="Payment Method"
             type="column"
             defaultValue="CASH"
-            options={paymentOptions}
+            options={props.paymentOptions}
             className="mt-2"
             setValue={setPaymentMethod}
           />
@@ -185,7 +193,7 @@ export default function AllUsersList(props) {
             </Button>
             <Button
               color="mindaro"
-              isLoading={isLoading}
+              isloading={isloading}
               onClick={() => createMembership(addClassDialog.payload)}
             >
               Add

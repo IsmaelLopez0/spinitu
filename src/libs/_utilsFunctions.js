@@ -76,3 +76,16 @@ export const resizeFile = (file) =>
       'base64',
     );
   });
+
+export function convertTZ(date, options = {}) {
+  const { onlyDate, tzString } = options;
+  const dateBase = typeof date === 'string' ? new Date(date) : date;
+  const toReturn = dateBase
+    .toLocaleString('es-CL', {
+      timeZone: tzString ?? 'America/Mexico_City',
+    })
+    .replace(/:00$/, '')
+    .replace(/-/g, '/');
+  if (onlyDate) return toReturn.replace(/, .*/, '');
+  return toReturn;
+}

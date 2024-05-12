@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tab } from '@headlessui/react';
 import Button from '@/components/atoms/Button';
 
@@ -12,6 +12,7 @@ export default function Tabs({
   actionButtons = [],
   currentTab = 0,
   setCurrentTab,
+  customLeft,
 }) {
   const [selectedTab, setSelectedTab] = useState(currentTab);
 
@@ -22,17 +23,24 @@ export default function Tabs({
     }
   }
 
+  useEffect(() => {
+    setTab(currentTab);
+  }, [tabs]);
+
   return (
     <div className="flex flex-col">
       <Tab.Group>
-        <Tab.List className="flex justify-between p-4 space-x-4 rounded-md bg-cararra-200">
+        <Tab.List
+          selectedIndex={selectedTab}
+          className="flex justify-between p-4 space-x-4 rounded-md bg-cararra-200"
+        >
           <div className="flex gap-2">
             {tabs.map((tab, index) => (
               <Tab
                 key={tab.title}
                 className={({ selected }) =>
                   classNames(
-                    'rounded-lg p-2 text-sm font-medium leading-5',
+                    'rounded-lg p-2 font-medium leading-5',
                     'ring-white/60 ring-offset-2 ring-offset-cararra-100 focus:outline-none focus:ring-2',
                     selected
                       ? 'bg-cararra-100 shadow'
@@ -49,6 +57,7 @@ export default function Tabs({
             {actionButtons.map((button, index) => (
               <Button key={index} {...button} />
             ))}
+            {customLeft && customLeft}
           </div>
         </Tab.List>
         <Tab.Panels className="mt-4">

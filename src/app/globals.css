@@ -13,13 +13,16 @@
   margin: 0 -10px;
 }
 
-.material-symbols-outlined-48 {
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 48;
+/* .cormorant {
+  font-family: var(--font-cormorant);
+  font-size: 18px;
+  font-weight: 600;
 }
+.cormorant_upright {
+  font-family: var(--font-cormorant_upright);
+  font-size: 18px;
+  font-weight: 600;
+} */
 
 #my-chart .bar {
   --color: red;

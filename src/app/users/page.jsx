@@ -10,7 +10,7 @@ import { XCircleIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
 import { setToast } from '@/libs/notificationsAPIs';
 
 const AddBottonTitle = ['New Coach', 'New Receptionist', 'New Administrator'];
-const TabsTitles = ['Coach', 'Receptionist', 'Administrator'];
+const TabsTitles = ['Coaches', 'Receptionists', 'Administrators'];
 
 async function getUsers() {
   const params = {
@@ -28,7 +28,7 @@ async function getUsers() {
 const headers = [
   { key: 'name', title: 'Name' },
   { key: 'lastname', title: 'Last Name' },
-  { key: 'email', title: 'Email' },
+  { key: 'email', title: 'Emaīl' },
   { key: 'phone', title: 'Phone' },
 ];
 
@@ -45,16 +45,16 @@ export default function UsersPage() {
   function handleDialog(data) {
     let currTab = 'Coach';
     const tabRol = {
-      COACH: 'Coach',
-      RECEPTIONIST: 'Receptionist',
-      ADMINISTRATOR: 'Administrator',
+      COACH: 'Coaches',
+      RECEPTIONIST: 'Receptionists',
+      ADMINISTRATOR: 'Administrators',
     };
     let currRol = 'COACH';
-    if (TabsTitles[currentTab] === 'Receptionist') {
+    if (TabsTitles[currentTab] === 'Receptionists') {
       currTab = 'Receptionist';
       currRol = 'RECEPTIONIST';
     }
-    if (TabsTitles[currentTab] === 'Administrator') {
+    if (TabsTitles[currentTab] === 'Administrators') {
       currTab = 'Administrator';
       currRol = 'ADMINISTRATOR';
     }
@@ -158,7 +158,7 @@ export default function UsersPage() {
       const temp = headers.slice();
       temp.splice(2, 0, {
         key: 'specializationsParsed',
-        title: 'Specializations',
+        title: 'Specīalīzatīons',
       });
       const coachData = COACH.map((coach) => ({
         ...coach,
