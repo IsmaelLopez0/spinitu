@@ -82,7 +82,7 @@ export default function Autocomplete({
                         <div className="w-5 mr-2" />
                       )}
                       <span
-                        className={`block truncate ${
+                        className={`block ${
                           selected ? 'font-medium' : 'font-normal'
                         }`}
                       >

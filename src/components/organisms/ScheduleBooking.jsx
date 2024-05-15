@@ -25,6 +25,56 @@ const dias = ['Time', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 const currentWeek = getCurrentWeek();
 
+const settingsClasses = {
+  [CYCLING]: {
+    totalPositions: 7,
+    position: {
+      class: [
+        'col-span-3',
+        'row-start-2',
+        'row-start-2',
+        'row-start-2',
+        'row-start-3',
+        'row-start-3',
+        'row-start-3',
+      ],
+      preference: [
+        null,
+        'fitpass',
+        null,
+        'fitpass',
+        'totalpass',
+        'totalpass',
+        'totalpass',
+      ],
+    },
+  },
+  [BARRE]: {
+    totalPositions: 8,
+    position: {
+      class: [
+        '',
+        'col-start-3',
+        'row-start-2',
+        'row-start-2',
+        'row-start-2',
+        'row-start-3',
+        'row-start-3',
+        'row-start-3',
+      ],
+      preference: [
+        null,
+        'fitpass',
+        null,
+        'fitpass',
+        'totalpass',
+        'totalpass',
+        'totalpass',
+      ],
+    },
+  },
+};
+
 async function getWeekClasses(firstDayWeek) {
   if (!firstDayWeek) return {};
   const tempDate = new Date(firstDayWeek);
@@ -76,7 +126,25 @@ export default function ScheduleBooking() {
           .map(({ memberships, ...item }) => ({
             id: item.id,
             name: `${item.name ?? ''} ${item.lastname ?? ''}`,
-            description: `${item.days_to_access} remaining classes`,
+            description: (
+              <>
+                {item.days_to_access} remaining classes
+                {item.membership_type_id === 9 && (
+                  <IconByPreference
+                    preference="totalpass"
+                    display="inline"
+                    position="relative"
+                  />
+                )}
+                {item.membership_type_id === 10 && (
+                  <IconByPreference
+                    preference="fitpass"
+                    display="inline"
+                    position="relative"
+                  />
+                )}
+              </>
+            ),
           }));
         setData(newData);
         if (isReload) {
@@ -263,17 +331,23 @@ export default function ScheduleBooking() {
               </div>
               <hr />
               <div className="grid grid-cols-3 grid-rows-3 gap-4 mt-3">
-                {Array.from(Array(9)).map((e, i) => {
+                {Array.from(
+                  Array(
+                    settingsClasses[classDetail.payload?.type].totalPositions,
+                  ),
+                ).map((e, i) => {
                   const currentReservations =
                     classDetail.payload.classExist.reservations;
-                  const position = 9 - i;
+                  const position =
+                    settingsClasses[classDetail.payload?.type].totalPositions -
+                    i;
                   const isReserved = currentReservations.find(
                     (f) => f.position === position,
                   );
                   return (
                     <div
                       key={i}
-                      className={`relative text-center rounded-xl select-none hover:bg-cararra-50 ${!isReserved ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+                      className={`relative text-center rounded-xl select-none hover:bg-cararra-50 ${!isReserved ? 'cursor-pointer' : 'cursor-not-allowed'} ${settingsClasses[classDetail.payload?.type].position.class[i]}`}
                       onClick={() => {
                         if (
                           user.rol !== 'COACH' &&
@@ -283,6 +357,7 @@ export default function ScheduleBooking() {
                           setConfirmReserve({
                             show: true,
                             payload: {
+                              index: i,
                               ...classDetail.payload,
                               position: position,
                               usersInClass:
@@ -306,6 +381,12 @@ export default function ScheduleBooking() {
                         <span className="absolute bottom-0 text-center bg-white border rounded-full left-2/3 w-7">
                           {position}
                         </span>
+                        <IconByPreference
+                          preference={
+                            settingsClasses[classDetail.payload?.type].position
+                              .preference[i]
+                          }
+                        />
                         {isReserved && (
                           <span className="p-1 rounded shadow-lg tooltip bg-cararra-100 -left-2 -bottom-2">
                             {isReserved?.user?.name}
@@ -353,21 +434,26 @@ export default function ScheduleBooking() {
       ) : null}
       {confirmReserve.show ? (
         <Dialog title="Select user">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center justify-between gap-1">
             <p>
-              Search and select a user to assign to the class{' '}
-              <span className="underline decoration-solid">
-                {convertTZ(confirmReserve.payload?.dateStart)}{' '}
-              </span>
+              Search and select a user to assign to the class
               <span className="underline decoration-solid">
                 {convertTZ(confirmReserve.payload?.dateStart)}
               </span>
             </p>
-            <div className="flex flex-col items-center justify-center p-2 border rounded">
+            <div className="flex flex-col items-center justify-center gap-1 p-2 border rounded">
               {confirmReserve.payload?.position}
               <IconByType
                 type={confirmReserve.payload?.type}
                 color="wirl-950"
+                small
+              />
+              <IconByPreference
+                position="relative"
+                preference={
+                  settingsClasses[confirmReserve.payload?.type].position
+                    .preference[confirmReserve.payload?.index]
+                }
               />
             </div>
           </div>
@@ -431,4 +517,27 @@ const IconByType = ({ small = false, type, className, color }) => {
     );
   }
   return null;
+};
+
+const IconByPreference = ({
+  preference,
+  display = 'block',
+  position = 'absolute',
+}) => {
+  if (preference === null) return null;
+  return (
+    <span className={`${position} bottom-0 left-[10%] w-7`}>
+      <Image
+        className={display}
+        src={
+          preference === 'fitpass'
+            ? '/images/external/fitpass2.png'
+            : '/images/external/totalpass.png'
+        }
+        alt="Preference"
+        width="20"
+        height="20"
+      />
+    </span>
+  );
 };
