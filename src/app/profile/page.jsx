@@ -10,12 +10,13 @@ import Button from '@/components/atoms/Button';
 import Dialog from '@/components/atoms/Dialog';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
+import { resizeFile } from '@/libs/_utilsFunctions';
 
 export default function ProfilePage() {
   const [userData, setUserData] = useState({});
   const [showDialog, setShowDialog] = useState(false);
   const { src } = useImage({
-    srcList: [userData?.image, 'public/images/userDefault.svg'],
+    srcList: [userData?.image, 'images/userDefault.svg'],
   });
 
   async function init() {
@@ -88,8 +89,13 @@ export default function ProfilePage() {
                     className="invisible w-0"
                     accept="image/*"
                     onChange={(e) => {
+                      const imageType = e.target.files[0].type;
                       resizeFile(e.target.files[0]).then((res) => {
-                        setUserData((prev) => ({ ...prev, image: res }));
+                        setUserData((prev) => ({
+                          ...prev,
+                          image: res,
+                          imageType,
+                        }));
                       });
                     }}
                   />

@@ -19,7 +19,12 @@ export default function FormProfile(props) {
     setIsLoadingButton(true);
     const params = {
       url: '/user',
-      body: { ...data, email: props.userData.email },
+      body: {
+        ...data,
+        email: props.userData.email,
+        image: props.userData.image,
+        imageType: props.userData.imageType,
+      },
       method: 'PUT',
     };
     const res = await genericFetch(params);
