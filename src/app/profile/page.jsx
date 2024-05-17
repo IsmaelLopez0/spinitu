@@ -11,13 +11,15 @@ import Dialog from '@/components/atoms/Dialog';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
 import { resizeFile } from '@/libs/_utilsFunctions';
+import { useUserConfig } from '@/stores/useUserConfig';
 
 export default function ProfilePage() {
   const [userData, setUserData] = useState({});
   const [showDialog, setShowDialog] = useState(false);
   const { src } = useImage({
-    srcList: [userData?.image, 'images/userDefault.svg'],
+    srcList: [userData?.profileImageURL, 'images/userDefault.svg'],
   });
+  const setUser = useUserConfig((state) => state.setUser);
 
   async function init() {
     const { user } = await getSession();
@@ -28,6 +30,7 @@ export default function ProfilePage() {
     };
     const data = await genericFetch(params);
     setUserData(data.body);
+    setUser(data.body);
   }
 
   async function deleteAccount() {
@@ -93,7 +96,7 @@ export default function ProfilePage() {
                       resizeFile(e.target.files[0]).then((res) => {
                         setUserData((prev) => ({
                           ...prev,
-                          image: res,
+                          profileImageURL: res,
                           imageType,
                         }));
                       });
@@ -102,7 +105,11 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
-            <FormProfile userData={userData} setUserData={setUserData} />
+            <FormProfile
+              userData={userData}
+              setUserData={setUserData}
+              callback={() => init()}
+            />
           </Card>
         </div>
 

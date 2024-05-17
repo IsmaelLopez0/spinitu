@@ -22,7 +22,7 @@ export default function FormProfile(props) {
       body: {
         ...data,
         email: props.userData.email,
-        image: props.userData.image,
+        image: props.userData.profileImageURL,
         imageType: props.userData.imageType,
       },
       method: 'PUT',
@@ -31,6 +31,7 @@ export default function FormProfile(props) {
     if (res.statusCode === 200) {
       props.setUserData(res.body);
       setToast('Saved Successfully', 'success', params.url);
+      props.callback && props.callback();
     } else {
       setToast(res.body.error, 'error', params.url + res.statusCode);
     }
