@@ -1,5 +1,5 @@
 'use client';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 function HomePage() {
   const router = useRouter();
   router.push('/auth/login');

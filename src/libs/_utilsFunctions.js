@@ -1,3 +1,5 @@
+import Resizer from 'react-image-file-resizer';
+
 export function getCurrentWeek() {
   const currentDate = new Date();
   const startDate = new Date(currentDate.getFullYear(), 0, 1);
@@ -58,6 +60,22 @@ export function formatDate(d) {
 
   return [year, month, day].join('-');
 }
+
+export const resizeFile = (file) =>
+  new Promise((resolve) => {
+    Resizer.imageFileResizer(
+      file,
+      1000,
+      1000,
+      'JPEG',
+      100,
+      0,
+      (uri) => {
+        resolve(uri);
+      },
+      'base64',
+    );
+  });
 
 export function convertTZ(date, options = {}) {
   const { onlyDate, tzString } = options;

@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Fragment, useEffect, useState } from 'react';
 import { getSession } from 'next-auth/react';
 import { Menu, Transition } from '@headlessui/react';
@@ -47,10 +48,20 @@ export default function Profile() {
       <div>
         <Menu.Button className="inline-flex items-center justify-center w-full px-4 py-2 font-medium bg-transparent border rounded text-swirl-700 border-swirl-200 hover:bg-swirl-200">
           {user?.name}
-          <UserCircleIcon
-            className="w-5 h-5 ml-2 -mr-1 text-swirl-700"
-            aria-hidden="true"
-          />
+          {user?.profileImageURL ? (
+            <Image
+              src={user.profileImageURL}
+              alt="Descripción de la imagen"
+              width={20}
+              height={20}
+              className="border rounded-full border-swirl-700"
+            />
+          ) : (
+            <UserCircleIcon
+              className="w-5 h-5 ml-2 -mr-1 text-swirl-700"
+              aria-hidden="true"
+            />
+          )}
         </Menu.Button>
       </div>
       <Transition

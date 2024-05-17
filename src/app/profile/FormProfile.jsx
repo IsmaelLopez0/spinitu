@@ -5,6 +5,7 @@ import Input from '@/components/atoms/Input';
 import Button from '@/components/atoms/Button';
 import { genericFetch } from '@/libs/externalAPIs';
 import { setToast } from '@/libs/notificationsAPIs';
+import { resizeFile } from '@/libs/_utilsFunctions';
 
 export default function FormProfile(props) {
   const [isLoadingButton, setIsLoadingButton] = useState(false);
@@ -18,13 +19,19 @@ export default function FormProfile(props) {
     setIsLoadingButton(true);
     const params = {
       url: '/user',
-      body: { ...data, email: props.userData.email },
+      body: {
+        ...data,
+        email: props.userData.email,
+        image: props.userData.profileImageURL,
+        imageType: props.userData.imageType,
+      },
       method: 'PUT',
     };
     const res = await genericFetch(params);
     if (res.statusCode === 200) {
       props.setUserData(res.body);
       setToast('Saved Successfully', 'success', params.url);
+      props.callback && props.callback();
     } else {
       setToast(res.body.error, 'error', params.url + res.statusCode);
     }
