@@ -63,10 +63,11 @@ const settingsClasses = {
         'row-start-3',
       ],
       preference: [
-        null,
+        'fitpass',
         'fitpass',
         null,
-        'fitpass',
+        null,
+        null,
         'totalpass',
         'totalpass',
         'totalpass',
