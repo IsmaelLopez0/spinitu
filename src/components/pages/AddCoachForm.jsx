@@ -188,7 +188,7 @@ export default function RegisterPage({ data, rol, isUpdate, ...props }) {
 
       <div className="flex gap-5">
         <Button
-          color="orchid"
+          color="mindaro"
           className="w-full"
           type="outline"
           onClick={() => {
@@ -198,7 +198,7 @@ export default function RegisterPage({ data, rol, isUpdate, ...props }) {
         >
           Cancel
         </Button>
-        <Button color="mindaro" className="w-full" isloading={isloading}>
+        <Button color="orchid" className="w-full" isloading={isloading}>
           {data ? 'Update' : 'Register'}
         </Button>
       </div>

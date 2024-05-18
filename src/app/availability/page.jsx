@@ -279,7 +279,7 @@ export default function AvailabilityPage() {
                 ) : user && user.rol === 'ADMINISTRATOR' ? (
                   <Button
                     text="Check the class"
-                    color="mindaro"
+                    color="orchid"
                     className="ml-3 text-sm"
                     onClick={() => {
                       verifyClass(
@@ -308,7 +308,7 @@ export default function AvailabilityPage() {
                 <Button
                   text="I'm available"
                   className="text-sm"
-                  color="mindaro"
+                  color="orchid"
                   isloading={isLoadingModalBtn}
                   onClick={() => {
                     setIsLoadingModalBtn(true);

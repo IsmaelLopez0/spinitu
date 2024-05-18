@@ -252,7 +252,7 @@ export default function Schedule() {
                 <Button
                   text="I'm available"
                   className="text-sm"
-                  color="mindaro"
+                  color="orchid"
                   isloading={isLoadingModalBtn}
                   onClick={() => {
                     setIsLoadingModalBtn(true);

@@ -122,7 +122,7 @@ export default function ProfilePage() {
               {"Once your account has been deactivate, it's gone for good."}
             </p>
             <Button
-              color="orchid"
+              color="mindaro"
               text="Deactivate account"
               className="w-full mt-2 bg-red-700"
               onClick={() => setShowDialog(true)}
@@ -139,7 +139,7 @@ export default function ProfilePage() {
           footer={
             <>
               <Button
-                color="orchid"
+                color="mindaro"
                 text="Deactivate account"
                 className="ml-3 text-sm bg-red-700"
                 onClick={() => {

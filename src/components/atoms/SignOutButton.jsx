@@ -30,7 +30,7 @@ export default function SignOutButton({ isMenu, active }) {
   }
 
   return (
-    <Button color="orchid" className="px-3 py-1" onClick={signOutFunc}>
+    <Button color="mindaro" className="px-3 py-1" onClick={signOutFunc}>
       Sign out
     </Button>
   );

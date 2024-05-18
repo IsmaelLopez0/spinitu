@@ -91,7 +91,7 @@ export default function UsersPage() {
         show: true,
         children: (
           <Button
-            color="mindaro"
+            color="orchid"
             text="Ok"
             onClick={() => setDialog({ show: false })}
           />
@@ -115,7 +115,7 @@ export default function UsersPage() {
             onClick={() => setDialog({ show: false })}
           />
           <Button
-            color="orchid"
+            color="mindaro"
             text="Delete"
             onClick={() => {
               setDialog({ show: false });

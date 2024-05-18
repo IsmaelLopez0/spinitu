@@ -147,7 +147,7 @@ export default function AllUsersList(props) {
             <Input placeholder="Search by name o email" ref={null} {...field} />
           )}
         />
-        <Button text="Search" className="px-3 py-1 h-1/2" color="mindaro" />
+        <Button text="Search" className="px-3 py-1 h-1/2" color="orchid" />
       </form>
       <Table
         title="All users"
@@ -185,14 +185,14 @@ export default function AllUsersList(props) {
           />
           <div className="flex justify-end gap-3 mt-3">
             <Button
-              color="orchid"
+              color="mindaro"
               type="outline"
               onClick={() => setAddClassDialog({ show: false })}
             >
               Cancel
             </Button>
             <Button
-              color="mindaro"
+              color="orchid"
               isloading={isloading}
               onClick={() => createMembership(addClassDialog.payload)}
             >

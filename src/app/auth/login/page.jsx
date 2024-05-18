@@ -98,7 +98,7 @@ export default function LoginPage() {
 
         <Button
           isloading={isloading}
-          color="mindaro"
+          color="orchid"
           type="solid"
           className="w-full"
         >

@@ -468,13 +468,13 @@ export default function ScheduleBooking() {
             />
             <div className="flex justify-between mt-2">
               <Button
-                color="orchid"
+                color="mindaro"
                 onClick={() => setConfirmReserve({ show: false })}
               >
                 Cancel
               </Button>
               <Button
-                color="mindaro"
+                color="orchid"
                 disabled={!userSelected}
                 onClick={() => reservClass(confirmReserve.payload)}
                 isloading={isLoadingReservation}

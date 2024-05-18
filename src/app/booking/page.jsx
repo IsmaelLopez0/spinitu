@@ -171,9 +171,9 @@ export default function Booking() {
             />
 
             <div className="flex flex-row-reverse w-full gap-4 p-3">
-              <Button color="mindaro" text="Add" isloading={isloading} />
+              <Button color="orchid" text="Add" isloading={isloading} />
               <Button
-                color="orchid"
+                color="mindaro"
                 type="outline"
                 text="Cancel"
                 onClick={() => {

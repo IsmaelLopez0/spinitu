@@ -121,7 +121,7 @@ export default function FormProfile(props) {
 
       <Button
         isloading={isLoadingButton}
-        color="mindaro"
+        color="orchid"
         type="outline"
         className="w-full"
       >

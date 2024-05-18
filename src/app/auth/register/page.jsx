@@ -160,7 +160,7 @@ export default function RegisterPage() {
           )}
         />
 
-        <Button color="mindaro" className="w-full">
+        <Button color="orchid" className="w-full">
           Register
         </Button>
       </form>

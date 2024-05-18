@@ -81,7 +81,7 @@ export default function UserList(props) {
             <Input placeholder="Search by name o email" ref={null} {...field} />
           )}
         />
-        <Button text="Search" className="px-3 py-1 h-1/2" color="mindaro" />
+        <Button text="Search" className="px-3 py-1 h-1/2" color="orchid" />
       </form>
       <Table
         title="Today"
