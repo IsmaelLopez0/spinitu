@@ -6,17 +6,17 @@ export const paymentOptions = {
 };
 
 export const validSchedule = {
-  1: { start: '6:15', end: '7:00' },
-  2: { start: '7:15', end: '8:00' },
-  3: { start: '8:15', end: '9:00' },
-  4: { start: '9:15', end: '10:00' },
-  5: { start: '10:15', end: '11:00' },
-  6: { start: '11:15', end: '12:00' },
-  7: { start: '12:15', end: '13:00' }, // remover temporalmente
-  8: { start: '18:15', end: '19:00' },
-  9: { start: '19:15', end: '20:00' },
-  10: { start: '20:15', end: '21:00' },
-  11: { start: '21:15', end: '22:00' },
+  1: { start: '6:00', end: '7:50' },
+  2: { start: '7:00', end: '8:50' },
+  3: { start: '8:00', end: '9:50' },
+  4: { start: '9:00', end: '10:50' },
+  5: { start: '10:00', end: '11:50' },
+  6: { start: '11:00', end: '12:50' },
+  7: { start: '12:00', end: '13:50' }, // remover temporalmente
+  8: { start: '18:00', end: '19:50' },
+  9: { start: '19:00', end: '20:50' },
+  10: { start: '20:00', end: '21:50' },
+  11: { start: '21:00', end: '22:50' },
 };
 
 export const CYCLING = 'cycling';
